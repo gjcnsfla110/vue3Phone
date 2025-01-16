@@ -15,4 +15,17 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  css:{
+    preprocessorOptions: {
+    }
+  },
+  server:{
+    proxy:{
+      '/api': {
+        target: 'http://clphone.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+    }
+  }
 })
