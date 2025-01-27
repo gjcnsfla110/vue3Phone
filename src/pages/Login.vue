@@ -5,13 +5,14 @@ defineOptions({
 import {ref,reactive} from "vue";
 import {login} from "@/api/manager.js";
 import {showMessage} from "@/composables/utill.js";
-
+import {useRouter} from "vue-router";
+import managerStore from "@/store/manager.js";
+const router = useRouter();
 const loginFromRef = ref(null);
 const loginForm = reactive({
   manager_id:"",
   password: "",
 })
-
 //아이디 입력은 영문자와 숫자로만 이루어져야한다
 const idFilterInput = (value) => {
   // 영문자 및 숫자만 허용
@@ -69,8 +70,10 @@ const submitForm = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      login(loginForm).then(res=>{
+      const useManager = managerStore();
+      useManager.adminLogin(loginForm).then(res=>{
         showMessage("欢迎来到小韩手机")
+        router.push("/")
       })
     } else {
       console.log('error submit!', fields)

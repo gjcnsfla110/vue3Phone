@@ -15,5 +15,6 @@ app.use(router)
 app.use(pinia)
 app.use(ElementPlus)
 import  './permission.js'
+import 'nprogress/nprogress.css';
 
 app.mount('#app')
