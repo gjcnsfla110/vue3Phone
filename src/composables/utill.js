@@ -1,4 +1,4 @@
-import { ElNotification } from 'element-plus'
+import { ElNotification ,ElMessageBox,ElMessage} from 'element-plus'
 import nprogress from 'nprogress'
 export function showMessage(message,type = "success"){
     ElNotification({
@@ -16,4 +16,22 @@ export function showFullLoading(){
 // 隐藏全屏loading
 export function hideFullLoading(){
     nprogress.done()
+}
+
+export function showMsg(message="",type = "success"){
+    ElMessage({
+        type: type,
+        message: message,
+    })
+}
+export function showMessagebox(content = "提示内容",type = "error",title = ""){
+    return ElMessageBox.confirm(
+        content,
+        title,
+        {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type,
+        },
+    )
 }

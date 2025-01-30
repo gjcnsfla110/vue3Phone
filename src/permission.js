@@ -8,7 +8,6 @@ import {addRoutes} from "@/route/index.js";
 let getInfo = false;
 router.beforeEach(async (to, from, next) => {
     showFullLoading()
-    const useStore = managerStore()
     const token = getToken();
     if(!token && to.path !="/login"){
         showMessage("请先登录","error")
@@ -23,10 +22,11 @@ router.beforeEach(async (to, from, next) => {
     if(token && !getInfo){
         const useStore = managerStore();
         try {
-            const {menu} = await useStore.adminInfo();
+            const {menus} = await useStore.adminInfo();
             getInfo = true;
-            hasNewRoutes = addRoutes(menu);
+            hasNewRoutes = addRoutes(menus);
         }catch(err){
+            console.log(err);
             showMessage("会员加载失败","error")
         }
     }

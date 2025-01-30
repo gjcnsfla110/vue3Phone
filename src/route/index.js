@@ -2,10 +2,12 @@ import {createRouter, createWebHistory} from "vue-router";
 import Login from "@/pages/Login.vue"
 import NotFound from "@/pages/404.vue";
 import Admin from "@/layout/Admin.vue";
+import MenuList from "@/pages/menu/MenuList.vue";
+import MenuAuth from "@/pages/menu/MenuAuth.vue";
 const routes = [
     {
         path: "/login",
-        name: "Login",
+        name: "login",
         component: Login,
         meta:{
             title:"会员登录"
@@ -21,7 +23,7 @@ const routes = [
     },
     {
         path:'/',
-        name: 'Admin',
+        name: 'admin',
         component: Admin,
         meta:{
             title:"管理员首页"
@@ -29,10 +31,45 @@ const routes = [
     }
 ]
 
-export function addRoutes(menu){
+const asycnRoutes = [
+    {
+        path:'/menu/list',
+        name: 'MenuList',
+        component: MenuList,
+        meta:{
+            title:"菜单管理"
+        }
+    },
+    {
+        path:'/menu/auth',
+        name: 'MenuAuth',
+        component: MenuAuth,
+        meta:{
+            title:"菜单权限"
+        }
+    },
+];
 
-}
 export  const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+export function addRoutes(menus){
+    let hasAddRoute = false;
+    function asyncAddroute(items){
+        items.forEach(route => {
+            let item = asycnRoutes.find((e)=>e.path === route.frontpath);
+            if(item && !router.hasRoute(item.path)){
+                router.addRoute("admin",item);
+                hasAddRoute = true;
+            }
+            if(route.child && route.child.length > 0){
+                asyncAddroute(route.child);
+            }
+        })
+    }
+
+    asyncAddroute(menus)
+    return hasAddRoute;
+}

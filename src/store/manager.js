@@ -1,13 +1,32 @@
 import {defineStore} from 'pinia'
-import {getInfo,login} from "@/api/manager.js";
+import {getInfo,login,logout} from "@/api/manager.js";
 import {showMessage} from "@/composables/utill.js";
-import {setToken} from "@/composables/auth.js";
+import {setToken,removeToken} from "@/composables/auth.js";
+import Admin from "@/layout/Admin.vue";
 
 const managerStore = defineStore("manager",{
     state(){
         return {
             manager :{},
-            menu : [],
+            menus : [
+                {
+                    "name": "菜单管理",
+                    "icon": "Menu",
+                    "frontpath": null,
+                    "child": [
+                        {
+                            "name": "菜单管理",
+                            "frontpath": "/menu/list",
+                            "icon": "Document",
+                        },
+                        {
+                            "name": "菜单权限",
+                            "frontpath": "/menu/auth",
+                            "icon": "Lock",
+                        }
+                        ]
+                }
+            ],
             // 侧边宽度
             asideWidth:"250px",
             ruleNames:[]
@@ -18,17 +37,19 @@ const managerStore = defineStore("manager",{
             return new Promise((resolve,reject)=>{
                 login(data).then(res=>{
                     setToken(res.token);
-                    resolve(res)
+                    resolve("susess")
                 }).catch(error=>reject(error))
             })
         },
         adminInfo(){
             return new Promise((resolve,reject)=>{
-                getInfo(resolve).then(res=>{
-                    resolve(res);
-                }).catch(error=>reject(error))
+                getInfo().then(res=>{
+                    resolve({menus : this.menus});
+                }).catch(error=>{
+                    reject(error)
+                })
             })
-        },
+        }
     },
     getters:{
 
