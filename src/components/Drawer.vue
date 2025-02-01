@@ -1,5 +1,25 @@
 <script setup>
 import {ref} from "vue";
+defineProps({
+  title : {
+    type: String,
+    default:""
+  },
+  size:{
+    type: String,
+    default:"45%"
+  },
+  destroyOnClose:{
+    type: Boolean,
+    default:false
+  },
+  submitButton:{
+    type: String,
+    default:"确认"
+  }
+})
+const emit = defineEmits(["submit"])
+
 const isDrawer = ref(false);
 const loading = ref(false);
 const openDrawer = ()=>{
@@ -12,25 +32,6 @@ const showLoading = () => loading.value = true;
 const closeLoading = () => loading.value = false;
 const submit = ()=> emit('submit');
 
-defineProps({
-    title : {
-      type: String,
-      default:""
-    },
-    size:{
-      type: String,
-      default:"45%"
-    },
-    destroyOnClose:{
-      type: Boolean,
-      default:false
-    },
-    submitButton:{
-      type: String,
-      default:"确认"
-    }
-})
-
 defineExpose({
   openDrawer,
   closeDrawer,
@@ -38,7 +39,7 @@ defineExpose({
   closeLoading
 })
 
-defineEmits(["submit"])
+
 </script>
 
 <template>
@@ -48,7 +49,6 @@ defineEmits(["submit"])
       :size="size"
       :close-on-click-modal="false"
       :destroy-on-close="destroyOnClose"
-      z-index="1000"
   >
     <div class="formDrawer">
       <div class="body">
@@ -67,6 +67,7 @@ defineEmits(["submit"])
       height: 100%;
       position: relative;
       .body{
+        padding-top:30px;
         flex: 1;
         position: absolute;
         top: 0;
