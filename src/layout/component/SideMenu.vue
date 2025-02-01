@@ -2,14 +2,21 @@
 import {computed, ref} from "vue";
 import {storeToRefs} from "pinia";
 import managerStore from "@/store/manager.js";
-import {useRouter} from "vue-router";
+import {onBeforeRouteUpdate, useRouter} from "vue-router";
+
+const windowHeight = window.innerHeight || document.body.clientHeight
+const h = windowHeight - 64
+const activeMenu = ref('/');
+// 监听路由变化
+onBeforeRouteUpdate((to,from)=>{
+  activeMenu.value = to.path
+})
 const router = useRouter();
 const useMangerStore = managerStore();
 const {menus,asideWidth} = storeToRefs(useMangerStore);
 const isCollapse = computed(()=> asideWidth.value == "250px" ? false : true);
 
 const changeRoute = (e)=>{
-  console.log(router.options.route);
   router.push(e);
 }
 
@@ -17,14 +24,15 @@ const changeRoute = (e)=>{
 
 <template>
   <div class="menuBox" :style="{width:asideWidth}">
-    <template v-for="menu in menus">
       <el-menu
+          :style="{height:h+'px'}"
           collapse-transition
-          class="el-menu-vertical-demo"
           :collapse="isCollapse"
           unique-opened
           @select="changeRoute"
+          :default-active = "activeMenu"
       >
+        <template v-for="menu in menus">
         <el-sub-menu :index="menu.name" v-if="menu.child && menu.child.length > 0">
           <template #title>
             <el-icon><component :is="menu.icon"/></el-icon>
@@ -41,8 +49,8 @@ const changeRoute = (e)=>{
           <el-icon><component :is="menu.icon" /></el-icon>
           <template #title>{{menu.name}}</template>
         </el-menu-item>
+        </template>
       </el-menu>
-    </template>
   </div>
 </template>
 

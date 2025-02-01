@@ -4,6 +4,7 @@ import NotFound from "@/pages/404.vue";
 import Admin from "@/layout/Admin.vue";
 import MenuList from "@/pages/menu/MenuList.vue";
 import MenuAuth from "@/pages/menu/MenuAuth.vue";
+import ImageList from "@/pages/image/ImageList.vue";
 const routes = [
     {
         path: "/login",
@@ -34,7 +35,7 @@ const routes = [
 const asycnRoutes = [
     {
         path:'/menu/list',
-        name: 'MenuList',
+        name: '/menu/list',
         component: MenuList,
         meta:{
             title:"菜单管理"
@@ -42,12 +43,20 @@ const asycnRoutes = [
     },
     {
         path:'/menu/auth',
-        name: 'MenuAuth',
+        name: '/menu/auth',
         component: MenuAuth,
         meta:{
             title:"菜单权限"
         }
     },
+    {
+        path:'/image/list',
+        name: '/image/list',
+        component: ImageList,
+        meta:{
+            title:"图片管理"
+        }
+    }
 ];
 
 export  const router = createRouter({

@@ -25,7 +25,15 @@ const managerStore = defineStore("manager",{
                             "icon": "Lock",
                         }
                         ]
-                }
+                },
+                {
+                    "name": "图片管理",
+                    "icon": "picture-filled",
+                    "frontpath": "/image/list",
+                    "child": [
+                    ]
+                },
+
             ],
             // 侧边宽度
             asideWidth:"250px",
