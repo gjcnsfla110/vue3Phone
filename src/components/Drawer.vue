@@ -67,7 +67,7 @@ defineExpose({
       height: 100%;
       position: relative;
       .body{
-        padding-top:30px;
+        padding:50px;
         flex: 1;
         position: absolute;
         top: 0;
@@ -77,6 +77,7 @@ defineExpose({
         overflow-y: auto;
       }
       .actions{
+        padding-left: 100px;
         height: 80px;
         width: 100%;
         position: absolute;
