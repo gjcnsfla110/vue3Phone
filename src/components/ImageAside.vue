@@ -106,8 +106,8 @@
                 </el-popconfirm>
             </div>
           </div>
-        </template>
-        <el-menu-item index="2">
+        </template> 
+        <el-menu-item>
           <template #title>
             <div class="menubar_item">
               <p>
@@ -120,21 +120,51 @@
             </div>
           </template>
         </el-menu-item>
-        <el-menu-item index="2">
+        <el-sub-menu>
           <template #title>
             <div class="menubar_item">
               <p>
                 <span>苹果手机</span>
               </p>
               <div class="menubar_item_button">
-                <el-button @click.stop  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
-                <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
+                  <template #reference>
+                    <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                  </template>
+                </el-popconfirm>
               </div>
             </div>
           </template>
-        </el-menu-item>
+          <el-menu-item >
+            <template #title>
+              <div class="menubar_item">
+                <p>
+                  <span>苹果手机</span>
+                </p>
+                <div class="menubar_item_button">
+                  <el-button @click.stop  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                  <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                </div>
+              </div>
+            </template>
+          </el-menu-item>
+          <el-menu-item>
+            <template #title>
+              <div class="menubar_item">
+                <p>
+                  <span>苹果手机</span>
+                </p>
+                <div class="menubar_item_button">
+                  <el-button @click.stop  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                  <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                </div>
+              </div>
+            </template>
+          </el-menu-item>
+        </el-sub-menu>
       </el-sub-menu>
-      <el-menu-item index="2" v-for="a in 5">
+      <el-menu-item  v-for="a in 2">
         <template #title>
           <div class="menubar_item">
             <p>
