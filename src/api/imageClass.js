@@ -7,3 +7,7 @@ export function imageClassList(){
 export function imageList(id){
     return  service.post("imageClassList");
 }
+
+export function addImageClass(data){
+    return  service.post("admin/image_class",data);
+}

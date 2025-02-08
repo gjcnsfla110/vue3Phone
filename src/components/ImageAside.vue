@@ -42,7 +42,6 @@
   const deleteMenu = ()=>{
      alert("삭제성공")
   }
-
   const editSubmit = ()=>{
        editRef.value.validate(valid => {
           if (valid) return;
@@ -55,29 +54,10 @@
      }
   })
 
-  const value = ref('')
-  const options = [
-    {
-      value: 0,
-      label: 'Option1',
-    },
-    {
-      value: 1,
-      label: 'Option2',
-    },
-    {
-      value: 2,
-      label: 'Option3',
-    },
-    {
-      value: 3,
-      label: 'Option4',
-    },
-    {
-      value: 4,
-      label: 'Option5',
-    },
-  ]
+  defineExpose({
+
+  })
+
 </script>
 
 <template>

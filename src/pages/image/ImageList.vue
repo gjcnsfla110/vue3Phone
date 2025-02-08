@@ -91,14 +91,6 @@ const editClassImgOpen = ()=> drawerImgClass.value.openDrawer();
 //이미지 업로드 drawer 열기
 const editPhotoOpen = ()=> drawerPhoto.value.openDrawer();
 
-
-
-
-
-
-
-
-
 const op = [
   {
     value: 'guide',
