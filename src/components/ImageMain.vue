@@ -7,6 +7,7 @@
       type: Number,
     }
   })
+  import {ref} from "vue";
 </script>
 <template>
     <el-main class="imgMainBox" :style="{height:height+'px'}">

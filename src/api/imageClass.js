@@ -1,11 +1,11 @@
 import service from "@/axios.js";
 
-export function imageClassList(){
-    return  service.get("imageClassList");
+export function imageClassList(page){
+    return  service.get(`admin/image_class/${page}`);
 }
 
 export function imageList(id){
-    return  service.post("imageClassList");
+    return  service.post();
 }
 
 export function addImageClass(data){

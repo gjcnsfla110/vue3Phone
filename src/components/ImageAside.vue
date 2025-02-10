@@ -4,8 +4,32 @@
   })
   import Drawer from "@/components/Drawer.vue";
   import {ref,reactive} from "vue";
-
+  import {imageClassList,addImageClass} from "@/api/imageClass.js";
   const editRef = ref(null);
+  //페이징에 관련 변수
+  const currentPage = ref(1);
+  const totalPage = ref(0);
+  const limitPage = ref(10);
+  //imageClass변수
+  const classList = ref([]);
+  //페이지 change 이벤트
+  const pageChange = (p)=>{
+     currentPage.value = p;
+     getData();
+  }
+  const getData =async (page = null)=>{
+      if(typeof page == 'number'){
+         currentPage.value = page;
+      }
+      try {
+         let data = await imageClassList(currentPage.value);
+          classList.value = data.list;
+          totalPage.value = data.total;
+      }catch(e){
+
+      }
+  }
+  getData();
   const rules = reactive({
     pid : [
       {
@@ -71,95 +95,124 @@
         class="menu_top"
         :style="{height:(height-60)+'px'}"
     >
-      <el-sub-menu index="1">
-        <template #title>
-          <div class="menubar_item">
-            <p>
-              <span>苹果手机</span>
-            </p>
-            <div class="menubar_item_button">
-                <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
-                <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
-                  <template #reference>
-                    <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
-                  </template>
-                </el-popconfirm>
-            </div>
-          </div>
-        </template> 
-        <el-menu-item>
-          <template #title>
-            <div class="menubar_item">
-              <p>
-                <span>苹果手机</span>
-              </p>
-              <div class="menubar_item_button">
-                <el-button @click.stop  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
-                <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
-              </div>
-            </div>
-          </template>
-        </el-menu-item>
-        <el-sub-menu>
-          <template #title>
-            <div class="menubar_item">
-              <p>
-                <span>苹果手机</span>
-              </p>
-              <div class="menubar_item_button">
-                <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
-                <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
-                  <template #reference>
-                    <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
-                  </template>
-                </el-popconfirm>
-              </div>
-            </div>
-          </template>
-          <el-menu-item >
+        <div v-for="menu in classList">
+          <el-sub-menu v-if="menu.child.length > 0" :index="String(menu.id)">
             <template #title>
               <div class="menubar_item">
                 <p>
-                  <span>苹果手机</span>
+                  <span>{{menu.name}}</span>
                 </p>
                 <div class="menubar_item_button">
-                  <el-button @click.stop  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
-                  <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                    <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                    <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
+                      <template #reference>
+                        <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                      </template>
+                    </el-popconfirm>
+                </div>
+              </div>
+            </template>
+            <template v-for="menu1 in menu.child">
+              <el-sub-menu v-if="menu1.child.length > 0" :index="String(menu1.id)" >
+                <template #title>
+                  <div class="menubar_item">
+                    <p>
+                      <span>{{menu1.name}}</span>
+                    </p>
+                    <div class="menubar_item_button">
+                      <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                      <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
+                        <template #reference>
+                          <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                        </template>
+                      </el-popconfirm>
+                    </div>
+                  </div>
+                </template>
+                <template v-for="menu2 in menu1.child">
+                  <el-sub-menu v-if="menu2.child.length > 0" :index="String(menu2.id)">
+                    <template slot="title">
+                      <div class="menubar_item">
+                        <p>
+                          <span>{{menu2.name}}</span>
+                        </p>
+                        <div class="menubar_item_button">
+                          <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                          <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
+                            <template #reference>
+                              <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                            </template>
+                          </el-popconfirm>
+                        </div>
+                      </div>
+                    </template>
+                  </el-sub-menu>
+                  <el-menu-item v-else  :index="String(menu2.id)" >
+                    <template #title>
+                      <div class="menubar_item">
+                        <p>
+                          <span>{{menu2.name}}</span>
+                        </p>
+                        <div class="menubar_item_button">
+                          <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                          <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
+                            <template #reference>
+                              <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                            </template>
+                          </el-popconfirm>
+                        </div>
+                      </div>
+                    </template>
+                  </el-menu-item>
+                </template>
+              </el-sub-menu>
+              <el-menu-item v-else :index="String(menu1.id)">
+                <template #title>
+                  <div class="menubar_item">
+                    <p>
+                      <span>{{menu1.name}}</span>
+                    </p>
+                    <div class="menubar_item_button">
+                      <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                      <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
+                        <template #reference>
+                          <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                        </template>
+                      </el-popconfirm>
+                    </div>
+                  </div>
+                </template>
+              </el-menu-item>
+            </template>
+          </el-sub-menu>
+          <el-menu-item v-else  :index="String(menu.id)">
+            <template #title>
+              <div class="menubar_item">
+                <p>
+                  <span>{{menu.name}}</span>
+                </p>
+                <div class="menubar_item_button">
+                  <el-button @click.stop="editMenu"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                  <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu">
+                    <template #reference>
+                      <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
+                    </template>
+                  </el-popconfirm>
                 </div>
               </div>
             </template>
           </el-menu-item>
-          <el-menu-item>
-            <template #title>
-              <div class="menubar_item">
-                <p>
-                  <span>苹果手机</span>
-                </p>
-                <div class="menubar_item_button">
-                  <el-button @click.stop  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
-                  <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
-                </div>
-              </div>
-            </template>
-          </el-menu-item>
-        </el-sub-menu>
-      </el-sub-menu>
-      <el-menu-item  v-for="a in 2">
-        <template #title>
-          <div class="menubar_item">
-            <p>
-              <span>苹果手机</span>
-            </p>
-            <div class="menubar_item_button">
-              <el-button @click.stop  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
-              <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
-            </div>
-          </div>
-        </template>
-      </el-menu-item>
+        </div>
     </el-menu>
     <div class="menu_bottom">
-        <el-pagination background layout="prev, next" :total="1000" />
+        <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="limitPage"
+            background
+            layout="prev, next"
+            :total="totalPage"
+            @change="pageChange"
+            />
     </div>
     <Drawer ref="drawer" title="图片分类 修改" @submit="editSubmit()">
         <el-form
