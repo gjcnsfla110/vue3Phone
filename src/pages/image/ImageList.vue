@@ -2,7 +2,10 @@
 import ImageAside from "@/components/ImageAside.vue";
 import ImageMain from "@/components/ImageMain.vue";
 import Drawer from "@/components/Drawer.vue";
-import {ref,reactive} from "vue";
+import {ref, reactive, watchEffect, toRaw} from "vue";
+import {addImageClass} from "@/api/imageClass.js";
+//imageAside ref부붑
+const imagesClassRef = ref(null);
 //이미지 클래스 drawer
 const drawerImgClass = ref(null);
 //이미지 사진 업로드
@@ -72,7 +75,10 @@ const editPhotoFormData = reactive({
 const editImgClassSubmit = ()=>{
   editImgClassRef.value.validate(valid => {
     if (!valid) return;
-    console.log(editImgClassFormData);
+    addImageClass(editImgClassFormData).then(res=>{
+      imagesClassRef.value.getData();
+      console.log(res);
+    })
   })
 }
 //사진업로드 submit
@@ -82,7 +88,38 @@ const editPhotoSubmit = ()=>{
 
   })
 }
-const value = ref('')
+
+//클래스리스트를 옵션에 대입
+const op = ref([]);
+watchEffect(() => {
+  if (imagesClassRef.value) {
+     let data  = toRaw(imagesClassRef.value.classList);
+     op.value = cleanChildren(data);
+     op.value.unshift({
+        "id" : 0,
+        "name" : "最上级菜单",
+        "child":[]
+     })
+  }
+});
+//아래부분은 손자부분 child 삭제하는 함수
+const cleanChildren = (data) => {
+  const deepCopiedData = JSON.parse(JSON.stringify(data)); // 깊은 복사
+  return deepCopiedData.map(item => {
+    const cleanedChildren = item.child.map(child => {
+      // 자식의 자식 배열을 빈 배열로 만듦
+      if (child.child) {
+        child.child = [];  // 자식의 자식은 빈 배열로 설정
+      }
+      return child;
+    });
+
+    return {
+      ...item,
+      child: cleanedChildren
+    };
+  });
+};
 
 const windowHeight = window.innerHeight || document.body.clientHeight;
 const h = windowHeight - 64 - 44 - 40;
@@ -91,274 +128,7 @@ const editClassImgOpen = ()=> drawerImgClass.value.openDrawer();
 //이미지 업로드 drawer 열기
 const editPhotoOpen = ()=> drawerPhoto.value.openDrawer();
 
-const op = [
-  {
-    value: 'guide',
-    label: 'Guide',
-    children: [
-      {
-        value: 'disciplines',
-        label: 'Disciplines',
-        children: [
-          {
-            value: 'consistency',
-            label: 'Consistency',
-          },
-          {
-            value: 'feedback',
-            label: 'Feedback',
-          },
-          {
-            value: 'efficiency',
-            label: 'Efficiency',
-          },
-          {
-            value: 'controllability',
-            label: 'Controllability',
-          },
-        ],
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-        children: [
-          {
-            value: 'side nav',
-            label: 'Side Navigation',
-          },
-          {
-            value: 'top nav',
-            label: 'Top Navigation',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: 'component',
-    label: 'Component',
-    children: [
-      {
-        value: 'basic',
-        label: 'Basic',
-        children: [
-          {
-            value: 'layout',
-            label: 'Layout',
-          },
-          {
-            value: 'color',
-            label: 'Color',
-          },
-          {
-            value: 'typography',
-            label: 'Typography',
-          },
-          {
-            value: 'icon',
-            label: 'Icon',
-          },
-          {
-            value: 'button',
-            label: 'Button',
-          },
-        ],
-      },
-      {
-        value: 'form',
-        label: 'Form',
-        children: [
-          {
-            value: 'radio',
-            label: 'Radio',
-          },
-          {
-            value: 'checkbox',
-            label: 'Checkbox',
-          },
-          {
-            value: 'input',
-            label: 'Input',
-          },
-          {
-            value: 'input-number',
-            label: 'InputNumber',
-          },
-          {
-            value: 'select',
-            label: 'Select',
-          },
-          {
-            value: 'cascader',
-            label: 'Cascader',
-          },
-          {
-            value: 'switch',
-            label: 'Switch',
-          },
-          {
-            value: 'slider',
-            label: 'Slider',
-          },
-          {
-            value: 'time-picker',
-            label: 'TimePicker',
-          },
-          {
-            value: 'date-picker',
-            label: 'DatePicker',
-          },
-          {
-            value: 'datetime-picker',
-            label: 'DateTimePicker',
-          },
-          {
-            value: 'upload',
-            label: 'Upload',
-          },
-          {
-            value: 'rate',
-            label: 'Rate',
-          },
-          {
-            value: 'form',
-            label: 'Form',
-          },
-        ],
-      },
-      {
-        value: 'data',
-        label: 'Data',
-        children: [
-          {
-            value: 'table',
-            label: 'Table',
-          },
-          {
-            value: 'tag',
-            label: 'Tag',
-          },
-          {
-            value: 'progress',
-            label: 'Progress',
-          },
-          {
-            value: 'tree',
-            label: 'Tree',
-          },
-          {
-            value: 'pagination',
-            label: 'Pagination',
-          },
-          {
-            value: 'badge',
-            label: 'Badge',
-          },
-        ],
-      },
-      {
-        value: 'notice',
-        label: 'Notice',
-        children: [
-          {
-            value: 'alert',
-            label: 'Alert',
-          },
-          {
-            value: 'loading',
-            label: 'Loading',
-          },
-          {
-            value: 'message',
-            label: 'Message',
-          },
-          {
-            value: 'message-box',
-            label: 'MessageBox',
-          },
-          {
-            value: 'notification',
-            label: 'Notification',
-          },
-        ],
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-        children: [
-          {
-            value: 'menu',
-            label: 'Menu',
-          },
-          {
-            value: 'tabs',
-            label: 'Tabs',
-          },
-          {
-            value: 'breadcrumb',
-            label: 'Breadcrumb',
-          },
-          {
-            value: 'dropdown',
-            label: 'Dropdown',
-          },
-          {
-            value: 'steps',
-            label: 'Steps',
-          },
-        ],
-      },
-      {
-        value: 'others',
-        label: 'Others',
-        children: [
-          {
-            value: 'dialog',
-            label: 'Dialog',
-          },
-          {
-            value: 'tooltip',
-            label: 'Tooltip',
-          },
-          {
-            value: 'popover',
-            label: 'Popover',
-          },
-          {
-            value: 'card',
-            label: 'Card',
-          },
-          {
-            value: 'carousel',
-            label: 'Carousel',
-          },
-          {
-            value: 'collapse',
-            label: 'Collapse',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: 'resource',
-    label: 'Resource',
-    children: [
-      {
-        value: 'axure',
-        label: 'Axure Components',
-      },
-      {
-        value: 'sketch',
-        label: 'Sketch Templates',
-      },
-      {
-        value: 'docs',
-        label: 'Design Documentation',
-      },
-    ],
-  },
-]
+
 </script>
 <template>
     <el-card
@@ -370,7 +140,7 @@ const op = [
         <el-button type="danger" size="small" @click="editPhotoOpen">上传图片</el-button>
       </el-header>
       <el-container>
-         <ImageAside :height="h-65"/>
+         <ImageAside ref="imagesClassRef" :height="h-65"/>
          <ImageMain :height="h-65"/>
       </el-container>
       <Drawer ref="drawerImgClass" title="图片分类 添加" @submit="editImgClassSubmit()">
@@ -383,7 +153,7 @@ const op = [
           <el-form-item label="图片分类" prop="pid">
             <el-cascader v-model="editImgClassFormData.pid"
                          :options="op"
-                         :props="{emitPath:false}"
+                         :props="{value:'id',label:'name',children:'child',emitPath:false}"
                          clearable
                          placeholder="选择相册目录"
                          :style="{width: '50%'}"
@@ -398,7 +168,7 @@ const op = [
         </el-form>
       </Drawer>
 
-      <Drawer ref="drawerPhoto" title="이미지사진 업로드" @submit="editPhotoSubmit">
+      <Drawer ref="drawerPhoto" title="图片添加 " @submit="editPhotoSubmit">
         <el-form
           label-width="auto"
           ref="editPhotoRef"

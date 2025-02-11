@@ -1,7 +1,7 @@
 import service from "@/axios.js";
 
-export function imageClassList(page){
-    return  service.get(`admin/image_class/${page}`);
+export function imageClassList(page,limit=10){
+    return  service.get(`admin/image_class/${page}?limit=${limit}`);
 }
 
 export function imageList(id){
