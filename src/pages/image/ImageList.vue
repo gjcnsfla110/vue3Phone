@@ -2,8 +2,9 @@
 import ImageAside from "@/components/ImageAside.vue";
 import ImageMain from "@/components/ImageMain.vue";
 import Drawer from "@/components/Drawer.vue";
-import {ref, reactive, watchEffect, toRaw} from "vue";
-import {addImageClass} from "@/api/imageClass.js";
+import {ref, reactive, onMounted} from "vue";
+import {imageClassAll,addImageClass} from "@/api/imageClass.js";
+import {showMsg} from "@/composables/utill.js";
 //imageAside ref부붑
 const imagesClassRef = ref(null);
 //이미지 클래스 drawer
@@ -70,6 +71,13 @@ const editPhotoFormData = reactive({
   name : "",
   url : ""
 })
+//이미지 클래스 drawer 열기
+const editClassImgOpen = ()=>{
+  editImgClassFormData.name="";
+  editImgClassFormData.pid ="";
+  editImgClassFormData.order =50;
+  drawerImgClass.value.openDrawer();
+}
 
 //이미지클래스 submit
 const editImgClassSubmit = ()=>{
@@ -77,7 +85,9 @@ const editImgClassSubmit = ()=>{
     if (!valid) return;
     addImageClass(editImgClassFormData).then(res=>{
       imagesClassRef.value.getData();
-      console.log(res);
+      getClassAll();
+      drawerImgClass.value.closeDrawer();
+      showMsg("添加成功")
     })
   })
 }
@@ -91,40 +101,17 @@ const editPhotoSubmit = ()=>{
 
 //클래스리스트를 옵션에 대입
 const op = ref([]);
-watchEffect(() => {
-  if (imagesClassRef.value) {
-     let data  = toRaw(imagesClassRef.value.classList);
-     op.value = cleanChildren(data);
-     op.value.unshift({
-        "id" : 0,
-        "name" : "最上级菜单",
-        "child":[]
-     })
-  }
-});
-//아래부분은 손자부분 child 삭제하는 함수
-const cleanChildren = (data) => {
-  const deepCopiedData = JSON.parse(JSON.stringify(data)); // 깊은 복사
-  return deepCopiedData.map(item => {
-    const cleanedChildren = item.child.map(child => {
-      // 자식의 자식 배열을 빈 배열로 만듦
-      if (child.child) {
-        child.child = [];  // 자식의 자식은 빈 배열로 설정
-      }
-      return child;
-    });
-
-    return {
-      ...item,
-      child: cleanedChildren
-    };
-  });
-};
-
+function getClassAll(){
+  imageClassAll().then(res=>{
+    op.value = res.list;
+  })
+}
+onMounted(()=>{
+    getClassAll();
+})
 const windowHeight = window.innerHeight || document.body.clientHeight;
 const h = windowHeight - 64 - 44 - 40;
-//이미지 클래스 drawer 열기
-const editClassImgOpen = ()=> drawerImgClass.value.openDrawer();
+
 //이미지 업로드 drawer 열기
 const editPhotoOpen = ()=> drawerPhoto.value.openDrawer();
 
@@ -153,7 +140,7 @@ const editPhotoOpen = ()=> drawerPhoto.value.openDrawer();
           <el-form-item label="图片分类" prop="pid">
             <el-cascader v-model="editImgClassFormData.pid"
                          :options="op"
-                         :props="{value:'id',label:'name',children:'child',emitPath:false}"
+                         :props="{value:'id',label:'name',children:'child',emitPath:false,checkStrictly:true}"
                          clearable
                          placeholder="选择相册目录"
                          :style="{width: '50%'}"

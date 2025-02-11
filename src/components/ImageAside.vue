@@ -25,7 +25,6 @@
       }
       try {
          let data = await imageClassList(currentPage.value);
-          console.log(data);
           classList.value = data.list.slice();  // slice() 사용
           totalPage.value = data.total;
       }catch(e){
@@ -80,7 +79,6 @@
   })
 
   defineExpose({
-    classList,
     getData
   })
 </script>
