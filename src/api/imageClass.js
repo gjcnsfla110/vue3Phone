@@ -6,9 +6,8 @@ export function imageClassList(page,limit=10){
 }
 
 //이미지 리스트
-export function imageList(date){
-    console.log(date);
-    return  service.get(`admin/image_class/${date.id}/images/${date.page}?limit=${date.limit}`);
+export function imageList(data){
+    return  service.get(`admin/image_class/${data.id}/images/${data.page}?limit=${data.limit}`);
 }
 
 //이미지 클래스 추가

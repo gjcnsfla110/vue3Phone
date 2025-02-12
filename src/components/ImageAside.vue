@@ -4,7 +4,7 @@
   })
   import Drawer from "@/components/Drawer.vue";
   import {ref, reactive, watchEffect, toRaw} from "vue";
-  import {imageClassList,addImageClass} from "@/api/imageClass.js";
+  import {imageClassList} from "@/api/imageClass.js";
   defineProps({
     height:{
       type: Number,

@@ -12,23 +12,33 @@
   //메뉴클릭되였는지 여부체크
   const activeClass = ref(0);
   const loding =ref(false);
-
+  //이미지 리스트
+  const images = ref([]);
   //페이징처리
   const currentPage = ref(1);
   const totalPage = ref(0);
-  const limitPage = ref(10);
+  const limitPage = ref(12);
+
+  //페이지 change될때
+  function pageChange(page){
+      currentPage.value = page;
+      getImagesList(activeClass.value);
+  }
 
   //이미지 리스트 갖고오기
   function getImagesList(id){
      loding.value = true;
-     activeClass.value = id;
+     if(id !== activeClass.value){
+       activeClass.value = id;
+     }
      let data = {
         id:id,
         page:currentPage.value,
         limit:limitPage.value,
      };
      imageList(data).then((res)=>{
-
+        images.value = res.list;
+        totalPage.value = res.total;
      }).finally(()=>{
        loding.value = false;
      })
@@ -53,12 +63,12 @@
           </el-result>
         </div>
         <div v-loading="loding" v-else class="imgMain-top" :style="{height:(height-100)+'px'}">
-          <el-card :body-style="{ 'padding':0, width:'100%',height:'100%'}" class="imgItem" shadow="hover" v-for="a in 12">
+          <el-card :body-style="{ 'padding':0, width:'100%',height:'100%'}" class="imgItem" shadow="hover" v-for="item in images">
             <div class="imgItem_top">
-              <el-image class="imgItem_img" src="https://imgnn.seoul.co.kr/img/upload/2024/08/04/SSC_20240804172159.png" fit="cover" />
+              <el-image class="imgItem_img" :src="item.url" fit="cover" />
             </div>
             <div class="imgItem_name">
-              fdasfdafd
+              {{item.name}}
             </div>
             <div class="imgItem_bottom">
                <el-button color="#626aef"  plain text>重命名</el-button>
@@ -67,7 +77,7 @@
           </el-card>
         </div>
         <div class="imgMain-bottom">
-          <el-pagination background layout="prev, pager, next" v-model:page-size="limitPage" v-model:current-page="currentPage" :total="totalPage" />
+          <el-pagination @change="pageChange" background layout="prev, pager, next" v-model:page-size="limitPage" v-model:current-page="currentPage" :total="totalPage" />
         </div>
     </el-main>
 </template>

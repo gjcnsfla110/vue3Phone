@@ -4,6 +4,7 @@ import ImageMain from "@/components/ImageMain.vue";
 import Drawer from "@/components/Drawer.vue";
 import {ref, reactive, onMounted} from "vue";
 import {imageClassAll,addImageClass} from "@/api/imageClass.js";
+import {addImage} from "@/api/image.js";
 import {showMsg,showMessage} from "@/composables/utill.js";
 //사이드라인 이미지메뉴 클릭여부 확인
 const isClassA = ref(0);
@@ -59,7 +60,7 @@ const photoRules = reactive({
     {
       required: true,
       message : "填写图片网址",
-      trigger: 'change'
+      trigger: 'blur'
     }
   ]
 });
@@ -73,6 +74,7 @@ const editImgClassFormData = reactive({
 
 //사진폼 데이터
 const editPhotoFormData = reactive({
+  image_class_id : 0,
   name : "",
   url : ""
 })
@@ -102,6 +104,8 @@ const editPhotoOpen = ()=>{
      showMessage("选择菜单后再添加","error");
      return false;
   }
+  editPhotoFormData.name="";
+  editPhotoFormData.url="";
   drawerPhoto.value.openDrawer();
 };
 
@@ -109,7 +113,14 @@ const editPhotoOpen = ()=>{
 const editPhotoSubmit = ()=>{
   editPhotoRef.value.validate(valid => {
     if (!valid) return;
-
+    if(!isClassA.value) return;
+    editPhotoFormData.image_class_id = isClassA.value;
+    addImage(editPhotoFormData).then(res => {
+        showMsg("图片添加成功");
+        imageMainRef.value.getImagesList(isClassA.value);
+    }).finally(res=>{
+      drawerPhoto.value.closeDrawer();
+    })
   })
 }
 
