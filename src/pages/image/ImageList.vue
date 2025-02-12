@@ -4,7 +4,11 @@ import ImageMain from "@/components/ImageMain.vue";
 import Drawer from "@/components/Drawer.vue";
 import {ref, reactive, onMounted} from "vue";
 import {imageClassAll,addImageClass} from "@/api/imageClass.js";
-import {showMsg} from "@/composables/utill.js";
+import {showMsg,showMessage} from "@/composables/utill.js";
+//사이드라인 이미지메뉴 클릭여부 확인
+const isClassA = ref(0);
+//imageManin ref
+const imageMainRef = ref(null);
 //imageAside ref부붑
 const imagesClassRef = ref(null);
 //이미지 클래스 drawer
@@ -15,6 +19,7 @@ const drawerPhoto = ref(null);
 const editImgClassRef = ref(null);
 //사진 ref
 const editPhotoRef = ref(null);
+
 
 //이미지클래스 rules 검증
 const imgClassRules = reactive({
@@ -80,17 +85,26 @@ const editClassImgOpen = ()=>{
 }
 
 //이미지클래스 submit
-const editImgClassSubmit = ()=>{
+const editImgClassSubmit = ()=> {
   editImgClassRef.value.validate(valid => {
     if (!valid) return;
-    addImageClass(editImgClassFormData).then(res=>{
+    addImageClass(editImgClassFormData).then(res => {
+      showMsg("添加成功")
       imagesClassRef.value.getData();
       getClassAll();
       drawerImgClass.value.closeDrawer();
-      showMsg("添加成功")
     })
   })
 }
+//이미지 업로드 drawer 열기
+const editPhotoOpen = ()=>{
+  if(!isClassA.value){
+     showMessage("选择菜单后再添加","error");
+     return false;
+  }
+  drawerPhoto.value.openDrawer();
+};
+
 //사진업로드 submit
 const editPhotoSubmit = ()=>{
   editPhotoRef.value.validate(valid => {
@@ -112,10 +126,11 @@ onMounted(()=>{
 const windowHeight = window.innerHeight || document.body.clientHeight;
 const h = windowHeight - 64 - 44 - 40;
 
-//이미지 업로드 drawer 열기
-const editPhotoOpen = ()=> drawerPhoto.value.openDrawer();
-
-
+//이미지 클릭했을때 이미지들을  갖고오기
+function imageClassActive(id){
+    isClassA.value = id;
+    imageMainRef.value.getImagesList(id);
+}
 </script>
 <template>
     <el-card
@@ -127,8 +142,8 @@ const editPhotoOpen = ()=> drawerPhoto.value.openDrawer();
         <el-button type="danger" size="small" @click="editPhotoOpen">上传图片</el-button>
       </el-header>
       <el-container>
-         <ImageAside ref="imagesClassRef" :height="h-65"/>
-         <ImageMain :height="h-65"/>
+         <ImageAside ref="imagesClassRef" :height="h-65" @classActive="imageClassActive"/>
+         <ImageMain ref="imageMainRef" :height="h-65"/>
       </el-container>
       <Drawer ref="drawerImgClass" title="图片分类 添加" @submit="editImgClassSubmit()">
         <el-form

@@ -5,6 +5,15 @@
   import Drawer from "@/components/Drawer.vue";
   import {ref, reactive, watchEffect, toRaw} from "vue";
   import {imageClassList,addImageClass} from "@/api/imageClass.js";
+  defineProps({
+    height:{
+      type: Number,
+    }
+  })
+  //emit 관련변수
+  const emit = defineEmits(["classActive"]);
+
+  //메뉴 수정부분draw ref
   const editRef = ref(null);
   //페이징에 관련 변수
   const currentPage = ref(1);
@@ -12,10 +21,16 @@
   const limitPage = ref(10);
   //imageClass변수
   const classList = ref([]);
+
   //페이지 change 이벤트
   const pageChange = (p)=>{
      currentPage.value = p;
      getData();
+  }
+
+  //사진메뉴클릭시 발생하는 이벤트
+  function menuClickEv(a){
+    emit("classActive",a);
   }
 
   //데이터를 갖고오는 부분
@@ -25,8 +40,15 @@
       }
       try {
          let data = await imageClassList(currentPage.value);
-          classList.value = data.list.slice();  // slice() 사용
+          classList.value = data.list;  // slice() 사용
           totalPage.value = data.total;
+          /*if(classList.value[0]['child'][0]['child'] && classList.value[0]['child'][0]['child'].length>0) {
+            defaultActiveClass.value = classList.value[0]['child'][0]['child'][0]['id'];
+          }else if(classList.value[0] && classList.value[0]['child'].length>0){
+            defaultActiveClass.value = classList.value[0]['child'][0]['id'];
+          }else{
+            defaultActiveClass.value = classList.value[0]['id'];
+          }*/
       }catch(e){
 
       }
@@ -72,15 +94,11 @@
      alert("삭제성공"+id);
   }
 
-  defineProps({
-     height:{
-       type: Number,
-     }
-  })
-
   defineExpose({
     getData
   })
+
+
 </script>
 
 <template>
@@ -89,10 +107,10 @@
         unique-opened
         active-text-color="#ffd04b"
         background-color="#545c64"
-        default-active="1"
         text-color="#fff"
         class="menu_top"
         :style="{height:(height-60)+'px'}"
+        @select="menuClickEv"
     >
         <div v-for="menu in classList">
           <el-sub-menu v-if="menu.child.length > 0" :index="String(menu.id)">
