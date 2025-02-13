@@ -19,3 +19,12 @@ export function addImageClass(data){
 export function imageClassAll(){
     return service.post("admin/image_class/all");
 }
+
+//이미지 클래스 업데이트
+export function updateImageClass(data){
+    return  service.post("admin/image_class/update",data);
+}
+//이미지 클래스 삭제
+export function deleteImageClass(id){
+    return  service.post("admin/image_class/delete",{id});
+}

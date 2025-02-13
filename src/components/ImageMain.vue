@@ -9,6 +9,8 @@
   })
   import {ref} from "vue";
   import {imageList} from "@/api/imageClass.js";
+  import {deleteImages,updateImage} from "@/api/image.js";
+  import {showMsg,showMessageboxPrompt} from "@/composables/utill.js";
   //메뉴클릭되였는지 여부체크
   const activeClass = ref(0);
   const loding =ref(false);
@@ -44,6 +46,30 @@
      })
   }
 
+  //이미지 삭제부분
+  const deleteImage = (id)=>{
+      deleteImages({'ids':[id]}).then((res)=>{
+          loding.value = true;
+          showMsg("删除成功");
+          getImagesList(activeClass.value);
+      }).finally(()=>{
+         loding.value = false;
+      })
+  }
+
+  //이미지 업데이트 부분
+  const updateName = (item)=>{
+    showMessageboxPrompt("修改图片名称",item.name).then(({value})=>{
+        updateImage(item.id,value).then(()=>{
+            loding.value = true;
+            showMsg("修改成功");
+            getImagesList(activeClass.value);
+        }).finally(()=>{
+            loding.value = false;
+        })
+    })
+  }
+
   defineExpose({
      getImagesList
   })
@@ -71,8 +97,12 @@
               {{item.name}}
             </div>
             <div class="imgItem_bottom">
-               <el-button color="#626aef"  plain text>重命名</el-button>
-               <el-button color="#626aef"  plain text>删除</el-button>
+               <el-button color="#626aef"  plain text @click="updateName(item)">重命名</el-button>
+              <el-popconfirm title="是否要删除图片？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteImage(item.id)">
+                <template #reference>
+                  <el-button color="#626aef"  plain text>删除</el-button>
+                </template>
+              </el-popconfirm>
             </div>
           </el-card>
         </div>

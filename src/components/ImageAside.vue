@@ -3,8 +3,9 @@
     name: 'ImageAside',
   })
   import Drawer from "@/components/Drawer.vue";
-  import {ref, reactive, watchEffect, toRaw} from "vue";
-  import {imageClassList} from "@/api/imageClass.js";
+  import {ref, reactive} from "vue";
+  import {imageClassList, updateImageClass,deleteImageClass} from "@/api/imageClass.js";
+  import {showMsg} from "@/composables/utill.js";
   defineProps({
     height:{
       type: Number,
@@ -21,6 +22,8 @@
   const limitPage = ref(10);
   //imageClass변수
   const classList = ref([]);
+  //데이터로딩효과부분
+  const loding = ref(false);
 
   //페이지 change 이벤트
   const pageChange = (p)=>{
@@ -73,25 +76,46 @@
     ]
   });
   const editFormData = reactive({
+      id:0,
       name : "",
       order : 50
   })
 
-  //클래스 추가부분
+  //클래스 수정부분
   const drawer = ref(null);
-  const editMenu = (id)=>{
+  const editMenu = (item)=>{
+      editFormData.id = item.id;
+      editFormData.name=item.name;
+      editFormData.order=item.order;
       drawer.value.openDrawer();
   }
 
   const editSubmit = ()=>{
     editRef.value.validate(valid => {
-      if (valid) return;
+      if (!valid) return;
+      if(!editFormData.id){
+        showMsg("非法修改！联系客服","error");
+      }
+      updateImageClass(editFormData).then(res=>{
+           loding.value= true;
+           showMsg("菜单修改成功");
+           drawer.value.closeDrawer();
+           getData(currentPage.value);
+      }).finally(()=>{
+           loding.value = false;
+      })
     })
   }
 
   //클래스 삭제부분
   const deleteMenu = (id)=>{
-     alert("삭제성공"+id);
+      deleteImageClass(id).then(res=>{
+        loding.value = true;
+         showMsg("删除成功");
+         getData();
+      }).finally(()=>{
+        loding.value = false;
+      })
   }
 
   defineExpose({
@@ -102,7 +126,7 @@
 </script>
 
 <template>
-  <el-aside class="menu_box" :style="{height:height+'px'}">
+  <el-aside v-loading="loding" class="menu_box" :style="{height:height+'px'}">
     <el-menu
         unique-opened
         active-text-color="#ffd04b"
@@ -120,7 +144,7 @@
                   <span>{{menu.name}}</span>
                 </p>
                 <div class="menubar_item_button">
-                    <el-button @click.stop="editMenu(menu.id)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                    <el-button @click.stop="editMenu(menu)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
                     <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu(menu.id)">
                       <template #reference>
                         <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
@@ -137,7 +161,7 @@
                       <span>{{menu1.name}}</span>
                     </p>
                     <div class="menubar_item_button">
-                      <el-button @click.stop="editMenu(menu1.id)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                      <el-button @click.stop="editMenu(menu1)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
                       <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu(menu1.id)">
                         <template #reference>
                           <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
@@ -154,7 +178,7 @@
                           <span>{{menu2.name}}</span>
                         </p>
                         <div class="menubar_item_button">
-                          <el-button @click.stop="editMenu(menu2.id)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                          <el-button @click.stop="editMenu(menu2)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
                           <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu(menu2.id)">
                             <template #reference>
                               <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
@@ -171,7 +195,7 @@
                           <span>{{menu2.name}}</span>
                         </p>
                         <div class="menubar_item_button">
-                          <el-button @click.stop="editMenu(menu2.id)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                          <el-button @click.stop="editMenu(menu2)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
                           <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu(menu2.id)">
                             <template #reference>
                               <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
@@ -190,7 +214,7 @@
                       <span>{{menu1.name}}</span>
                     </p>
                     <div class="menubar_item_button">
-                      <el-button @click.stop="editMenu(menu1.id)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                      <el-button @click.stop="editMenu(menu1)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
                       <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu(menu1.id)">
                         <template #reference>
                           <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>
@@ -209,7 +233,7 @@
                   <span>{{menu.name}}</span>
                 </p>
                 <div class="menubar_item_button">
-                  <el-button @click.stop="editMenu(menu.id)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
+                  <el-button @click.stop="editMenu(menu)"  style="display: block"  size="small"  type="primary"><el-icon :size="12"><Edit  color="rgb(255,255,255)"/></el-icon></el-button>
                   <el-popconfirm title="是否要删除该分类？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteMenu(menu.id)">
                     <template #reference>
                       <el-button @click.stop  style="display: block"  size="small"  type="danger"><el-icon :size="12"><Delete  color="rgb(255,255,255)"/></el-icon></el-button>

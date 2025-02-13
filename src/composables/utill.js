@@ -24,7 +24,7 @@ export function showMsg(message="",type = "success"){
         message: message,
     })
 }
-export function showMessagebox(content = "提示内容",type = "error",title = ""){
+export function showMessagebox(title = "",content = "提示内容",type = "error"){
     return ElMessageBox.confirm(
         content,
         title,
@@ -34,4 +34,12 @@ export function showMessagebox(content = "提示内容",type = "error",title = "
             type,
         },
     )
+}
+
+export function showMessageboxPrompt(title="",value=""){
+    return ElMessageBox.prompt('', title, {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        inputValue:value
+    })
 }
