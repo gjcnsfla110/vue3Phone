@@ -20,7 +20,6 @@
        <el-main>
           <MenuTabList/>
           <router-view>
-
           </router-view>
        </el-main>
      </el-container>

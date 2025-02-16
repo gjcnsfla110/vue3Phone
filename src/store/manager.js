@@ -19,19 +19,7 @@ const managerStore = defineStore("manager",{
                             "frontpath": "/menu/list",
                             "icon": "Document",
                         },
-                        {
-                            "name": "菜单权限",
-                            "frontpath": "/menu/auth",
-                            "icon": "Lock",
-                        }
                         ]
-                },
-                {
-                    "name": "图片管理",
-                    "icon": "picture-filled",
-                    "frontpath": "/image/list",
-                    "child": [
-                    ]
                 },
 
             ],

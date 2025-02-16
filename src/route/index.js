@@ -3,7 +3,6 @@ import Login from "@/pages/Login.vue"
 import NotFound from "@/pages/404.vue";
 import Admin from "@/layout/Admin.vue";
 import MenuList from "@/pages/menu/MenuList.vue";
-import MenuAuth from "@/pages/menu/MenuAuth.vue";
 import ImageList from "@/pages/image/ImageList.vue";
 const routes = [
     {
@@ -39,14 +38,6 @@ const asycnRoutes = [
         component: MenuList,
         meta:{
             title:"菜单管理"
-        }
-    },
-    {
-        path:'/menu/auth',
-        name: '/menu/auth',
-        component: MenuAuth,
-        meta:{
-            title:"菜单权限"
         }
     },
     {
