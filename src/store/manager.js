@@ -21,6 +21,11 @@ const managerStore = defineStore("manager",{
                         },
                         ]
                 },
+                {
+                    "name":"图片管理",
+                    "icon": "Menu",
+                    "frontpath": '/image/list',
+                }
 
             ],
             // 侧边宽度

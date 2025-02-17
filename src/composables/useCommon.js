@@ -36,7 +36,7 @@ export function useInitTable(opt={}){
             currentPage.value = page;
         }
         loading.value = true;
-        opt.getList(currentPage, limit,searchForm).then((res)=>{
+        opt.getList(currentPage.value,limit.value,searchForm).then((res)=>{
             if(opt.afterDataList && typeof opt.afterDataList === 'function'){
                 opt.afterDataList(res);
             }else{
@@ -164,5 +164,6 @@ export function useInitFrom(opt = {}){
         handleCreate,
         handleUpdate,
         resetFormData,
+        handleSubmit
     }
 }
