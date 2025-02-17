@@ -15,27 +15,43 @@
 </script>
 
 <template>
-    <div>
-      <el-icon :size="20" v-if="modelValue">
-        <component :is="modelValue" />
-      </el-icon>
-      <el-select :modelValue="modelValue" placeholder="选择图标"  @change="changeIcon">
+    <div class="selectIconBox">
+      <div class="iconPhoto" v-if="modelValue">
+        <el-icon :size="20">
+          <component :is="modelValue" />
+        </el-icon>
+      </div>
+      <el-select :modelValue="modelValue" placeholder="选择图标"  @change="chageIcon" style="width:300px">
         <el-option
-            v-for="item in icons"
-            :key="item"
-            :label="item"
-            :value="item"
-        />
-          <div>
-            <el-icon>
-              <component :is="item"/>
-            </el-icon>
-            <span>{{ item }}</span>
-          </div>
+            v-for="icon in icons"
+            :key="icon"
+            :label="icon"
+            :value="icon"
+        >
+           <div style="display: flex; align-items: center; justify-content: space-between;">
+              <el-icon >
+                <component :is="icon"/>
+              </el-icon>
+              <span>{{ icon }}</span>
+           </div>
+        </el-option>
       </el-select>
     </div>
 </template>
 
 <style scoped lang="scss">
+.selectIconBox{
+  display: flex;
+  align-items: center;
+  .selectIcon{
+     align-items: center;
+  }
+  .iconPhoto{
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 15px;
+  }
+}
 
 </style>

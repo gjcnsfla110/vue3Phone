@@ -24,8 +24,8 @@
       handleUpdate,
       handleSubmit
     } = useInitFrom({
-        formData:{
-          rule_id:0,
+        form:{
+          rule_id:"",
           menu:0,
           name:"",
           condition:"",
@@ -89,14 +89,14 @@
             <el-cascader
                 v-model="formData.rule_id"
                :options="menus"
-               :props="{value:'rule_id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
+               :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
                placeholder="请选择上级菜单"
             />
           </el-form-item>
           <el-form-item label="菜单/规则">
             <el-radio-group v-model="formData.menu">
-              <el-radio value="1" size="large" border>菜单</el-radio>
-              <el-radio value="0" size="large" border>规则</el-radio>
+              <el-radio :value="1" size="large" border>菜单</el-radio>
+              <el-radio :value="0" size="large" border>规则</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="名称">
@@ -105,6 +105,9 @@
           <el-form-item label="菜单图标">
               <SelectAicon v-model="formData.icon"/>
           </el-form-item>
+        <el-form-item label="前端路由" v-if="formData.rule_id !== ''">
+          <el-input v-model="formData.frontpath" placeholder="填写前端路由"></el-input>
+        </el-form-item>
       </el-form>
   </Drawer>
 </template>

@@ -96,7 +96,7 @@ export function useInitFrom(opt = {}){
     const formDrawerRef = ref(null);
     const formRef = ref(null);
     const formData = reactive({});
-    const defaultFormData = opt.formData;
+    const defaultFormData = opt.form;
     const formRules = opt.rules || {};
     const editId = ref(0);
     const formTitle = computed(()=>editId.value ? "修改":"添加");
@@ -114,7 +114,8 @@ export function useInitFrom(opt = {}){
             }else{
                 body = formData;
             }
-
+            console.log(formData);
+            return false
             let submit = editId.value ? opt.update(editId.value,body) : opt.create(body);
             submit.then((res)=>{
                 showMsg(formTitle.value + "成功");
