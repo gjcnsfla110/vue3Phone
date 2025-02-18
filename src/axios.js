@@ -24,7 +24,8 @@ service.interceptors.response.use(function (response) {
     return response.request.responseType == "blob" ? response.data : response.data.data;
 }, function (error) {
     // 对响应错误做点什么
-    const msg = error.response.data.msg || "请求失败"
+    console.log(error.response);
+    const msg = error.response.data.msg ||error.response.data.message || "请求失败"
     showMessage(msg,"error")
     return Promise.reject(error);
 });

@@ -114,12 +114,10 @@ export function useInitFrom(opt = {}){
             }else{
                 body = formData;
             }
-            console.log(formData);
-            return false
             let submit = editId.value ? opt.update(editId.value,body) : opt.create(body);
             submit.then((res)=>{
                 showMsg(formTitle.value + "成功");
-                opt.getData(editId.value ? false : 1);
+                opt.getDataList(editId.value ? false : 1);
                 formDrawerRef.value.closeDrawer();
             }).finally(()=>{
                 formDrawerRef.value.closeLoading();
@@ -143,7 +141,7 @@ export function useInitFrom(opt = {}){
     const handleUpdate = (row)=>{
         editId.value = row.id;
         resetFormData(row);
-        formDrawerRef.value.closeDrawer();
+        formDrawerRef.value.openDrawer();
     }
 
     /**

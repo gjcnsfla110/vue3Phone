@@ -50,6 +50,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
+      margin-bottom: 30px;
+      margin-top:10px;
     }
 </style>
