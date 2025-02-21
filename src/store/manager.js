@@ -10,21 +10,31 @@ const managerStore = defineStore("manager",{
             manager :{},
             menus : [
                 {
-                    "name": "菜单管理",
-                    "icon": "Menu",
-                    "frontpath": null,
-                    "child": [
+                    name: "菜单管理",
+                    icon: "Menu",
+                    frontpath: null,
+                    child: [
                         {
-                            "name": "菜单管理",
-                            "frontpath": "/menu/list",
-                            "icon": "Document",
+                            name: "菜单管理",
+                            frontpath: "/menu/list",
+                            icon: "Document",
                         },
+                        {
+                            name : "角色管理",
+                            frontpath : "/role/list",
+                            icon: "Aim",
+                        },
+                        {
+                            name:"管理员管理",
+                            frontpath : "/manager/list",
+                            icon: "Aim",
+                        }
                         ]
                 },
                 {
-                    "name":"图片管理",
-                    "icon": "Menu",
-                    "frontpath": '/image/list',
+                    name:"图片管理",
+                    icon: "Menu",
+                    frontpath: '/image/list',
                 }
 
             ],

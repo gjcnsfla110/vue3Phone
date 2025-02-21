@@ -4,6 +4,8 @@ import NotFound from "@/pages/404.vue";
 import Admin from "@/layout/Admin.vue";
 import MenuList from "@/pages/menu/MenuList.vue";
 import ImageList from "@/pages/image/ImageList.vue";
+import RoleList from "@/pages/role/RoleList.vue";
+import ManagerList from "@/pages/manager/ManagerList.vue";
 const routes = [
     {
         path: "/login",
@@ -46,6 +48,22 @@ const asycnRoutes = [
         component: ImageList,
         meta:{
             title:"图片管理"
+        }
+    },
+    {
+        path:'/role/list',
+        name: '/role/list',
+        component: RoleList,
+        meta: {
+            title: "角色管理"
+        }
+    },
+    {
+        path:'/manager/list',
+        name: '/manager/list',
+        component: ManagerList,
+        meta: {
+            title: "角色管理"
         }
     }
 ];
