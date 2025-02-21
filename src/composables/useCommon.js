@@ -66,7 +66,7 @@ export function useInitTable(opt={}){
      * 데이터 상태변화
      */
     const handleStatusChange = (status,item)=>{
-        item.statusLoding = true;
+            item.statusLoding = true;
         opt.updateStatus(item.id,status).then((res)=>{
             showMsg("状态修改成功");
             item.status = status;

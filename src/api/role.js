@@ -18,7 +18,7 @@ export function deleteRole(id){
 }
 
 export function updateStatus(id,status){
-    return  service.post(`admin/role/${id}/updateStatus`,status);
+    return  service.post(`admin/role/${id}/updateStatus`,{status});
 }
 
 export function updateRules(id,ruleIds){

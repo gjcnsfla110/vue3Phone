@@ -28,6 +28,13 @@
     getList:roleList,
     delete:deleteRole,
     updateStatus:updateStatus,
+    afterDataList:(res)=>{
+      res.list.forEach(item => {
+          item.statusLoading = false;
+      });
+      dataList.value = res.list;
+      total.value = res.total;
+    }
   })
 
   const {
@@ -73,14 +80,14 @@
     <el-card>
       <ListHeader @create="handleCreate"  @refresh="getData"/>
       <el-table v-loading="loading" :data="dataList" stripe style="width: 100%">
-         <el-table-column prop="name" label="角色名称" width="180" />
-         <el-table-column prop="desc" label="角色描述" width="180" />
-         <el-table-column prop="status" label="状态" width="180">
+         <el-table-column prop="name" label="角色名称" />
+         <el-table-column prop="desc" label="角色描述" width="700" />
+         <el-table-column  label="状态" width="150" align="center">
            <template #default="{row}">
-             <el-switch v-model="row.status" active-text="正常" inactive-text="禁止" :active-value="1" :inactive-value="0" @change="handleStatusChange(row.id,row.status)"/>
+             <el-switch  :modelValue="row.status" :loading="row.statusLoding"  :active-value="1" :inactive-value="0" @change="handleStatusChange($event,row)"/>
            </template>
          </el-table-column>
-         <el-table-column prop="id" label="操作" width="180">
+         <el-table-column  label="操作" width="400" align="center">
            <template #default="{row}">
              <el-button type="primary" text>配置权限</el-button>
              <el-button type="primary" @click="handleUpdate(row)" text>修改</el-button>
