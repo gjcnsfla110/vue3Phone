@@ -9,8 +9,8 @@ export function roleCreate(data){
     return  service.post(`admin/role`,data);
 }
 
-export function updateRole(page,data){
-    return  service.post(`admin/role/${page}/update`,data)
+export function updateRole(id,data){
+    return  service.post(`admin/role/${id}/update`,data)
 }
 
 export function deleteRole(id){

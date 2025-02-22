@@ -66,6 +66,7 @@
         trigger: 'blur'
       }]
     },
+    update:updateRole,
     getDataList:getData,
     create:roleCreate
   })
