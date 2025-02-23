@@ -20,3 +20,7 @@ export function updateMenu(id,data){
 export function updateStatus(id,status){
     return service.post(`admin/rule/${id}/updateStatus`,status);
 }
+
+export function listAll(){
+    return service.get(`admin/rule/listAll`);
+}

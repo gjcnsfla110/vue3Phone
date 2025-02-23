@@ -4,8 +4,9 @@
   })
   import {ref} from "vue";
   import ListHeader from "@/components/ListHeader.vue";
-  import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
+  import {useInitTable,useInitFrom,listTrees} from "@/composables/useCommon.js";
   import Drawer from "@/components/Drawer.vue";
+  import {listAll} from "@/api/menu.js";
   import {
     roleList,
     roleCreate,
@@ -72,7 +73,12 @@
   })
   getData();
   const updateRuleDrawerRef = ref(null);
-
+  const test =()=>{
+      listAll().then(res=>{
+        console.log(listTrees(res,'rule_id','child'));
+      })
+  }
+  test();
 
 </script>
 
