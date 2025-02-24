@@ -72,13 +72,40 @@
     create:roleCreate
   })
   getData();
+
+  //아래부분은 권한여부를체크하는 부분
   const updateRuleDrawerRef = ref(null);
-  const test =()=>{
-      listAll().then(res=>{
-        console.log(listTrees(res,'rule_id','child'));
-      })
+  const treeHeight = ref(0);
+  const ruleDataList = ref([]);
+  const defaulteOptinKey = ref([]);
+  const roleId = ref(0)
+  const ruleIds = ref([])
+  const checkStrictly = ref(false);
+  const elTreeRef = ref(null);
+  const accessOpen = (data)=>{
+    checkStrictly.value = true;
+    roleId.value = data.id;
+    listAll().then(res=>{
+       ruleDataList.value = listTrees(res,'rule_id','child');
+       defaulteOptinKey.value = ruleDataList.value.map(item=>item.id);
+       updateRuleDrawerRef.value.openDrawer();
+       ruleIds.value = data.rule;
+       setTimeout(()=>{
+         elTreeRef.value.setCheckedKeys(ruleIds.value)
+         checkStrictly.value = false
+       },150)
+    })
   }
-  test();
+  //添加，修改 权限
+  const submitRules = ()=>{
+
+  }
+
+  //修改ruleIds
+  const changeRuleIds = (...e)=>{
+    const { checkedKeys,halfCheckedKeys } = e[1]
+    ruleIds.value = [...checkedKeys,...halfCheckedKeys]
+  }
 
 </script>
 
@@ -96,7 +123,7 @@
          </el-table-column>
          <el-table-column  label="操作" width="400" align="center">
            <template #default="{row}">
-             <el-button type="primary" text>配置权限</el-button>
+             <el-button type="primary" text @click="accessOpen(row)">配置权限</el-button>
              <el-button type="primary" @click="handleUpdate(row)" text>修改</el-button>
              <el-popconfirm
                  confirm-button-text="确认"
@@ -150,8 +177,25 @@
         </el-form>
     </Drawer>
 
-    <Drawer ref="updateRuleDrawerRef">
-
+    <Drawer ref="updateRuleDrawerRef" title="权限添加" @submit="submitRules">
+      <el-tree
+          ref="elTreeRef"
+          :data="ruleDataList"
+          show-checkbox
+          node-key="id"
+          :check-strictly="checkStrictly"
+          :default-expanded-keys="defaulteOptinKey"
+          :props="{label:'name',children: 'child'}"
+          @check="changeRuleIds"
+      >
+        <template #default="{node, data}">
+          <el-tag :type="data.menu ? 'primary':'info'" style="margin-right: 13px">{{data.menu ? '菜单' : "权限"}}</el-tag>
+          <el-icon v-if="data.icon" style="margin-right: 10px;">
+            <component :is="data.icon"/>
+          </el-icon>
+          <span>{{ data.name }}</span>
+        </template>
+      </el-tree>
     </Drawer>
 </template>
 
