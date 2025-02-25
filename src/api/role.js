@@ -22,6 +22,6 @@ export function updateStatus(id,status){
 }
 
 export function updateRules(id,ruleIds){
-    return  service.post(`admin/rule/${id}/updateRules`,ruleIds);
+    return  service.post(`admin/role/${id}/updateRules`,{ruleIds});
 }
 

@@ -7,6 +7,7 @@
   import {useInitTable,useInitFrom,listTrees} from "@/composables/useCommon.js";
   import Drawer from "@/components/Drawer.vue";
   import {listAll} from "@/api/menu.js";
+  import {showMsg} from "@/composables/utill.js";
   import {
     roleList,
     roleCreate,
@@ -98,7 +99,11 @@
   }
   //添加，修改 权限
   const submitRules = ()=>{
-
+      updateRules(roleId.value,ruleIds.value).then(res=>{
+          showMsg("权限修改成功");
+          getData();
+          updateRuleDrawerRef.value.closeDrawer();
+      })
   }
 
   //修改ruleIds
