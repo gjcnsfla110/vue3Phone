@@ -18,7 +18,7 @@ function  myClick(e){
       alert("update")
    }else if(e === "logout"){
      showFullLoading();
-     showMessagebox("确认退出会员吗？").then(res=>{
+     showMessagebox("确认退出会员吗？","退出会员信息").then(res=>{
        logout().then(res=>{
              removeToken();
              showMsg("退出成功");
@@ -29,10 +29,7 @@ function  myClick(e){
        }).finally(()=>{
          hideFullLoading()
        })
-     }).catch(err=>{
-
      })
-
    }
 }
 </script>

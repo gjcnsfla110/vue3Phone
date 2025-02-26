@@ -1,11 +1,16 @@
 import service from '@/axios.js';
-
+import {queryUrl} from "@/composables/utill.js";
 export function login(data){
     return service.post('/admin/login',data);
 }
 
 export function getInfo(){
     return service.post('/admin/getInfo');
+}
+
+export function managerList(page,param){
+    let query  = queryUrl(param);
+    return service.get(`/admin/${page}/managerList${query}`);
 }
 
 /**

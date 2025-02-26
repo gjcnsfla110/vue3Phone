@@ -51,6 +51,7 @@ export function queryUrl(query){
             params.push(`${key}=${encodeURIComponent(query[key])}`);
         }
     }
-    let r = params ? params.join('&') : '';
+    let r = params.join("&")
+    r = r ? ("?"+r) : ""
     return r;
 }
