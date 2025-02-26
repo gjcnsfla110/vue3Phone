@@ -43,3 +43,14 @@ export function showMessageboxPrompt(title="",value=""){
         inputValue:value
     })
 }
+
+export function queryUrl(query){
+    let params = []
+    for(const key in query){
+        if(query[key]){
+            params.push(`${key}=${encodeURIComponent(query[key])}`);
+        }
+    }
+    let r = params ? params.join('&') : '';
+    return r;
+}
