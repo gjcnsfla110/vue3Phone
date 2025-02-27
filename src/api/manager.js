@@ -8,9 +8,9 @@ export function getInfo(){
     return service.post('/admin/getInfo');
 }
 
-export function managerList(page,param){
+export function managerList(page,limit,param){
     let query  = queryUrl(param);
-    return service.get(`/admin/${page}/managerList${query}`);
+    return service.get(`/admin/manager/${page}/list/${limit}${query}`);
 }
 
 /**

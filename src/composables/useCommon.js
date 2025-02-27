@@ -15,7 +15,6 @@ export function useInitTable(opt={}){
                  searchForm[key] = opt.defaultSearchForm[key];
                  getData();
              }
-
          }
      }
 
