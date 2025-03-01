@@ -154,6 +154,7 @@ export function useInitFrom(opt = {}){
     }
 
     return {
+        editId,
         formDrawerRef,
         formRef,
         formData,

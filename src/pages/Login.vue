@@ -120,7 +120,7 @@ const resetForm = (formEl) => {
           </el-input>
         </el-form-item>
         <el-form-item label="管理员密码" prop="password">
-          <el-input type="password" v-model="loginForm.password" @input="passFilterInput" maxlength="20">
+          <el-input type="password" v-model="loginForm.password" @input="passFilterInput" maxlength="20" show-password>
             <template #prefix>
               <el-icon><Key/></el-icon>
             </template>
