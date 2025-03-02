@@ -11,14 +11,52 @@
     import{managerList,updateManager,deleteManager,resetPass,managerCreate} from "@/api/manager.js";
 
     const roles = ref([]);
+    //비밀번호 같은지 체크하는부분
     const isCheckPass = (rule, value, callback) => {
-          if (value === "") {
-            callback(new Error('填写确认密码'))
-          }else if(value !== formData.password){
-            callback(new Error('填写的确认密码不一致'))
-          }else{
-            callback()
-          }
+      if(value !== formData.password){
+        callback(new Error('填写的确认密码不一致'))
+      }else{
+        callback()
+      }
+    }
+    //입력하는 아이디 체크부분
+    const idFilterInput = (value) => {
+      // 영문자 및 숫자만 허용
+      formData.manager_id = value.replace(/[^a-zA-Z0-9]/g, "");
+    };
+    //아이디 체크
+    const idCheck = (rule,value,callback)=>{
+      //아이디가 영문,숫자로이루어져야한다 다음것은 패턴
+      const regex = /^[A-Za-z](?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,17}$/;
+      if(!regex.test(value)){
+        callback(new Error("账号必须 * 1. 首字英文 * -- * 2. 英文，数字组合！ * -- * 3. 大于8字～少于20字！ *"))
+      }else{
+        callback()
+      }
+    }
+    //비밀번호 영문,숫자,/특수기호 대문자 보류중/
+    const passFilterInput = (value) => {
+      //영문,숫자,/특수기호 대문자
+      //loginForm.userId = value.replace(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,18}$/,"");
+      // 영문자 및 숫자만 허용
+      formData.password = value.replace(/[^a-zA-Z0-9!@#$%^&*.-_+=()~]/g, "");
+    };
+    //비밀번호 영문,숫자,/특수기호 대문자 보류중/
+    const pass1FilterInput = (value) => {
+      //영문,숫자,/특수기호 대문자
+      //loginForm.userId = value.replace(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,18}$/,"");
+      // 영문자 및 숫자만 허용
+      formData.checkPassword = value.replace(/[^a-zA-Z0-9!@#$%^&*.-_+=()~]/g, "");
+    };
+    //비밀번호 체크
+    const passCheck = (rule,value,callback)=>{
+      //이부분은 비밀번호는 반드시 영문,숫자,특수기호로만 이루어져야하면 8-20자이내 여야한다
+      const regex = /^[a-zA-Z0-9!@#$%^&*.-_+=()~]{7,20}$/;
+      if(!regex.test(value)){
+        callback(new Error("密码 * 1. 只能用 英文，数字，特殊符号！ * -- * 2. 长度少于20字！ *"))
+      }else{
+        callback()
+      }
     }
     const {
       searchForm,
@@ -64,7 +102,8 @@
       },
       rules:{
         manager_id:[
-          {required: true, message: '请输入管理者账号！', trigger: 'blur',}
+          {required: true, message: '请输入管理者账号！', trigger: 'blur',},
+          {validator:idCheck,trigger: "blur"}
         ],
         username:[
           {required: true, message: '请输入管理者名字！', trigger: 'blur',}
@@ -79,15 +118,21 @@
           {required: true, message: '请选者所属角色', trigger: 'change',}
         ],
         password:[
-          {required: true, message: '请填写密码！', trigger: 'blur',}
+          {required: true, message: '请填写密码！', trigger: 'blur',},
+          {validator:passCheck,trigger: "blur"}
+
         ],
         checkPassword:[
+          {required: true, message: '请填写确认密码！', trigger: 'blur',},
+          {validator:passCheck,trigger: "blur"},
           {validator: isCheckPass, trigger: 'blur',}
         ],
       },
+      getDataList:getData,
       create:managerCreate,
       update:updateManager,
     })
+
     getData();
 </script>
 
@@ -105,7 +150,7 @@
         <el-table-column prop="username"  label="管理员" width="500">
 
         </el-table-column>
-        <el-table-column  prop="name" label="所属角色" width="500">
+        <el-table-column  prop="name" label="所属角色" width="500" align="center">
 
         </el-table-column>
         <el-table-column prop="California"  label="状态" width="200" align="center">
@@ -166,7 +211,7 @@
         label-width="auto"
       >
         <el-form-item label="管理者账号" prop="manager_id">
-           <el-input v-model="formData.manager_id" placeholder="填写管理者账号"></el-input>
+           <el-input v-model="formData.manager_id" placeholder="填写管理者账号" @input="idFilterInput"></el-input>
         </el-form-item>
         <el-form-item label="管理者姓名" prop="username">
           <el-input v-model="formData.username" placeholder="填写管理者姓名"></el-input>
@@ -175,10 +220,10 @@
           <el-input v-model="formData.phone" placeholder="填写手机号码"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password" v-if="!editId">
-          <el-input type="password" v-model="formData.password" placeholder="填写密码" show-password></el-input>
+          <el-input type="password" v-model="formData.password" placeholder="填写密码" show-password @input="passFilterInput"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPassword" v-if="!editId">
-          <el-input type="password" v-model="formData.checkPassword" placeholder="确认密码" show-password></el-input>
+          <el-input type="password" v-model="formData.checkPassword" placeholder="确认密码" show-password @input="pass1FilterInput"></el-input>
         </el-form-item>
         <el-form-item label="所属角色" prop="role_id">
           <el-select v-model="formData.role_id" placeholder="请选择角色" style="width: 240px">
