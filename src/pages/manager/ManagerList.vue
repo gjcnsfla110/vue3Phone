@@ -8,8 +8,8 @@
     import SearchItem from "@/components/SearchItem.vue";
     import {useInitFrom, useInitTable} from "@/composables/useCommon.js";
     import Drawer from "@/components/Drawer.vue";
-    import{managerList,updateManager,deleteManager,resetPass,managerCreate} from "@/api/manager.js";
-
+    import{managerList,updateManager,deleteManager,resetPass,managerCreate,updateStatus} from "@/api/manager.js";
+    import {showMsg} from "@/composables/utill.js";
     const roles = ref([]);
     //비밀번호 같은지 체크하는부분
     const isCheckPass = (rule, value, callback) => {
@@ -78,7 +78,9 @@
           total.value = res.total;
           roles.value = res.roles;
       },
-      getList:managerList
+      getList:managerList,
+      updateStatus:updateStatus,
+      delete:deleteManager,
     });
     const {
       formDrawerRef,
@@ -134,6 +136,12 @@
     })
 
     getData();
+    //비밀번호 초기화
+    const resetPassword = (id)=>{
+        resetPass(id).then(res=>{
+            showMsg("密码初始化成功！");
+        })
+    }
 </script>
 
 <template>
@@ -146,12 +154,19 @@
          </template>
       </Search>
       <ListHeader @create="handleCreate" @refresh="getData" />
-      <el-table :data="dataList"  border style="width: 100%">
+      <el-table v-loading="loading" :data="dataList"  border style="width: 100%">
         <el-table-column prop="username"  label="管理员" width="500">
 
         </el-table-column>
-        <el-table-column  prop="name" label="所属角色" width="500" align="center">
-
+        <el-table-column  label="所属角色" width="500" align="center">
+          <template #default="{row}">
+              <div v-if="row.super">
+                  <el-text type="danger">超级管理员</el-text>
+              </div>
+              <div v-else>
+                  <el-text>{{row.role.name}}</el-text>
+              </div>
+          </template>
         </el-table-column>
         <el-table-column prop="California"  label="状态" width="200" align="center">
             <template #default="{row}">
@@ -162,7 +177,7 @@
                   :inactive-value="0"
                   active-text="正常"
                   inactive-text="禁用"
-                  @change=""
+                  @change="handleStatusChange(row.status,row)"
                   :disabled="row.super == 1"
                 >
                 </el-switch>
@@ -178,7 +193,7 @@
                     cancel-button-text="取消"
                     icon-color="#626AEF"
                     title="确定删除管理员吗？"
-                    @confirm=""
+                    @confirm="handleDelete(row.id)"
                 >
                   <template #reference>
                     <el-button type="danger" plain round size="small">删除</el-button>
@@ -189,7 +204,7 @@
                     cancel-button-text="取消"
                     icon-color="#626AEF"
                     title="管理员初始设置密码？"
-                    @confirm=""
+                    @confirm="resetPassword(row.id)"
                 >
                   <template #reference>
                     <el-button color="#626aef" plain>初始密码</el-button>
@@ -211,7 +226,7 @@
         label-width="auto"
       >
         <el-form-item label="管理者账号" prop="manager_id">
-           <el-input v-model="formData.manager_id" placeholder="填写管理者账号" @input="idFilterInput"></el-input>
+           <el-input v-model="formData.manager_id" placeholder="填写管理者账号" @input="idFilterInput" :disabled="editId ? true : false"></el-input>
         </el-form-item>
         <el-form-item label="管理者姓名" prop="username">
           <el-input v-model="formData.username" placeholder="填写管理者姓名"></el-input>

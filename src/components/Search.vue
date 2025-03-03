@@ -23,7 +23,7 @@
         <el-col :span="8" :offset="hasShowSlots ? 0 : 8">
           <div style="display: flex; justify-content: end;">
              <el-button @click="emit('search')" type="primary">搜索</el-button>
-             <el-button @click="emit('rest')">重设</el-button>
+             <el-button @click="emit('reset')">重设</el-button>
              <el-button v-if="hasSearch" @click="hasShowSlots = !hasShowSlots" text>
                 {{hasShowSlots ? '收起' : "展开" }}
                 <el-icon>

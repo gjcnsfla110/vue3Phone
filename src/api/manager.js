@@ -36,8 +36,8 @@ export function managerCreate(data){
 /**
  * 관리인 업데이트
  */
-export function updateManager(data){
-    return service.post(`admin/manager/${data.id}/manager/`,data);
+export function updateManager(id,data){
+    return service.post(`admin/manager/${id}/update`,data);
 }
 
 /**
@@ -56,7 +56,7 @@ export function updateStatus(id,status){
  * @returns
  */
 export function resetPass(id){
-    return service.post(`admin/manager/${id}/reset/`);
+    return service.post(`admin/manager/${id}/reset`);
 }
 
 /**
@@ -75,7 +75,7 @@ export function updatePass(id,data){
  * @returns
  */
 export function deleteManager(id){
-    return service.post(`admin/manager/delete`);
+    return service.post(`admin/manager/delete`,{id});
 }
 /**
  * 관리인 로그아웃
