@@ -15,7 +15,6 @@ export function useInitTable(opt={}){
                  searchForm[key] = opt.defaultSearchForm[key];
                  getData();
              }
-
          }
      }
 
@@ -155,6 +154,7 @@ export function useInitFrom(opt = {}){
     }
 
     return {
+        editId,
         formDrawerRef,
         formRef,
         formData,

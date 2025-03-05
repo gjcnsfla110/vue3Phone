@@ -33,12 +33,12 @@ const passFilterInput = (value) => {
   //영문,숫자,/특수기호 대문자
   //loginForm.userId = value.replace(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,18}$/,"");
   // 영문자 및 숫자만 허용
-  loginForm.password = value.replace(/[^a-zA-Z0-9!@#$%^&*]/g, "");
+  loginForm.password = value.replace(/[^a-zA-Z0-9!@#$%^&*.-_+=()~]/g, "");
 };
 //비밀번호 체크
 const passCheck = (rule,value,callback)=>{
   //이부분은 비밀번호는 반드시 영문,숫자,특수기호로만 이루어져야하면 8-20자이내 여야한다
-  const regex = /^[a-zA-Z0-9!@#$%^&*]{0,20}$/;
+  const regex = /^[a-zA-Z0-9!@#$%^&*.-_+=()~]{0,20}$/;
   if(!regex.test(value)){
     callback(new Error("密码 * 1. 只能用 英文，数字，特殊符号！ * -- * 2. 长度少于20字！ *"))
   }else{
@@ -113,10 +113,18 @@ const resetForm = (formEl) => {
           </div>
         </el-form-item>
         <el-form-item label="管理员账号" prop="manager_id">
-          <el-input v-model="loginForm.manager_id" maxlength="18" @input="idFilterInput"></el-input>
+          <el-input v-model="loginForm.manager_id" maxlength="18" @input="idFilterInput">
+              <template #prefix>
+                <el-icon><UserFilled /></el-icon>
+              </template>
+          </el-input>
         </el-form-item>
         <el-form-item label="管理员密码" prop="password">
-          <el-input type="password" v-model="loginForm.password" @input="passFilterInput" maxlength="20"></el-input>
+          <el-input type="password" v-model="loginForm.password" @input="passFilterInput" maxlength="20" show-password>
+            <template #prefix>
+              <el-icon><Key/></el-icon>
+            </template>
+          </el-input>
         </el-form-item>
         <div class="login-form-bottom">
           <el-button type="primary" size="large" @click="submitForm(loginFromRef)">登录</el-button>
