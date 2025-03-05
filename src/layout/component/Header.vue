@@ -6,6 +6,7 @@ import {useRouter} from "vue-router";
 import {removeToken} from "@/composables/auth.js";
 import managerStore from "@/store/manager.js";
 import {storeToRefs} from "pinia";
+import {ref} from "vue";
 const router = useRouter();
 const useMangerStore = managerStore();
 const {asideWidth} = storeToRefs(useMangerStore);
@@ -35,16 +36,20 @@ function  myClick(e){
 
    }
 }
+
+const handleSelect =(...e)=>{
+   console.log(e);
+}
+
 </script>
 
 <template>
    <div class="header">
      <div class="header_left">
-          <p class="title_box">
+          <div class="title_box">
           <span></span>
           <span>小韩手机</span>
-          </p>
-          <p class="icon_btn_box">
+            <span class="icon_btn_box">
             <el-tooltip
                 class="box-item"
                 effect="dark"
@@ -56,16 +61,30 @@ function  myClick(e){
                 <Expand v-else/>
               </el-icon>
             </el-tooltip>
-
-            <el-tooltip
-                class="box-item"
-                effect="dark"
-                content="刷新页面"
-                placement="bottom"
-            >
-              <el-icon class="icon_tbn" :size="18"><Refresh /></el-icon>
-            </el-tooltip>
-          </p>
+          </span>
+          </div>
+     </div>
+     <div class="header_center">
+       <el-menu
+           :default-active="1"
+           class="el-menu-demo"
+           mode="horizontal"
+           background-color="rgb(50,50,50)"
+           text-color="#fff"
+           active-text-color="#ffd04b"
+           style="border: none"
+           @select="handleSelect"
+       >
+         <el-menu-item index="1">Processing Center</el-menu-item>
+         <el-menu-item index="3">Info</el-menu-item>
+         <el-menu-item index="4">Orders</el-menu-item>
+         <el-menu-item index="6">Info</el-menu-item>
+         <el-menu-item index="7">Info</el-menu-item>
+         <el-menu-item index="8">Info</el-menu-item>
+         <el-menu-item index="9">Info</el-menu-item>
+         <el-menu-item index="10">Info</el-menu-item>
+         <el-menu-item index="11">Info</el-menu-item>
+       </el-menu>
      </div>
      <div class="header_right">
        <div class="Avatar">
@@ -91,10 +110,20 @@ function  myClick(e){
 </template>
 
 <style lang="scss" scoped>
+/* 활성화된 메뉴 스타일 */
+:deep(.el-menu-item.is-active) {
+  background-color: rgb(50,50,50) !important; /* 활성화된 메뉴 배경 */
+}
+:deep(.el-menu-item:hover),
+:deep(.el-sub-menu__title:hover) {
+  background-color: rgb(50,50,50) !important; /* 마우스 오버 배경 */
+  color: #ffd04b !important;
+  border-bottom: 2px solid #ffd04b !important;
+}s
 .header{
     width: 100%;
     height: 64px;
-    background-color: cornflowerblue;
+    background-color: rgb(50,50,50);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -118,6 +147,14 @@ function  myClick(e){
       }
     }
 
+  }
+  .header_center{
+    height: 64px;
+    width: 77%;
+    .tabsMenu{
+      height: 64px;
+      line-height: 64px;
+    }
   }
   .header_right{
     height: 64px;

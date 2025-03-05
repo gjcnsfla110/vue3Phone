@@ -5,7 +5,7 @@ import managerStore from "@/store/manager.js";
 import {onBeforeRouteUpdate, useRouter} from "vue-router";
 
 const windowHeight = window.innerHeight || document.body.clientHeight
-const h = windowHeight - 64
+const h = windowHeight - 70
 const activeMenu = ref('/');
 // 监听路由变化
 onBeforeRouteUpdate((to,from)=>{
