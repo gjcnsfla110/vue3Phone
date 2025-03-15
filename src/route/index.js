@@ -6,6 +6,7 @@ import MenuList from "@/pages/menu/MenuList.vue";
 import ImageList from "@/pages/image/ImageList.vue";
 import RoleList from "@/pages/role/RoleList.vue";
 import ManagerList from "@/pages/manager/ManagerList.vue";
+import HeaderMenuList from "@/pages/headerMenu/HeaderMenuList.vue";
 const routes = [
     {
         path: "/login",
@@ -34,6 +35,14 @@ const routes = [
 ]
 
 const asycnRoutes = [
+    {
+        path: '/headerMenu/list',
+        name: '/headerMenu/list',
+        component: HeaderMenuList,
+        meta: {
+            title: '头部菜单'
+        }
+    },
     {
         path:'/menu/list',
         name: '/menu/list',

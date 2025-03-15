@@ -15,6 +15,11 @@ const managerStore = defineStore("manager",{
                     frontpath: null,
                     child: [
                         {
+                            name: "头部菜单",
+                            frontpath: "/headerMenu/list",
+                            icon: "Document",
+                        },
+                        {
                             name: "菜单管理",
                             frontpath: "/menu/list",
                             icon: "Document",
