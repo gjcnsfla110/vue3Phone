@@ -8,6 +8,7 @@
     import Drawer from "@/components/Drawer.vue";
     import {getMenuList,addMenu,deleteMenu,updateMenu,updateStatus} from "@/api/menu.js";
     import {useInitFrom, useInitTable} from "@/composables/useCommon.js";
+    import {listTrees} from "@/composables/useCommon.js";
     import SelectAicon from "@/components/SelectAicon.vue";
 
     const menus = ref([]);
@@ -31,7 +32,7 @@
       updateStatus:updateStatus,
       defaultSearchForm:{},
       afterDataList(res){
-          menus.value = res.menus;
+          menus.value = [{id:0,name:'最上级图片菜单',child:[]}].concat(listTrees(res.menus,'rule_id','child'));
           dataList.value = res.list;
           total.value = res.total;
           defaultExpandedKeys.value = res.list.map(item=>item.id);
