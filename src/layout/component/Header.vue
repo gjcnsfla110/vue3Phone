@@ -116,7 +116,7 @@ const handleSelect =(...e)=>{
   background-color: rgb(50,50,50) !important; /* 마우스 오버 배경 */
   color: #ffd04b !important;
   border-bottom: 2px solid #ffd04b !important;
-}s
+}
 .header{
     width: 100%;
     height: 64px;
