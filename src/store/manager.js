@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {getInfo,login,logout} from "@/api/manager.js";
+import {listTrees} from "@/composables/utill.js";
 import {showMessage} from "@/composables/utill.js";
 import {setToken,removeToken} from "@/composables/auth.js";
 
@@ -17,22 +18,22 @@ const managerStore = defineStore("manager",{
                         {
                             name: "头部菜单",
                             frontpath: "/headerMenu/list",
-                            icon: "Document",
+                            icon: "List",
                         },
                         {
                             name: "菜单管理",
                             frontpath: "/menu/list",
-                            icon: "Document",
+                            icon: "List",
                         },
                         {
                             name : "角色管理",
                             frontpath : "/role/list",
-                            icon: "Aim",
+                            icon: "Management",
                         },
                         {
                             name:"管理员管理",
                             frontpath : "/manager/list",
-                            icon: "Aim",
+                            icon: "User",
                         }
                         ]
                 },
@@ -42,6 +43,7 @@ const managerStore = defineStore("manager",{
                     frontpath: '/image/list',
                 }
             ],
+            sideMenu:[],
             // 侧边宽度
             asideWidth:"250px",
             ruleNames:[]
@@ -59,6 +61,34 @@ const managerStore = defineStore("manager",{
         adminInfo(){
             return new Promise((resolve,reject)=>{
                 getInfo().then(res=>{
+                    let m = listTrees(res.menu,'rule_id');
+                    m.push({
+                        name: "菜单管理",
+                        icon: "Menu",
+                        frontpath: null,
+                        child: [
+                            {
+                                name: "头部菜单",
+                                frontpath: "/headerMenu/list",
+                                icon: "List",
+                            },
+                            {
+                                name: "菜单管理",
+                                frontpath: "/menu/list",
+                                icon: "List",
+                            },
+                            {
+                                name : "角色管理",
+                                frontpath : "/role/list",
+                                icon: "Management",
+                            },
+                            {
+                                name:"管理员管理",
+                                frontpath : "/manager/list",
+                                icon: "User",
+                            }
+                        ]
+                    });
                     resolve({menus : this.menus});
                 }).catch(error=>{
                     reject(error)
