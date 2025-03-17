@@ -2,12 +2,12 @@ import {defineStore} from 'pinia'
 import {getInfo,login,logout} from "@/api/manager.js";
 import {showMessage} from "@/composables/utill.js";
 import {setToken,removeToken} from "@/composables/auth.js";
-import Admin from "@/layout/Admin.vue";
 
 const managerStore = defineStore("manager",{
     state(){
         return {
             manager :{},
+            topMenu:[],
             menus : [
                 {
                     name: "菜单管理",
@@ -41,7 +41,6 @@ const managerStore = defineStore("manager",{
                     icon: "Menu",
                     frontpath: '/image/list',
                 }
-
             ],
             // 侧边宽度
             asideWidth:"250px",
