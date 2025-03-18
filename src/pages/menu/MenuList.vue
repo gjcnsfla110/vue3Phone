@@ -10,6 +10,7 @@
     import {useInitFrom, useInitTable} from "@/composables/useCommon.js";
     import {listTrees} from "@/composables/useCommon.js";
     import SelectAicon from "@/components/SelectAicon.vue";
+    import {menuListTrees} from "@/composables/utill.js";
 
     const menus = ref([]);
     const defaultExpandedKeys = ref([]);
@@ -33,6 +34,7 @@
       defaultSearchForm:{},
       afterDataList(res){
           menus.value = [{id:0,name:'最上级图片菜单',child:[]}].concat(listTrees(res.menus,'rule_id','child'));
+          menuListTrees(res.list,res.menus);
           dataList.value = res.list;
           total.value = res.total;
           defaultExpandedKeys.value = res.list.map(item=>item.id);
@@ -141,7 +143,7 @@
        </template>
     </el-tree>
     <div class="bottomPage">
-        <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
+        <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" @change="getData" />
     </div>
   </el-card>
   <Drawer ref="formDrawerRef" :title="formTitle" @submit="handleSubmit">

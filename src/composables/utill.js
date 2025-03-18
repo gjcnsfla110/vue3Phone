@@ -56,6 +56,15 @@ export function queryUrl(query){
     return r;
 }
 
+/**
+ * 자식 트리를 만드는 구조
+ * @param data
+ * @param field
+ * @param child
+ * @param pid
+ * @param callF
+ * @returns {*|*[]}
+ */
 export function listTrees(data,field='pid',child='child',pid=0,callF=null){
     if (!Array.isArray(data) || data.length === 0) return [];
 
@@ -77,6 +86,27 @@ export function listTrees(data,field='pid',child='child',pid=0,callF=null){
     return getList(pid, data);
 }
 
-export function sideMenu(menu,titleMenu){
+/**
+ * 탑메뉴를 통하여 사이트메뉴를 설정하는 함수
+ * @param menu
+ * @param titleMenu
+ * @returns {boolean}
+ */
+export function sideMenuTrees(menu,titleMenu){
+
     return false;
+}
+
+/**
+ * 해더 메뉴에 선택할수 있는 사이드메뉴 배열 추출
+ */
+export function selectMenu(menu){
+    return menu.map((item) => {return {id:item.id, name:item.name}});
+}
+
+
+export function menuListTrees(menu,allMenu){
+    menu.forEach(item=>{
+        item.child =(listTrees(allMenu,'rule_id','child',item.id));
+    })
 }

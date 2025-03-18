@@ -8,7 +8,9 @@
   import {onBeforeMount} from "vue";
   import {addTitleMenu,updateTitleMenu,updateStatus,deleteTitleMenu,getTitleMenuList} from "@/api/titleMenu.js";
   import managerStore from "@/store/manager.js";
-
+  import {storeToRefs} from "pinia";
+  const managerS = managerStore();
+  const  {checkMenu} = storeToRefs(managerS);
   const {
     dataList,
     loading,
@@ -115,7 +117,7 @@
       </el-table-column>
     </el-table>
     <div style="margin-top:30px; display:flex; justify-content: center;align-items: center">
-      <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total">
+      <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" @change="getData">
       </el-pagination>
     </div>
   </el-card>
@@ -131,8 +133,7 @@
          </el-form-item>
          <el-form-item label="选择子菜单">
            <el-checkbox-group v-model="formData.child">
-             <el-checkbox :value="1" label="테스트1" border ></el-checkbox>
-             <el-checkbox :value="2" label="테스트2" border ></el-checkbox>
+             <el-checkbox v-for="item in checkMenu" :value="item.id" :label="item.name" border ></el-checkbox>
            </el-checkbox-group>
          </el-form-item>
          <el-form-item label="优先级">
