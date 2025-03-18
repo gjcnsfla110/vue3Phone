@@ -117,6 +117,9 @@ export function useInitFrom(opt = {}){
             submit.then((res)=>{
                 showMsg(formTitle.value + "成功");
                 opt.getDataList(editId.value ? false : 1);
+                if(opt.resultCheck && typeof opt.resultCheck === 'function'){
+                    opt.resultCheck();
+                }
                 formDrawerRef.value.closeDrawer();
             }).finally(()=>{
                 formDrawerRef.value.closeLoading();

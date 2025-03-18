@@ -6,10 +6,10 @@ import {useRouter} from "vue-router";
 import {removeToken} from "@/composables/auth.js";
 import managerStore from "@/store/manager.js";
 import {storeToRefs} from "pinia";
-import {ref} from "vue";
+
 const router = useRouter();
 const useMangerStore = managerStore();
-const {asideWidth} = storeToRefs(useMangerStore);
+const {asideWidth,topMenu} = storeToRefs(useMangerStore);
 const menuToggle = ()=>{
   asideWidth.value =  asideWidth.value == "250px" ? "64px" : "250px";
 }
@@ -33,11 +33,10 @@ function  myClick(e){
      })
    }
 }
-
-const handleSelect =(...e)=>{
-   console.log(e);
+const emit = defineEmits(['clickMenu'])
+const handleSelect =(index)=>{
+   emit('clickMenu',index);
 }
-
 </script>
 
 <template>
@@ -63,7 +62,7 @@ const handleSelect =(...e)=>{
      </div>
      <div class="header_center">
        <el-menu
-           :default-active="1"
+           :default-active="topMenu[0].id.toString()"
            class="el-menu-demo"
            mode="horizontal"
            background-color="rgb(50,50,50)"
@@ -72,15 +71,7 @@ const handleSelect =(...e)=>{
            style="border: none"
            @select="handleSelect"
        >
-         <el-menu-item index="1">Processing Center</el-menu-item>
-         <el-menu-item index="3">Info</el-menu-item>
-         <el-menu-item index="4">Orders</el-menu-item>
-         <el-menu-item index="6">Info</el-menu-item>
-         <el-menu-item index="7">Info</el-menu-item>
-         <el-menu-item index="8">Info</el-menu-item>
-         <el-menu-item index="9">Info</el-menu-item>
-         <el-menu-item index="10">Info</el-menu-item>
-         <el-menu-item index="11">Info</el-menu-item>
+         <el-menu-item v-for="item in topMenu" :index="item.id.toString()">{{item.name}}</el-menu-item>
        </el-menu>
      </div>
      <div class="header_right">

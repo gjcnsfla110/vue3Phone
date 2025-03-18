@@ -4,18 +4,24 @@
   import SideMenu from "@/layout/component/SideMenu.vue"
   import managerStore from "@/store/manager.js";
   import {storeToRefs} from "pinia";
+  import {ref} from "vue";
   const useManagerStore = managerStore()
-  const {asideWidth} = storeToRefs(useManagerStore);
+  const {asideWidth,sideMenu,topMenu} = storeToRefs(useManagerStore);
+  const childMenu = ref(sideMenu.value[topMenu.value[0].id]);
+  const clickHeaderMenu = (id)=>{
+      childMenu.value = sideMenu.value[id];
+  }
+
 </script>
 
 <template>
    <el-container>
      <el-header style="padding: 0">
-        <Header></Header>
+        <Header @clickMenu="clickHeaderMenu"></Header>
      </el-header>
      <el-container>
        <el-aside :style="{width:asideWidth}">
-         <SideMenu></SideMenu>
+         <SideMenu :menus="childMenu"></SideMenu>
        </el-aside>
        <el-main>
           <MenuTabList/>

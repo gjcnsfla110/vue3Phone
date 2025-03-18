@@ -1,25 +1,42 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, watch, ref} from "vue";
 import {storeToRefs} from "pinia";
 import managerStore from "@/store/manager.js";
 import {onBeforeRouteUpdate, useRouter} from "vue-router";
 
+const props = defineProps({
+  menus:{
+    type: Array,
+    default:()=>[]
+  }
+})
 const windowHeight = window.innerHeight || document.body.clientHeight
 const h = windowHeight - 70
-const activeMenu = ref('/');
+const activeMenu = ref(  '');
+
 // 监听路由变化
 onBeforeRouteUpdate((to,from)=>{
   activeMenu.value = to.path
 })
 const router = useRouter();
 const useMangerStore = managerStore();
-const {menus,asideWidth} = storeToRefs(useMangerStore);
+const {asideWidth} = storeToRefs(useMangerStore);
 const isCollapse = computed(()=> asideWidth.value == "250px" ? false : true);
+//초기에한번 라우터해주시
+if(props.menus.length > 0 && props.menus[0].child.length > 0){
+  activeMenu.value =  props.menus[0].child[0].frontpath;
+  router.push(props.menus[0].child[0].frontpath)
+}
+//메뉴가 변경될때마다
+watch(()=>props.menus,(newMenus)=>{
+  if(newMenus.length > 0 && newMenus[0].child.length > 0){
+    router.push(newMenus[0].child[0].frontpath)
+  }
+})
 
 const changeRoute = (e)=>{
   router.push(e);
 }
-
 </script>
 
 <template>
@@ -45,10 +62,6 @@ const changeRoute = (e)=>{
             </template>
           </el-menu-item>
         </el-sub-menu>
-        <el-menu-item :index="menu.frontpath" v-else>
-          <el-icon><component :is="menu.icon" /></el-icon>
-          <template #title>{{menu.name}}</template>
-        </el-menu-item>
         </template>
       </el-menu>
   </div>

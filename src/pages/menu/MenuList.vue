@@ -1,6 +1,4 @@
 <script setup>
-    import {ref} from "vue";
-
     defineOptions({
       name: 'MenuList',
     })
@@ -10,8 +8,10 @@
     import {useInitFrom, useInitTable} from "@/composables/useCommon.js";
     import {listTrees} from "@/composables/useCommon.js";
     import SelectAicon from "@/components/SelectAicon.vue";
+    import {ref} from "vue";
     import {menuListTrees} from "@/composables/utill.js";
-
+    import managerStore from "@/store/manager.js";
+    const managerS = managerStore();
     const menus = ref([]);
     const defaultExpandedKeys = ref([]);
 
@@ -75,7 +75,10 @@
       },
       getDataList:getData,
       update:updateMenu,
-      create:addMenu
+      create:addMenu,
+      resultCheck:()=>{
+        managerS.adminInfo();
+      }
     });
     getData();
     //자식추가부분

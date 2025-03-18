@@ -7,8 +7,11 @@ import {ref} from "vue";
 
 const managerStore = defineStore("manager",()=>{
     const manager = ref({});
+    //해더메뉴
     const topMenu = ref([]);
+    //해더메뉴에서 사이드메뉴를 추가할때 체크박스나타나는 값
     const checkMenu = ref([]);
+    //promission에 보내여 실제 라우트에 메뉴경로 추가하는 부분
     const menus = ref([
         {
             name: "菜单管理",
@@ -43,6 +46,7 @@ const managerStore = defineStore("manager",()=>{
             frontpath: '/image/list',
         }
     ]);
+    //사이드 메뉴 - 해드메뉴 아이디랑 대칭되게 가공한 사이드 메뉴값
     const sideMenu = ref([]);
     // 侧边宽度
     const asideWidth = ref("250px");
@@ -62,7 +66,7 @@ const managerStore = defineStore("manager",()=>{
                     let m = listTrees(res.menu,'rule_id');
                     checkMenu.value = selectMenu(m);
                     if(res.user['super'] === 1){
-                        m.push({
+                        m.unshift({
                             id:0,
                             name: "菜单管理",
                             icon: "Menu",
@@ -91,6 +95,7 @@ const managerStore = defineStore("manager",()=>{
                             ]
                         });
                     }
+                    topMenu.value = res.titleMenu;
                     sideMenu.value = sideMenuTrees(m,res.titleMenu);
                     resolve({menus : this.menus});
                 }).catch(error=>{
@@ -98,9 +103,6 @@ const managerStore = defineStore("manager",()=>{
                 })
             })
         }
-    function resetCheckMenu(){
-
-    }
     return {manager,checkMenu,topMenu,menus,sideMenu,asideWidth,ruleNames,adminInfo,adminLogin};
 })
 export default managerStore;

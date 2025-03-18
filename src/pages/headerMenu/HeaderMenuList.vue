@@ -57,7 +57,10 @@
     },
     create:addTitleMenu,
     update:updateTitleMenu,
-    getDataList:getData
+    getDataList:getData,
+    resultCheck:()=>{
+      managerS.adminInfo();
+    }
   });
   onBeforeMount(()=>{
     getData();
