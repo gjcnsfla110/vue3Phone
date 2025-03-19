@@ -1,4 +1,12 @@
 <script setup>
+import useManagerStore from "@/store/manager.js";
+import { watch } from 'vue';
+const managerStore = useManagerStore();
+
+// 상태 감시 설정
+watch(() => managerStore.$state, () => {
+  managerStore.saveState();
+}, { deep: true });
 </script>
 <template>
   <router-view></router-view>

@@ -3,9 +3,9 @@ import { getInfo, login } from "@/api/manager.js";
 import { listTrees, sideMenuTrees, selectMenu } from "@/composables/utill.js";
 import { setToken } from "@/composables/auth.js";
 
- const useManagerStore = defineStore("manager", {
-    state: () => {
-     const savedState = JSON.parse(sessionStorage.getItem('manager'))||{
+const useManagerStore = defineStore("manager", {
+    state: () => (
+        {
             manager: {},
             //해더부분메뉴탭
             topMenu: [],
@@ -24,9 +24,8 @@ import { setToken } from "@/composables/auth.js";
             //사이드메뉴바에 넓이
             asideWidth: "250px",
             ruleNames: [],
-        }
-        return savedState;
-    },
+        }),
+
     actions: {
         adminLogin(data) {
             return new Promise((resolve, reject) => {
@@ -70,10 +69,11 @@ import { setToken } from "@/composables/auth.js";
                     .catch((error) => reject(error));
             });
         },
-        saveState() {
-            sessionStorage.setItem('manager', JSON.stringify(this.$state));
-        },
+    },
+
+    persist: {
+        enabled: true,
+        strategies: [{ key: "manager", storage: window.sessionStorage,}],
     },
 });
-
 export default useManagerStore;

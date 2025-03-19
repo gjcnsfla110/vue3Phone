@@ -29,6 +29,9 @@
           item.child = JSON.parse(item.child);
       });
       dataList.value = res;
+    },
+    deleteCheck:()=>{
+      managerS.adminInfo();
     }
   });
 

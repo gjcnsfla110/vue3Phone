@@ -55,6 +55,9 @@ export function useInitTable(opt={}){
         loading.value = true;
         opt.delete(id).then((res)=>{
             showMsg("删除成功");
+            if(opt.deleteCheck && typeof opt.deleteCheck === 'function'){
+                opt.deleteCheck();
+            }
             getData();
         }).finally(()=>{
             loading.value = false;

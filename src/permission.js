@@ -22,9 +22,14 @@ router.beforeEach(async (to, from, next) => {
     if(token && !getInfo){
         const useStore = managerStore();
         try {
-            const {menus} = await useStore.adminInfo();
+            //localStorage 에메뉴가 저장되여있으면 한번만 adminInfo 접속
+            if(!useStore.menus.length){
+                const {menus} = await useStore.adminInfo();
+                console.log(1)
+            }
+            console.log(2)
             getInfo = true;
-            hasNewRoutes = addRoutes(menus);
+            hasNewRoutes = addRoutes(useStore.menus);
         }catch(err){
             console.log(err);
             showMessage("会员加载失败","error")

@@ -9,11 +9,15 @@ import {storeToRefs} from "pinia";
 
 const router = useRouter();
 const useMangerStore = managerStore();
-const {asideWidth,topMenu} = storeToRefs(useMangerStore);
+const {asideWidth,topMenu,activeTopMenu} = storeToRefs(useMangerStore);
 const menuToggle = ()=>{
   asideWidth.value =  asideWidth.value == "250px" ? "64px" : "250px";
 }
 
+/**
+ * 내관리페이지내용
+ * @param e
+ */
 function  myClick(e){
    if(e === "updatPass"){
       alert("update")
@@ -35,7 +39,9 @@ function  myClick(e){
 }
 const emit = defineEmits(['clickMenu'])
 const handleSelect =(index)=>{
-   emit('clickMenu',index);
+   //클릭시 마다 pinia통하여 내장브라우서 스토리지에 클릭된 값을 저장
+   activeTopMenu.value = index;
+   emit('clickMenu');
 }
 </script>
 
@@ -62,7 +68,7 @@ const handleSelect =(index)=>{
      </div>
      <div class="header_center">
        <el-menu
-           :default-active="topMenu[0].id.toString()"
+           :default-active="activeTopMenu"
            class="el-menu-demo"
            mode="horizontal"
            background-color="rgb(50,50,50)"
