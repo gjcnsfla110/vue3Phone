@@ -1,9 +1,10 @@
 <script setup>
 import {computed, watch, ref} from "vue";
 import {storeToRefs} from "pinia";
-import managerStore from "@/store/manager.js";
 import {onBeforeRouteUpdate, useRouter} from "vue-router";
-
+import useManagerStore from "@/store/manager.js";
+const managerStore = useManagerStore();
+const {activeRoute,asideWidth} = storeToRefs(managerStore);
 const props = defineProps({
   menus:{
     type: Array,
@@ -12,21 +13,14 @@ const props = defineProps({
 })
 const windowHeight = window.innerHeight || document.body.clientHeight
 const h = windowHeight - 70
-const activeMenu = ref(  '');
 
 // 监听路由变化
 onBeforeRouteUpdate((to,from)=>{
-  activeMenu.value = to.path
+  activeRoute.value = to.path
 })
 const router = useRouter();
-const useMangerStore = managerStore();
-const {asideWidth} = storeToRefs(useMangerStore);
 const isCollapse = computed(()=> asideWidth.value == "250px" ? false : true);
-//초기에한번 라우터해주시
-if(props.menus.length > 0 && props.menus[0].child.length > 0){
-  activeMenu.value =  props.menus[0].child[0].frontpath;
-  router.push(props.menus[0].child[0].frontpath)
-}
+
 //메뉴가 변경될때마다
 watch(()=>props.menus,(newMenus)=>{
   if(newMenus.length > 0 && newMenus[0].child.length > 0){
@@ -47,7 +41,7 @@ const changeRoute = (e)=>{
           :collapse="isCollapse"
           unique-opened
           @select="changeRoute"
-          :default-active = "activeMenu"
+          :default-active = "activeRoute"
       >
         <template v-for="menu in menus">
         <el-sub-menu :index="menu.name" v-if="menu.child && menu.child.length > 0">

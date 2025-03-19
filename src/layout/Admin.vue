@@ -6,8 +6,8 @@
   import {storeToRefs} from "pinia";
   import {ref} from "vue";
   const useManagerStore = managerStore()
-  const {asideWidth,sideMenu,topMenu} = storeToRefs(useManagerStore);
-  const childMenu = ref(sideMenu.value[topMenu.value[0].id]);
+  const {asideWidth,sideMenu,topMenu,childMenu} = storeToRefs(useManagerStore);
+  childMenu.value = sideMenu.value[topMenu.value[0].id];
   const clickHeaderMenu = (id)=>{
       childMenu.value = sideMenu.value[id];
   }
