@@ -153,7 +153,7 @@ const asycnRoutes = [
         name: '/model/list',
         component:Model,
         meta:{
-            title: '商品名称'
+            title: '商品型号'
         }
     }
 ];
