@@ -193,3 +193,10 @@ export function listTrees(data,field='pid',child='child',pid=0,callF=null){
 
     return getList(pid, data);
 }
+
+export function menuListTrees(menu,allMenu,pid="pid",child="child"){
+    menu.forEach(item=>{
+        item.child = (listTrees(allMenu,pid,child,item.id));
+    })
+    return menu;
+}

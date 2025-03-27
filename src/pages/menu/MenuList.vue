@@ -35,11 +35,16 @@
       afterDataList(res){
           menus.value = [{id:0,name:'最上级图片菜单',child:[]}].concat(listTrees(res.menus,'rule_id','child'));
           menuListTrees(res.list,res.menus);
-          dataList.value = res.list;
+          dataList.value = res.list.map(item=>{
+              item.child = item.child.sort((a, b) => b.order - a.order)
+              return item;
+          });
           total.value = res.total;
           defaultExpandedKeys.value = res.list.map(item=>item.id);
       },
-
+      deleteCheck:()=>{
+        managerS.adminInfo();
+      }
     });
 
     /**
@@ -94,7 +99,7 @@
     <ListHeader @create="handleCreate" @refresh="getData" />
     <el-tree
         :default-expanded-keys="defaultExpandedKeys"
-        node-key="id"
+         node-key="id"
         :data="dataList"
         :props="{label: 'name',children: 'child'}"
     >

@@ -7,6 +7,15 @@ import ImageList from "@/pages/image/ImageList.vue";
 import RoleList from "@/pages/role/RoleList.vue";
 import ManagerList from "@/pages/manager/ManagerList.vue";
 import HeaderMenuList from "@/pages/headerMenu/HeaderMenuList.vue";
+import GoodsCategory from "@/pages/goods/goods_about/GoodsCategory.vue";
+import GoodsBrand from "@/pages/goods/goods_about/GoodsBrand.vue";
+import ColorList from "@/pages/goods/goods_about/ColorList.vue";
+import Delivery from "@/pages/goods/goods_about/Delivery.vue";
+import DeliveryCompany from "@/pages/goods/goods_about/DeliveryCompany.vue";
+import SpectList from "@/pages/goods/goods_about/SpectList.vue";
+import GoodsLabel from "@/pages/goods/goods_about/GoodsLabel.vue";
+import GoodsList from "@/pages/goods/goods_about/GoodsList.vue";
+import Model from "@/pages/goods/goods_about/Model.vue";
 const routes = [
     {
         path: "/login",
@@ -73,6 +82,78 @@ const asycnRoutes = [
         component: ManagerList,
         meta: {
             title: "角色管理"
+        }
+    },
+    {
+      path:'/goodsCategory/list',
+      name: '/goodsCategory/list',
+      component: GoodsCategory,
+      meta: {
+          title: "商品分类"
+      }
+    },
+    {
+      path:'/goodsBrand/list',
+      name: '/goodsBrand/list',
+      component: GoodsBrand,
+      meta: {
+          title: '商品品牌'
+      }
+    },
+    {
+      path:'/goodsColor/list',
+      name: '/goodsColor/list',
+        component: ColorList,
+        meta: {
+          title: '商品颜色'
+        }
+    },
+    {
+        path:'/delivery/list',
+        name: '/delivery/list',
+        component: Delivery,
+        meta: {
+            title: '配送方式'
+        }
+    },
+    {
+        path:'/deliveryCompany/list',
+        name: '/deliveryCompany/list',
+        component: DeliveryCompany,
+        meta: {
+            title: '快递公司'
+        }
+    },
+    {
+        path:'/spec/List',
+        name: '/spec/List',
+        component: SpectList,
+        meta: {
+            title: '商品参数'
+        }
+    },
+    {
+        path:'/goodsLabel/list',
+        name: '/goodsLabel/list',
+        component: GoodsLabel,
+        meta: {
+            title: '商品标签'
+        }
+    },
+    {
+        path:'/goods/list',
+        name: '/goods/list',
+        component: GoodsList,
+        meta: {
+            title: '商品列表'
+        }
+    },
+    {
+        path:'/model/list',
+        name: '/model/list',
+        component:Model,
+        meta:{
+            title: '商品名称'
         }
     }
 ];

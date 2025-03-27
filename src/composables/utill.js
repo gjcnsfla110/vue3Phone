@@ -110,6 +110,6 @@ export function selectMenu(menu){
 
 export function menuListTrees(menu,allMenu){
     menu.forEach(item=>{
-        item.child =(listTrees(allMenu,'rule_id','child',item.id));
+        item.child = (listTrees(allMenu,'rule_id','child',item.id));
     })
 }

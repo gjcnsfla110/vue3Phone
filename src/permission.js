@@ -3,6 +3,7 @@ import {showFullLoading, hideFullLoading, showMessage} from "@/composables/utill
 import managerStore from "@/store/manager.js";
 import {getToken} from "@/composables/auth.js";
 import {addRoutes} from "@/route/index.js";
+import {watchEffect} from "vue";
 
 //라우터 들어오기전에 체크
 let getInfo = false;
@@ -24,14 +25,14 @@ router.beforeEach(async (to, from, next) => {
         try {
             //localStorage 에메뉴가 저장되여있으면 한번만 adminInfo 접속
             if(!useStore.menus.length){
-                const {menus} = await useStore.adminInfo();
-                console.log(1)
+                await useStore.adminInfo();
             }
-            console.log(2)
             getInfo = true;
-            hasNewRoutes = addRoutes(useStore.menus);
+            //이부분은 라우터 등록 부분 자동으로 무조건 한번실행되고 menus 변경될때마다 자동실행해줌
+            watchEffect(() => {
+                hasNewRoutes = addRoutes(useStore.menus);
+            });
         }catch(err){
-            console.log(err);
             showMessage("会员加载失败","error")
         }
     }
