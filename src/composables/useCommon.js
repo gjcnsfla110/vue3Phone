@@ -179,7 +179,7 @@ export function listTrees(data,field='pid',child='child',pid=0,callF=null){
     const getList = (pid1, items) => {
         const children = items.filter(item => {
             let isCheck = true;
-            if (typeof callF === "function") {
+            if (typeof callF === "function"){
                 isCheck = callF(item);
             }
             return isCheck && item[field] === pid1;
@@ -199,4 +199,25 @@ export function menuListTrees(menu,allMenu,pid="pid",child="child"){
         item.child = (listTrees(allMenu,pid,child,item.id));
     })
     return menu;
+}
+
+export function orderTrees(menus,order='ranking'){
+    function sortTreeByRanking(tree) {
+        // 트리가 배열인지 확인 (최상위가 배열일 경우)
+        if (Array.isArray(tree)) {
+            // 배열의 각 노드를 정렬
+            console.log(tree);
+            tree.sort((a, b) => b[order] - a[order] || b.id - a.id);
+            console.log(tree);
+            // 각 노드의 child를 재귀적으로 정렬
+            tree.forEach(node => {
+                if (node.child && Array.isArray(node.child) && node.child.length > 0) {
+                    sortTreeByRanking(node.child);
+                }
+            });
+        }
+        return tree;
+    }
+
+    sortTreeByRanking(menus.value);
 }

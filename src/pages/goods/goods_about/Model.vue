@@ -5,7 +5,7 @@
    import ListHeader from "@/components/ListHeader.vue";
    import {ref} from "vue";
    import Drawer from "@/components/Drawer.vue";
-   import {useInitTable, useInitFrom, listTrees, menuListTrees} from "@/composables/useCommon.js";
+   import {useInitTable, useInitFrom, listTrees, menuListTrees,orderTrees} from "@/composables/useCommon.js";
    import {modelList,addModel,updateModel,deleteModel,updateModelStatus} from "@/api/goods/modelList.js";
 
    const modelMenu = ref([]);
@@ -22,6 +22,7 @@
      afterDataList:(res)=>{
        model_ids.value = [{id:0,menu:'最上级模型菜单',child:[]}].concat(listTrees(res.list));
        modelMenu.value = menuListTrees(res.models,res.list,);
+       orderTrees(modelMenu);
        total.value = res.total;
      },
      getList:modelList,
@@ -44,6 +45,7 @@
         model_type:0,
         menu:"",
         name:"",
+        ranking:50,
         status:1
       },
       rules:{
@@ -148,6 +150,9 @@
         </el-form-item>
         <el-form-item label="填写商品"  v-else>
             <el-input v-model="formData.name"></el-input>
+        </el-form-item>
+        <el-form-item label="排序">
+            <el-input-number v-model="formData.ranking"/>
         </el-form-item>
         <el-form-item label="选择状态">
           <el-switch
