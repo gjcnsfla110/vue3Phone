@@ -206,9 +206,7 @@ export function orderTrees(menus,order='ranking'){
         // 트리가 배열인지 확인 (최상위가 배열일 경우)
         if (Array.isArray(tree)) {
             // 배열의 각 노드를 정렬
-            console.log(tree);
             tree.sort((a, b) => b[order] - a[order] || b.id - a.id);
-            console.log(tree);
             // 각 노드의 child를 재귀적으로 정렬
             tree.forEach(node => {
                 if (node.child && Array.isArray(node.child) && node.child.length > 0) {

@@ -4,12 +4,19 @@
         name: 'GoodsCategory',
     })
     import ListHeader from "@/components/ListHeader.vue";
-    import {useInitTable, useInitFrom, listTrees,menuListTrees} from "@/composables/useCommon.js";
+    import {useInitTable, useInitFrom, listTrees,menuListTrees,orderTrees} from "@/composables/useCommon.js";
     import {categoryList,addCategory,updateCategory,updateStatus,deleteCategory} from "@/api/goods/goodsCategory.js";
     import Drawer from "@/components/Drawer.vue";
     import {ref} from "vue";
+
+    //카테고리
     const categoryMenu = ref([]);
+    //카테고리 아이이디
     const category_ids = ref([]);
+    //카테고리 메뉴사진 url
+    const categoryUrl = ref("");
+    //카테고리 이름
+    const categoryName = ref("");
     const {
       dataList,
       loading,
@@ -23,6 +30,7 @@
       afterDataList:(res)=>{
           category_ids.value = [{id:0,name:'最上级图片菜单',child:[]}].concat(listTrees(res.list,'category_id','child'));
           categoryMenu.value = menuListTrees(res.menus,res.list,'category_id');
+          orderTrees(categoryMenu);
           total.value = res.total;
       },
       getList:categoryList,
@@ -43,7 +51,10 @@
     } = useInitFrom({
       form:{
         category_id:"",
+        menu:1,
         name:"",
+        img:"",
+        ranking:50,
         status:1
       },
       rules:{
@@ -70,6 +81,11 @@
         formData.category_id = id;
         formData.status = 1;
     }
+
+    const showImg = data=>{
+        categoryUrl.value = data.img;
+        categoryName.value = data.name;
+    }
 </script>
 
 <template>
@@ -84,8 +100,8 @@
         <template #default="{node,data}">
           <div class="custom-tree-node" @click.stop>
             <div style="display: flex;align-items: center;">
-              <el-tag type="primary" v-if="data.category_id == 0">菜单</el-tag>
-              <el-tag type="info" v-else>菜单</el-tag>
+              <el-tag type="primary" v-if="data.menu === 1">菜单</el-tag>
+              <el-tag type="info" v-else>显示菜单</el-tag>
               <span style="margin-left: 20px">{{data.name}}</span>
             </div>
             <div>
@@ -120,6 +136,14 @@
                   </el-button>
                 </template>
               </el-popconfirm>
+              <el-button
+                  v-if="data.img"
+                  type="primary"
+                  plain
+                  @click="showImg(data)"
+              >
+                 查看图片
+              </el-button>
             </div>
           </div>
         </template>
@@ -143,8 +167,20 @@
                   placeholder="请选择上级菜单"
               />
             </el-form-item>
+             <el-form-item label="菜单OR内菜单" >
+               <el-radio-group v-model="formData.menu" size="large">
+                 <el-radio-button label="菜单" :value="1" />
+                 <el-radio-button label="内菜单" :value="0" />
+               </el-radio-group>
+             </el-form-item>
             <el-form-item label="填写名称" prop="name">
               <el-input v-model="formData.name"></el-input>
+            </el-form-item>
+           <el-form-item label="图片URL" v-if="formData.menu == 0">
+             <el-input v-model="formData.img"></el-input>
+           </el-form-item>
+            <el-form-item label="选择排序">
+              <el-input-number v-model="formData.ranking"/>
             </el-form-item>
             <el-form-item label="状态">
               <el-switch
