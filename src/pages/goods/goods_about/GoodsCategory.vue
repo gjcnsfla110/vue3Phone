@@ -86,6 +86,7 @@
         categoryUrl.value = data.img;
         categoryName.value = data.name;
     }
+
 </script>
 
 <template>

@@ -171,7 +171,7 @@ const useSpecData = ()=>{
 
     //
     const cameraData = [
-        '5000万像素','1亿像素','2亿像素'
+        '1200万像素','4800万像素','5000万像素','1亿像素','2亿像素'
     ];
 
     const ramData = [
