@@ -1,9 +1,8 @@
-import {defineStore} from 'pinia';
 
-const specData = defineStore('specData',()=>{
+const useSpecData = ()=>{
 
     //cpu데이터
-    const cpu = [
+    const cpuData = [
         {
             name:'Iphone',
             child:[
@@ -171,19 +170,19 @@ const specData = defineStore('specData',()=>{
     ];
 
     //
-    const camera = [
+    const cameraData = [
         '5000万像素','1亿像素','2亿像素'
     ];
 
-    const ram = [
+    const ramData = [
         '4GB','6GB','8GB','12GB','16GB'
     ];
 
-    const storage = [
+    const storageData = [
         '64GB','128GB','256GB','512GB','1TB'
     ];
 
-    const display = [
+    const displayData = [
         {
             name:'Iphone',
             child:[
@@ -256,19 +255,19 @@ const specData = defineStore('specData',()=>{
         }
     ];
 
-    const battery = [
+    const batteryData = [
         '3300mAh','3700mAh','4000mAh','4400mAh','4500mAh','4900mAh','5000mAh','5160mAh','5400mAh','5500mAh','5800mAh','5850mAh','6000mAh','6100mAh',
     ];
 
-    const water = [
+    const waterData = [
         '生活防水','IP64','IP65','IP66','IP67','IP68','IP69',
     ];
 
-    const type = [
+    const typeData = [
         '5G网络','4G网络'
     ];
 
-    return {cpu,camera,ram,water,battery,display,storage,type};
-})
+    return {cpuData,cameraData,ramData,waterData,batteryData,displayData,storageData,typeData};
+}
 
-export default specData;
+export default useSpecData;

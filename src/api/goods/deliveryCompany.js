@@ -5,7 +5,7 @@ export function getDeliveryCompanyList(page,limit=10){
 }
 
 export function createDeliveryCompany(data){
-   return service.post(`/admin/deliveryCompany/${data.id}`, data);
+   return service.post(`/admin/deliveryCompany`, data);
 }
 
 export function updateDeliveryCompany(id,data){

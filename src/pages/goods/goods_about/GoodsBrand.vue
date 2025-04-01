@@ -9,8 +9,6 @@
     import {getBrandList,addBrand,deleteBrand,updateBrand} from "@/api/goods/brand.js";
 
     const{
-      searchForm,
-      resetSearchForm,
       dataList,
       loading,
       currentPage,
@@ -31,7 +29,6 @@
       formTitle,
       handleCreate,
       handleUpdate,
-      resetFormData,
       handleSubmit
     } = useInitFrom({
       form:{
@@ -76,7 +73,7 @@
           <template #default="{row}">
               <div style="width: 30%; text-align: left;">
                 <p style="width: 100%; text-align: center;"> <el-text tag="b" type="warning" size="large">品牌介绍 </el-text></p>
-                <P style="margin-top: 10px; width: 100%;text-align: center"><el-text tag="p" type="info">{{row.introduce}} </el-text></P>
+                <p style="margin-top: 10px; width: 100%;text-align: center"><el-text tag="p" type="info">{{row.introduce}} </el-text></p>
               </div>
           </template>
        </el-table-column>

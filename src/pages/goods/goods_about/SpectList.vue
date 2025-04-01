@@ -6,10 +6,22 @@
     import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
     import Drawer from "@/components/Drawer.vue";
     import{allList,addSpec,updateSpec,updateStatus,deleteSpec} from "@/api/goods/specList.js";
+    import useSpecData from "@/store/spec.js";
     import {ref} from "vue";
+    //스펙부분
+    const {cpuData,cameraData,ramData,waterData,batteryData,displayData,storageData,typeData} = useSpecData();
+
+    const onSelect = ref({
+      is_cpu:1,
+      is_camera:1,
+      is_ram:1,
+      is_storage:1,
+      is_display:1,
+      is_battery:1,
+      is_water:1,
+      is_type:1,
+    })
     const {
-      searchForm,
-      resetSearchForm,
       dataList,
       loading,
       currentPage,
@@ -25,7 +37,6 @@
     });
 
     const{
-      editId,
       formDrawerRef,
       formRef,
       formData,
@@ -33,13 +44,12 @@
       formTitle,
       handleCreate,
       handleUpdate,
-      resetFormData,
       handleSubmit
     }= useInitFrom({
       form:{
         spec_id:0,
         name:"",
-        spec_type:0,
+        spec_menu:0,
         model:"",
         cpu:'',
         camera:'',
@@ -65,7 +75,7 @@
           message:'填写菜单名字',
           trigger:"blur"
         },
-        spec_type:{
+        spec_menu:{
           required: true,
           message:'选择菜单或参数选项',
           trigger:"blur"
@@ -145,6 +155,7 @@
   <el-card>
     <ListHeader @create="handleCreate" @reset="getData"></ListHeader>
     <el-tree
+        :data="dataList"
         v-loading="loading"
     >
 
@@ -154,7 +165,198 @@
     <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" @change="getData" />
   </div>
   <Drawer ref="formDrawerRef" :title="formTitle" @submit="handleSubmit">
-
+       <el-form
+           ref="formRef"
+           :model="formData"
+           :rules="formRules"
+           label-width="auto"
+       >
+          <el-form-item label="上级菜单" prop="spec_id">
+          </el-form-item>
+          <el-form-item label="菜单OR配置" prop="spec_menu">
+            <el-radio-group v-model="formData.spec_menu" size="large">
+              <el-radio-button label="菜单" :value="1" />
+              <el-radio-button label="配置" :value="0" />
+            </el-radio-group>
+          </el-form-item>
+         <el-form-item label="菜单名称" v-if="formData.spec_menu==1" prop="name">
+              <el-input v-model="formData.name" placeholder="填写菜单名称"></el-input>
+         </el-form-item>
+         <el-form-item label="配置名称" v-else prop="model">
+              <el-input v-model="formData.model" placeholder="填写配置名称"></el-input>
+         </el-form-item>
+         <el-form-item label="CPU" prop="cpu" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_cpu" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+             <el-cascader
+                 v-model="formData.cpu"
+                 :options="cpuData"
+                 :props="{value:'name',label:'name',children:'child'}"
+                 placeholder="选择CPU"
+                 v-if="onSelect.is_cpu == 1"
+                 :show-all-levels="false"
+                 style="width: 300px"
+             />
+           <el-input v-model="formData.cpu" v-else placeholder="填写CPU" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="像素" prop="camera" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_camera" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+           <el-select
+               v-model="formData.camera"
+               placeholder="选择像素"
+               style="width: 300px"
+               v-if="onSelect.is_camera == 1"
+           >
+             <el-option
+                 v-for="item in cameraData"
+                 :key="item"
+                 :label="item"
+                 :value="item"
+             />
+           </el-select>
+           <el-input v-model="formData.camera" v-else placeholder="填写像素" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="运行内存" prop="ram" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_ram" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+           <el-select
+               v-model="formData.ram"
+               placeholder="选择运行内存"
+               style="width: 300px"
+               v-if="onSelect.is_ram == 1"
+           >
+             <el-option
+                 v-for="item in ramData"
+                 :key="item"
+                 :label="item"
+                 :value="item"
+             />
+           </el-select>
+           <el-input v-model="formData.ram" v-else placeholder="填写运行内存" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="颜色" prop="color" v-if="formData.spec_menu ==0">
+            <el-input v-model="formData.color" placeholder="填写颜色"></el-input>
+         </el-form-item>
+         <el-form-item label="存储内存" prop="storage" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_storage" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+           <el-select
+               v-model="formData.storage"
+               placeholder="选择存储内存"
+               style="width: 300px"
+               v-if="onSelect.is_storage == 1"
+           >
+             <el-option
+                 v-for="item in storageData"
+                 :key="item"
+                 :label="item"
+                 :value="item"
+             />
+           </el-select>
+           <el-input v-model="formData.storage" v-else placeholder="填写存储内存" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="屏幕尺寸" prop="display" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_display" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+           <el-cascader
+               v-model="formData.display"
+               :options="displayData"
+               :props="{value:'name',label:'name',children:'child'}"
+               placeholder="选择屏幕尺寸"
+               v-if="onSelect.is_display == 1"
+               :show-all-levels="false"
+               style="width: 300px"
+           />
+           <el-input v-model="formData.display" v-else placeholder="填写屏幕尺寸" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="电池量" prop="battery" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_battery" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+           <el-select
+               v-model="formData.battery"
+               placeholder="选择电池量"
+               style="width: 300px"
+               v-if="onSelect.is_battery == 1"
+           >
+             <el-option
+                 v-for="item in batteryData"
+                 :key="item"
+                 :label="item"
+                 :value="item"
+             />
+           </el-select>
+           <el-input v-model="formData.battery" v-else placeholder="填写电池量" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="防水级别" prop="water" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_water" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+           <el-select
+               v-model="formData.water"
+               placeholder="选择防水级别"
+               style="width: 300px"
+               v-if="onSelect.is_water == 1"
+           >
+             <el-option
+                 v-for="item in waterData"
+                 :key="item"
+                 :label="item"
+                 :value="item"
+             />
+           </el-select>
+           <el-input v-model="formData.water" v-else placeholder="填写防水级别" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="5G或4G" type="type" v-if="formData.spec_menu ==0">
+           <el-radio-group v-model="onSelect.is_type" style="margin-right: 10px">
+             <el-radio-button label="选项" :value="1" />
+             <el-radio-button label="填写" :value="0" />
+           </el-radio-group>
+           <el-select
+               v-model="formData.type"
+               placeholder="选择5G或4G"
+               style="width: 300px"
+               v-if="onSelect.is_type == 1"
+           >
+             <el-option
+                 v-for="item in typeData"
+                 :key="item"
+                 :label="item"
+                 :value="item"
+             />
+           </el-select>
+           <el-input v-model="formData.type" v-else placeholder="填写5G或4G" style="width: 60%"></el-input>
+         </el-form-item>
+         <el-form-item label="重量" prop="weight" v-if="formData.spec_menu ==0">
+           <el-input v-model="formData.color" placeholder="填写重量"></el-input>
+         </el-form-item>
+         <el-form-item label="发布日期" prop="launchDate" v-if="formData.spec_menu ==0">
+           <el-input v-model="formData.color" placeholder="填写发布日期"></el-input>
+         </el-form-item>
+         <el-form-item label="">
+           <el-switch
+               active-text="显示"
+               inactive-text="隐藏"
+              :active-value="1"
+              :inactive-value="0"
+               v-model="formData.status"
+           >
+           </el-switch>
+         </el-form-item>
+       </el-form>
   </Drawer>
 </template>
 
