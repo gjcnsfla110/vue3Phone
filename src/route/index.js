@@ -14,8 +14,10 @@ import Delivery from "@/pages/goods/goods_about/Delivery.vue";
 import DeliveryCompany from "@/pages/goods/goods_about/DeliveryCompany.vue";
 import SpectList from "@/pages/goods/goods_about/SpectList.vue";
 import GoodsLabel from "@/pages/goods/goods_about/GoodsLabel.vue";
-import GoodsList from "@/pages/goods/goods_about/GoodsList.vue";
 import Model from "@/pages/goods/goods_about/Model.vue";
+import Goods from "@/pages/goods/Goods.vue";
+import GoodsService from "@/pages/goods/goods_about/GoodsService.vue";
+
 const routes = [
     {
         path: "/login",
@@ -143,7 +145,7 @@ const asycnRoutes = [
     {
         path:'/goods/list',
         name: '/goods/list',
-        component: GoodsList,
+        component: Goods,
         meta: {
             title: '商品列表'
         }
@@ -154,6 +156,14 @@ const asycnRoutes = [
         component:Model,
         meta:{
             title: '商品型号'
+        }
+    },
+    {
+        path:'/goodsService/list',
+        name: '/goodsService/list',
+        component: GoodsService,
+        meta:{
+            title: '商品服务'
         }
     }
 ];

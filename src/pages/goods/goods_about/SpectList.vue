@@ -71,6 +71,7 @@
         type:'',
         weight:'',
         launchDate:'',
+        ranking:50,
         status:1,
       },
       rules:{
@@ -423,6 +424,9 @@
          </el-form-item>
          <el-form-item label="发布日期" prop="launchDate" v-if="formData.spec_menu ==0">
            <el-input v-model="formData.launchDate" placeholder="填写发布日期"></el-input>
+         </el-form-item>
+         <el-form-item label="排序">
+           <el-input-number v-model="formData.ranking"/>
          </el-form-item>
          <el-form-item label="显示/隐藏">
            <el-switch
