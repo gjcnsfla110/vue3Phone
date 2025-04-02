@@ -16,6 +16,7 @@
       getData,
       handleDelete,
     } = useInitTable({
+
        delete:deleteLabel,
        getList:getLabelList,
     })
