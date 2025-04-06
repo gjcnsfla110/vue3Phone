@@ -4,6 +4,10 @@
   })
   defineProps({
      model:Object,
+     backColor:{
+       type: String,
+       default:'white',
+     }
   })
   const emit = defineEmits(['search,reset'])
   import {ref, useSlots} from "vue";
@@ -15,8 +19,9 @@
 </script>
 
 <template>
-  <el-form :model="model">
-    <el-row :gutter="20">
+  <el-card :style="{padding:'15px',backgroundColor:backColor}">
+     <el-form :model="model">
+      <el-row :gutter="20">
         <slot/>
         <slot name="show" v-if="hasShowSlots">
         </slot>
@@ -34,7 +39,8 @@
           </div>
         </el-col>
     </el-row>
-  </el-form>
+   </el-form>
+  </el-card>
 </template>
 
 <style scoped lang="scss">
