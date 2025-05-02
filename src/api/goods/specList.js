@@ -1,5 +1,4 @@
 import service from "@/axios.js";
-import {id} from "element-plus/es/locale/index";
 
 
 export function getSpecList(page,limit=10){

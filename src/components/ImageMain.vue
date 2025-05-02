@@ -2,15 +2,25 @@
   defineOptions({
     name: 'ImageMain',
   })
-  defineProps({
+
+  const props = defineProps({
     height:{
       type: Number,
+    },
+    openChoose:{
+      type: Boolean,
+      default: false
+    },
+    limit:{
+      type: Number,
+      default:1
     }
   })
-  import {ref} from "vue";
+  import {computed, ref} from "vue";
   import {imageList} from "@/api/imageClass.js";
   import {deleteImages,updateImage} from "@/api/image.js";
   import {showMsg,showMessageboxPrompt} from "@/composables/utill.js";
+  import {showMessage} from "@/composables/utill.js";
   //메뉴클릭되였는지 여부체크
   const activeClass = ref(0);
   const loding =ref(false);
@@ -39,7 +49,10 @@
         limit:limitPage.value,
      };
      imageList(data).then((res)=>{
-        images.value = res.list;
+        images.value = res.list.map(item=>{
+             item.checked = false;
+             return item;
+        });
         totalPage.value = res.total;
      }).finally(()=>{
        loding.value = false;
@@ -70,8 +83,32 @@
     })
   }
 
+
+  const emit = defineEmits([
+      "imgChecked"
+  ])
+  //이미지 체크부분
+  const imgUrlChecks = computed({
+      get(){
+         return images.value.filter(item=>item.checked)
+      },
+      set(val){
+         images.value.forEach(item=>{
+            item.checked = val;
+         })
+      }
+  });
+  const handleCheck = (item)=>{
+      if(item.checked && imgUrlChecks.value.length > props.limit){
+          item.checked = false;
+          return showMessage(`最多只能选中${props.limit}张`,"error")
+      }
+      emit('imgChecked',imgUrlChecks.value);
+  }
+
   defineExpose({
-     getImagesList
+    getImagesList,
+    imgUrlChecks
   })
 </script>
 <template>
@@ -97,7 +134,8 @@
               {{item.name}}
             </div>
             <div class="imgItem_bottom">
-               <el-button color="#626aef"  plain text @click="updateName(item)">重命名</el-button>
+              <el-checkbox style="margin-right: 15px" v-if="openChoose"  v-model="item.checked" @change="handleCheck(item)"/>
+              <el-button color="#626aef"  plain text @click="updateName(item)" >重命名</el-button>
               <el-popconfirm title="是否要删除图片？" confirmButtonText="确认" cancelButtonText="取消" @confirm="deleteImage(item.id)">
                 <template #reference>
                   <el-button color="#626aef"  plain text>删除</el-button>

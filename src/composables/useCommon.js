@@ -13,8 +13,8 @@ export function useInitTable(opt={}){
          resetSearchForm = ()=>{
              for(let key in opt.defaultSearchForm){
                  searchForm[key] = opt.defaultSearchForm[key];
-                 getData();
              }
+             getData();
          }
      }
 
