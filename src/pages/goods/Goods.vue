@@ -43,6 +43,14 @@
         },
         afterDataList:(res)=>{
           tableList.value = res.list;
+          tableList.value.forEach((item)=>{
+              item.banner = JSON.parse(item.banner);
+              item.banner = JSON.parse(item.banner);
+              item.service = JSON.parse(item.service);
+              item.service = JSON.parse(item.service);
+              item.delivery = JSON.parse(item.delivery);
+              item.delivery = JSON.parse(item.delivery);
+          })
           if(firstList.value < 2){
             deliverys.value = res.delivery;
             services.value = res.service;
@@ -96,7 +104,7 @@
           order:50,
           spec_id:"",
           phone_detail:"",
-          isShop:1,
+          isShop:"公司所属",
         },
         rules:{
           category_id:{
@@ -135,7 +143,31 @@
     //입력,선택여부 결정
     const isColor = ref(1);
     const isStorage = ref(1);
+    const statusMap = {
+      1: '合约新机',
+      2: '开封合约机',
+      3: '新专柜机',
+      4: '开封专柜机',
+      5: '二手商品',
+    };
+    const shopStatusMap = (type)=>{
+      return  statusMap[type] ?  statusMap[type] : '无符合商品';
+    }
+    //배너수정부분
+    const banner = ref({
+       banner:[]
+    })
+    const bannerDrawerRef =ref("");
+    const bannerFormRef = ref("");
+    const openBannerDrawer = ()=>{
 
+    }
+    const closeBannerDrawer = ()=>{
+
+    }
+    const updateBanner = ()=>{
+
+    }
 </script>
 <template>
     <el-card>
@@ -182,14 +214,78 @@
           <el-button type="primary" plain round>出售商品</el-button>
           <el-button type="info" plain round>暂售商品</el-button>
           <el-button type="danger">批量删除</el-button>
-          <el-button type="primary">批量上架</el-button>
-          <el-button type="info">批量下架</el-button>
        </div>
        <el-table
            :data="tableList"
            v-loading="loading"
+           style="width: 100%"
+           @selection-change=""
        >
-          <el-table-column></el-table-column>
+          <el-table-column type="selection" width="55" />
+          <el-table-column type="expand" width="50">
+              <template #default="{row}">
+                  <div>
+                    <p>商品名称: {{row.title}}</p>
+                    <p>详细名称: {{row.title1}}</p>
+                    <p>商品状态: {{shopStatusMap(row.type)}}</p>
+                    <p>市场价格: {{row.title}}</p>
+                    <p>商品价格: {{row.title}}</p>
+                  </div>
+              </template>
+          </el-table-column>
+          <el-table-column width="300" label="商品">
+              <template #default="{row}">
+                <div class="detail">
+                  <div class="detailLeft">
+                    <el-image
+                        style="width: 80px; height: 80px;"
+                        :src="row.img"
+                        :zoom-rate="1.2"
+                        :max-scale="7"
+                        :min-scale="0.2"
+                        :preview-src-list="[row.img]"
+                        show-progress
+                        fit="cover"
+                    />
+                  </div>
+                  <div class="detailRight">
+                    <p class="detailRight1">{{row.title1}}</p>
+                    <p class="detailRight2">{{row.label}}</p>
+                    <p class="detailRight3">{{shopStatusMap(row.type)}}</p>
+                  </div>
+                </div>
+              </template>
+          </el-table-column>
+          <el-table-column label="商品配置"  align="center" width="200">
+            <template #default="{row}">
+                <div>
+                  <p><el-button style="width:120px" type="primary" plain>{{row.storage}}</el-button></p>
+                  <p style="margin-top: 10px"><el-button style="width:120px" type="danger" plain>{{JSON.parse(row.color).color}}</el-button></p>
+                </div>
+            </template>
+          </el-table-column>
+         <el-table-column label="商品状态" align="center" width="200">
+             <template #default="{row}">
+                <p v-if="row.status == 1">
+                  <el-button color="#626aef">出售商品</el-button>
+                </p>
+                <p v-else>
+                  <el-button color="#626aef" disabled>下架商品</el-button>
+                </p>
+             </template>
+         </el-table-column>
+         <el-table-column label="更改状态" align="center" width="230">
+           <template #default="{row}">
+             <el-switch v-model="row.status" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0" />
+           </template>
+         </el-table-column>
+         <el-table-column label="操作" align="center">
+           <template #default="{row}">
+             <el-button @click="handleUpdate(row)" type="primary" text bg>修改</el-button>
+             <el-button type="primary" text bg>更改轮播图</el-button>
+             <el-button type="danger" text bg>删除</el-button>
+           </template>
+         </el-table-column>
        </el-table>
       <div class="pagination">
         <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
@@ -248,9 +344,11 @@
 
           <el-form-item label="商品类型" prop="type">
             <el-radio-group v-model="formData.type" size="large">
-              <el-radio-button label="新商品" :value="1" />
-              <el-radio-button label="开封商品" :value="2" />
-              <el-radio-button label="二手商品" :value="3" />
+              <el-radio-button label="新合约机" :value="1" />
+              <el-radio-button label="开封合约机" :value="2" />
+              <el-radio-button label="新专柜机" :value="3" />
+              <el-radio-button label="开封专柜机" :value="4" />
+              <el-radio-button label="二手商品" :value="5" />
             </el-radio-group>
           </el-form-item>
           <el-form-item label="商品详细">
@@ -269,22 +367,14 @@
              <CheckImg v-model="formData.banner" :limit="20" ></CheckImg>
           </el-form-item>
           <el-form-item label="市场原价">
-            <el-input v-model="formData.price3" placeholder="填写市场原价" style="width: 80%" :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+            <el-input v-model="formData.price" placeholder="填写市场原价" style="width: 80%" :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                       :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
           </el-form-item>
-          <el-form-item v-if="formData.type != 3" label="合约机价格">
+          <el-form-item label="售卖价格">
               <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                        :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price" placeholder="填写合约机新机价格" style="width: 80%" ></el-input>
+                        :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price1" placeholder="填写售卖价格" style="width: 80%" ></el-input>
           </el-form-item>
-          <el-form-item v-if="formData.type != 3" label="专卖店价格">
-            <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                      :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price1" placeholder="填写专柜新价格" style="width: 80%"></el-input>
-          </el-form-item>
-          <el-form-item v-if="formData.type == 3" label="二手价格">
-            <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                      :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price2" placeholder="填写二手价格" style="width: 80%"></el-input>
-          </el-form-item>
-          <el-form-item label="选择参数" v-if="formData.type != 3">
+          <el-form-item label="选择参数" v-if="formData.type != 5">
             <el-cascader
                 v-model="formData.spec_id"
                 :options="goodsSpecs"
@@ -335,7 +425,7 @@
             </el-select>
             <el-input v-else v-model="formData.storage" placeholder="填写内存" style="width: 300px; margin-left:15px;"> </el-input>
           </el-form-item>
-          <el-form-item label="二手说明" v-if="formData.type == 3">
+          <el-form-item label="二手说明" v-if="formData.type == 5">
             <el-input
                 v-model="formData.phone_detail"
                 maxlength="500"
@@ -346,10 +436,10 @@
                 type="textarea"
             />
           </el-form-item>
-          <el-form-item label="商品所属" v-if="formData.type == 3">
+          <el-form-item label="商品所属" v-if="formData.type == 5">
             <el-radio-group v-model="formData.isShop" size="large">
-              <el-radio-button label="公司所属" :value="1" />
-              <el-radio-button label="卖家寄托" :value="2" />
+              <el-radio-button label="公司所属" value="公司所属" />
+              <el-radio-button label="卖家寄托" value="卖家寄托" />
             </el-radio-group>
           </el-form-item>
           <el-form-item label="状态">
@@ -358,6 +448,15 @@
           <el-form-item label="排序">
             <el-input-number v-model="formData.order"/>
           </el-form-item>
+        </el-form>
+    </Drawer>
+    <Drawer ref="bannerDrawerRef" title="修改轮播图-图片" @submit="updateBanner">
+        <el-form
+            v-model="banner"
+            ref="bannerFormRef"
+            label-width="auto"
+        >
+
         </el-form>
     </Drawer>
 </template>
@@ -376,5 +475,41 @@
   display: flex;
   align-items: center;
   justify-content: start;
+}
+.detail{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    .detailRight{
+      margin-left: 15px;
+      .detailRight1{
+         color: rgb(120,120,120);
+         font-size: 12px;
+      }
+      .detailRight2{
+          height: 18px;
+          width: 80px;
+          font-size: 11px;
+          line-height: 18px;
+          background-color: #ff4949;
+          color: white;
+          text-align: center;
+          border-radius: 5px;
+          margin-top: 3px;
+          margin-bottom: 3px;
+      }
+      .detailRight3{
+          height: 18px;
+          width: 80px;
+          line-height: 18px;
+          font-size: 11px;
+          background-color: black;
+          color: #E1D200;
+          text-align: center;
+          border-radius: 5px;
+          margin-top: 3px;
+          margin-bottom: 3px;
+      }
+    }
 }
 </style>
