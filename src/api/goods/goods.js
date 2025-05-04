@@ -31,3 +31,7 @@ export function updateStatus(id,status){
 export function updateStatusAll(id,status){
     return service.post(`admin/goods/updateStatusAll`,{ids:id,status:status});
 }
+
+export function updateBanners(id,banner){
+    return service.post(`admin/goods/${id}/banner`,{banner:banner});
+}

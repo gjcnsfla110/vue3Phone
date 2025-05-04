@@ -9,7 +9,8 @@
     import Drawer from "@/components/Drawer.vue";
     import CheckImg from "@/components/CheckImg.vue";
     import {ref} from "vue";
-    import {goodsList,createGoods,deleteGoods,deleteAll,updateGoods,updateStatus,updateStatusAll} from "@/api/goods/goods.js";
+    import {showMessage} from "@/composables/utill.js";
+    import {goodsList,createGoods,deleteGoods,deleteAll,updateGoods,updateStatus,updateStatusAll,updateBanners} from "@/api/goods/goods.js";
     import {listTrees,menuListTrees,orderTrees} from "@/composables/useCommon.js";
     import useSpecData from "@/store/spec.js";
     const {storageData} = useSpecData();
@@ -155,18 +156,23 @@
     }
     //배너수정부분
     const banner = ref({
+       id:"",
        banner:[]
     })
     const bannerDrawerRef =ref("");
     const bannerFormRef = ref("");
-    const openBannerDrawer = ()=>{
-
-    }
-    const closeBannerDrawer = ()=>{
-
+    const openBannerDrawer = (row)=>{
+        banner.value = {id:row.id,banner:row.banner};
+        bannerDrawerRef.value.openDrawer();
     }
     const updateBanner = ()=>{
-
+        updateBanners(banner.value.id,banner.value.banner).then(res=>{
+          showMessage("轮播图-修改成功");
+          getData();
+          bannerDrawerRef.value.closeDrawer();
+        }).finally(()=>{
+          bannerDrawerRef.value.closeDrawer();
+        })
     }
 </script>
 <template>
@@ -282,7 +288,7 @@
          <el-table-column label="操作" align="center">
            <template #default="{row}">
              <el-button @click="handleUpdate(row)" type="primary" text bg>修改</el-button>
-             <el-button type="primary" text bg>更改轮播图</el-button>
+             <el-button @click="openBannerDrawer(row)" type="primary" text bg>更改轮播图</el-button>
              <el-button type="danger" text bg>删除</el-button>
            </template>
          </el-table-column>
@@ -456,7 +462,9 @@
             ref="bannerFormRef"
             label-width="auto"
         >
-
+            <el-form-item>
+                <CheckImg v-model="banner.banner" :limit="20"></CheckImg>
+            </el-form-item>
         </el-form>
     </Drawer>
 </template>
