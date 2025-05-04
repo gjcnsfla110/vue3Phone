@@ -6,6 +6,7 @@
   import {ref, reactive} from "vue";
   import {imageClassList, updateImageClass,deleteImageClass} from "@/api/imageClass.js";
   import {showMsg} from "@/composables/utill.js";
+
   defineProps({
     height:{
       type: Number,
