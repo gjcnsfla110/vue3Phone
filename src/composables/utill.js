@@ -113,3 +113,4 @@ export function menuListTrees(menu,allMenu){
         item.child = (listTrees(allMenu,'rule_id','child',item.id));
     })
 }
+

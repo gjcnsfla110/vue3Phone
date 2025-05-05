@@ -46,10 +46,7 @@
           tableList.value = res.list;
           tableList.value.forEach((item)=>{
               item.banner = JSON.parse(item.banner);
-              item.banner = JSON.parse(item.banner);
               item.service = JSON.parse(item.service);
-              item.service = JSON.parse(item.service);
-              item.delivery = JSON.parse(item.delivery);
               item.delivery = JSON.parse(item.delivery);
           })
           if(firstList.value < 2){
@@ -71,6 +68,8 @@
           firstList.value = firstList.value+1;
         },
         getList:goodsList,
+        updateStatus:updateStatus,
+        delete:deleteGoods
     });
     const{
       formDrawerRef,
@@ -85,7 +84,7 @@
     } = useInitFrom({
         form:{
           category_id:"",
-          model:"",
+          model:'',
           service:[],
           label:"",
           type:1,
@@ -276,20 +275,30 @@
                   <el-button color="#626aef">出售商品</el-button>
                 </p>
                 <p v-else>
-                  <el-button color="#626aef" disabled>下架商品</el-button>
+                  <el-button color="#626aef" disabled>暂销商品</el-button>
                 </p>
              </template>
          </el-table-column>
          <el-table-column label="更改状态" align="center" width="230">
            <template #default="{row}">
-             <el-switch v-model="row.status" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0" />
+             <el-switch @change="handleStatusChange(row.status,row)" v-model="row.status" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0" />
            </template>
          </el-table-column>
          <el-table-column label="操作" align="center">
            <template #default="{row}">
              <el-button @click="handleUpdate(row)" type="primary" text bg>修改</el-button>
              <el-button @click="openBannerDrawer(row)" type="primary" text bg>更改轮播图</el-button>
-             <el-button type="danger" text bg>删除</el-button>
+             <el-popconfirm
+                 confirm-button-text="确认"
+                 cancel-button-text="取消"
+                 icon-color="#626AEF"
+                 title="确定删除管理员吗？"
+                 @confirm="handleDelete(row.id)"
+             >
+               <template #reference>
+                 <el-button type="danger" text bg>删除</el-button>
+               </template>
+             </el-popconfirm>
            </template>
          </el-table-column>
        </el-table>

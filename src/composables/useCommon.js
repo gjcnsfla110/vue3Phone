@@ -219,3 +219,17 @@ export function orderTrees(menus,order='ranking'){
 
     sortTreeByRanking(menus.value);
 }
+
+export function jsonEn(jsonCode){
+    // 1. 외부 따옴표 제거
+    const cleanedStr = jsonCode.slice(1, -1);
+    const validJsonStr = cleanedStr.replace(/\\"/g, '"'); // \\\" -> "
+
+    // 2. JSON 파싱
+    try {
+        return  JSON.parse(validJsonStr);
+    } catch (e) {
+        console.error("JSON 파싱 에러:", e.message);
+        return [];
+    }
+}

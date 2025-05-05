@@ -8,16 +8,21 @@ export function goodsList(page,limit=10,query={}) {
 }
 
 export function createGoods(data) {
-      console.log(data);
+      data.banner = JSON.stringify(data.banner);
+      data.service = JSON.stringify(data.service);
+      data.delivery= JSON.stringify(data.delivery);
       return service.post(`admin/goods/create`,data);
 }
 
 export function updateGoods(id,data) {
+    data.banner = JSON.stringify(data.banner);
+    data.service = JSON.stringify(data.service);
+    data.delivery= JSON.stringify(data.delivery);
     return service.post(`admin/goods/${id}/update`,data);
 }
 
 export function deleteGoods(id){
-    return service.post(`admin/goods/delete/${id}`);
+    return service.post(`admin/goods/${id}/delete`);
 }
 
 export function deleteAll(id){
