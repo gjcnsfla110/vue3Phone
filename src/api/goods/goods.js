@@ -26,7 +26,7 @@ export function deleteGoods(id){
 }
 
 export function deleteAll(id){
-    return service.post(`admin/goods/deleteAll/`,{ids:id});
+    return service.post(`admin/goods/deleteAll`,{ids:id});
 }
 
 export function updateStatus(id,status){

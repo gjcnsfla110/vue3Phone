@@ -32,8 +32,12 @@
       total,
       limit,
       getData,
+      multipleTableRef,
       handleStatusChange,
       handleDelete,
+      handleSelectionChange,
+      handleStatusChangeAll,
+      handleDeleteAll,
     } = useInitTable({
         defaultSearchForm:{
            title1:"",
@@ -69,7 +73,9 @@
         },
         getList:goodsList,
         updateStatus:updateStatus,
-        delete:deleteGoods
+        delete:deleteGoods,
+        deleteAll:deleteAll,
+        updateStatusAll:updateStatusAll,
     });
     const{
       formDrawerRef,
@@ -218,13 +224,36 @@
           <el-button plain>全部商品</el-button>
           <el-button type="primary" plain round>出售商品</el-button>
           <el-button type="info" plain round>暂售商品</el-button>
-          <el-button type="danger">批量删除</el-button>
+           <el-popconfirm
+               confirm-button-text="确认"
+               cancel-button-text="取消"
+               icon-color="#626AEF"
+               title="确定选项商品下架吗？"
+               @confirm="handleStatusChangeAll(0)"
+           >
+             <template #reference>
+               <el-button color="#626aef" type="danger">批量下架</el-button>
+             </template>
+           </el-popconfirm>
+           <el-popconfirm
+               confirm-button-text="确认"
+               cancel-button-text="取消"
+               icon-color="#626AEF"
+               title="确定选项商品删除吗？"
+               @confirm="handleDeleteAll"
+           >
+             <template #reference>
+               <el-button type="danger">批量删除</el-button>
+             </template>
+           </el-popconfirm>
+
        </div>
        <el-table
            :data="tableList"
            v-loading="loading"
            style="width: 100%"
-           @selection-change=""
+           ref="multipleTableRef"
+           @selection-change="handleSelectionChange"
        >
           <el-table-column type="selection" width="55" />
           <el-table-column type="expand" width="50">
