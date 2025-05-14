@@ -17,6 +17,8 @@ import GoodsLabel from "@/pages/goods/goods_about/GoodsLabel.vue";
 import Model from "@/pages/goods/goods_about/Model.vue";
 import Goods from "@/pages/goods/Goods.vue";
 import GoodsService from "@/pages/goods/goods_about/GoodsService.vue";
+import UsimList from "@/pages/usim/UsimList.vue";
+import UsimCategory from "@/pages/usim/UsimCategory.vue";
 
 const routes = [
     {
@@ -164,6 +166,22 @@ const asycnRoutes = [
         component: GoodsService,
         meta:{
             title: '商品服务'
+        }
+    },
+    {
+        path:'/usim/list',
+        name: '/usim/list',
+        component: UsimList,
+        meta: {
+            title:'套餐卡列表'
+        }
+    },
+    {
+        path:'/usim/category',
+        name: '/usim/category',
+        component: UsimCategory,
+        meta: {
+            title: '套餐菜单'
         }
     }
 ];

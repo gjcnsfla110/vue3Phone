@@ -49,6 +49,14 @@ export function useInitTable(opt={}){
     }
 
     /**
+     * 멀티아이디 갖고오는 함수
+     */
+    const multiSelectionIds = ref([])
+    const handleSelectionChange = (e) => {
+        multiSelectionIds.value = e.map(o => o.id)
+    }
+    const multipleTableRef = ref(null)
+    /**
      * 데이터 삭제
      */
     const handleDelete = (id)=>{
@@ -65,6 +73,32 @@ export function useInitTable(opt={}){
     }
 
     /**
+     * 데이터 멀티 삭제
+     */
+    const handleDeleteAll=()=>{
+        loading.value = true;
+        if(multiSelectionIds.value.length == 0){
+            showMsg("请选择删除项",'error');
+            loading.value = false;
+            return false;
+        }
+        opt.deleteAll(multiSelectionIds.value).then((res)=>{
+            showMsg("选择项删除成功");
+            if(opt.deleteAllCheck && typeof opt.deleteAllCheck === 'function'){
+                opt.deleteAllCheck();
+            }
+            // 清空选中
+            if (multipleTableRef.value) {
+                multipleTableRef.value.clearSelection()
+            }
+            getData()
+        }).finally(()=>{
+            loading.value = false;
+        })
+    }
+
+
+    /**
      * 데이터 상태변화
      */
     const handleStatusChange = (status,item)=>{
@@ -77,6 +111,27 @@ export function useInitTable(opt={}){
         })
     }
 
+    /**
+     * 데이터 멀티상태변환
+     */
+    const handleStatusChangeAll = (status)=>{
+        if(multiSelectionIds.value.length == 0){
+            showMsg("请选择状态修项",'error');
+            loading.value = false;
+            return;
+        }
+        opt.updateStatusAll(multiSelectionIds.value,status).then((res)=>{
+            showMsg("选择项状态修改成功");
+            // 清空选中
+            if (multipleTableRef.value) {
+                multipleTableRef.value.clearSelection()
+            }
+            getData()
+        }).finally(()=>{
+            loading.value = false;
+        })
+    }
+
     return {
         searchForm,
         resetSearchForm,
@@ -85,9 +140,13 @@ export function useInitTable(opt={}){
         currentPage,
         total,
         limit,
+        multipleTableRef,
         getData,
         handleStatusChange,
         handleDelete,
+        handleStatusChangeAll,
+        handleDeleteAll,
+        handleSelectionChange
      }
 }
 
@@ -218,4 +277,18 @@ export function orderTrees(menus,order='ranking'){
     }
 
     sortTreeByRanking(menus.value);
+}
+
+export function jsonEn(jsonCode){
+    // 1. 외부 따옴표 제거
+    const cleanedStr = jsonCode.slice(1, -1);
+    const validJsonStr = cleanedStr.replace(/\\"/g, '"'); // \\\" -> "
+
+    // 2. JSON 파싱
+    try {
+        return  JSON.parse(validJsonStr);
+    } catch (e) {
+        console.error("JSON 파싱 에러:", e.message);
+        return [];
+    }
 }
