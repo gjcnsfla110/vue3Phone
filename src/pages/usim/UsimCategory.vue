@@ -4,10 +4,14 @@
     import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
     import {usimCategoryList,updateUsimCategory,updateHotStatus,updateCategoryStatus,deleteUsimCategory,createUsimCategory} from "@/api/usim/usimCategory.js";
     import {ref} from "vue";
+    import {menuListTrees} from "@/composables/utill.js";
+    import {Hide, View} from "@element-plus/icons-vue";
 
     const categoryList =ref([]);
+    const defaultExpandedKeys = ref([]);
     const {
       loading,
+      dataList,
       currentPage,
       total,
       limit,
@@ -16,7 +20,15 @@
       handleDelete,
     } = useInitTable({
          afterDataList:(res)=>{
-           categoryList.value = [{id:0,name:'最上级图片菜单',child:[]}].concat(listTrees(res.category,'pid','child'));
+           categoryList.value = [{id:0,name:'最上级图片菜单',child:[]}].concat(listTrees(res.list,'pid','child'));
+           menuListTrees(res.category,res.list);
+           dataList.value = res.list.map(item=>{
+             console.log(item);
+             item.child = item.child.sort((a, b) => b.ranking - a.ranking)
+             return item;
+           });
+           total.value = res.total;
+           defaultExpandedKeys.value = res.category.map(item=>item.id);
          },
          getList:usimCategoryList,
          delete:deleteUsimCategory,
@@ -55,15 +67,80 @@
         },
         update:updateUsimCategory,
         create:createUsimCategory,
+        getDataList:getData
     });
+    getData();
+    const childCreate = (id)=>{
+
+    }
 </script>
 
 <template>
     <el-card>
        <ListHeader @create="handleCreate"></ListHeader>
-       <el-table>
+      <el-tree
+          :default-expanded-keys="defaultExpandedKeys"
+          node-key="id"
+          :data="dataList"
+          :props="{label: 'name',children: 'child'}"
+      >
+        <template #default="{node,data}" >
+          <div class="custom-tree-node" @click.stop>
+            <div style="display: flex;align-items: center;">
+              <el-tag type="primary" style="margin-right: 13px">菜单</el-tag>
+              <el-icon v-if="data.icon" style="margin-right: 10px;">
+                <component :is="data.icon"/>
+              </el-icon>
+              <span>{{ data.name }}</span>
+            </div>
+            <div>
+              <el-switch
+                  v-model="data.hot"
+                  inline-prompt
+                  size="large"
+                  style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949; margin-right: 30px"
+                  active-text="- 热门菜单 -"
+                  inactive-text="- 正常菜单 -"
+                  :active-value="1" :inactive-value="0"
+              />
+              <el-switch
+                  v-model="data.status"
+                  :active-action-icon="View"
+                  :inactive-action-icon="Hide"
+                  :active-value="1" :inactive-value="0"
+                  @change="handleStatusChange(data.status,data)"
+              />
+              <el-button
+                  type="info"
+                  text
+                  style="margin-left: 18px"
+                  @click="handleUpdate(data)"
+              >
+                修改
+              </el-button>
+              <el-button
+                  type="primary"
+                  text
+                  @click="childCreate(data.id)"
+              >
+                添加
+              </el-button>
 
-       </el-table>
+              <el-popconfirm title="是否要删除该记录？" confirmButtonText="确认" cancelButtonText="取消"  @confirm="handleDelete(data.id)">
+                <template #reference>
+                  <el-button
+                      type="danger"
+                      text
+                  >
+                    删除
+                  </el-button>
+                </template>
+              </el-popconfirm>
+
+            </div>
+          </div>
+        </template>
+      </el-tree>
       <div style="display: flex;align-items: center; justify-content: center; margin: 10px 0;">
         <el-pagination background layout="prev, pager, next"  v-model:page-size="limit"  v-model:current-page="currentPage" :total="total" />
       </div>
