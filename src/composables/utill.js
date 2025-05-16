@@ -108,9 +108,9 @@ export function selectMenu(menu){
 }
 
 
-export function menuListTrees(menu,allMenu){
+export function menuListTrees(menu,allMenu,pid='rule_id'){
     menu.forEach(item=>{
-        item.child = (listTrees(allMenu,'rule_id','child',item.id));
+        item.child = (listTrees(allMenu,pid,'child',item.id));
     })
 }
 
