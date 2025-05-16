@@ -1,5 +1,5 @@
 <script setup>
-  import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
+import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
   import ListHeader from "@/components/ListHeader.vue";
   import Drawer from "@/components/Drawer.vue";
   import {createUsim,updateUsim,updateStatus,updateHot,deleteUsim,getUsimList} from "@/api/usim/usimList.js";
@@ -7,6 +7,7 @@
   import Search from "@/components/Search.vue";
   import SearchItem from "@/components/SearchItem.vue";
   const firstList = ref(1);
+  const categoryList = ref([]);
   const {
     searchForm,
     resetSearchForm,
@@ -28,13 +29,19 @@
         title:"",
         category_id:"",
         mobile:"",
+        isCheck:1
      },
      getList:getUsimList,
      delete:deleteUsim,
      updateStatus:updateStatus,
      changeHot:updateHot,
      afterDataList(res){
-
+       dataList.value = res.list;
+       if(firstList.value < 2){
+         categoryList.value = listTrees(res.category,'pid','child');
+       }
+       searchForm.isCheck= firstList.value+1;
+       firstList.value = firstList.value+1;
      }
   });
 
@@ -121,6 +128,8 @@
     }
 
   });
+
+  getData();
 </script>
 <template>
    <el-card shadow="always" v-loading="loading">
@@ -151,7 +160,11 @@
          </SearchItem>
        </template>
      </Search>
-      <el-table>
+      <el-table
+          :data="dataList"
+          v-loading="loading"
+          style="width: 100%"
+      >
 
       </el-table>
      <div class="bottomPage">
@@ -168,7 +181,7 @@
         <el-form-item label="上级菜单" prop="category_id">
           <el-cascader
               v-model="formData.category_id"
-              :options="[]"
+              :options="categoryList"
               :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
               placeholder="请选择上级菜单"
           />
