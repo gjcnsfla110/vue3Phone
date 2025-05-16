@@ -18,12 +18,12 @@
       getData,
       handleStatusChange,
       handleDelete,
+      changeHot,
     } = useInitTable({
          afterDataList:(res)=>{
            categoryList.value = [{id:0,name:'最上级图片菜单',child:[]}].concat(listTrees(res.list,'pid','child'));
-           menuListTrees(res.category,res.list);
-           dataList.value = res.list.map(item=>{
-             console.log(item);
+           menuListTrees(res.category,res.list,'pid');
+           dataList.value = res.category.map(item=>{
              item.child = item.child.sort((a, b) => b.ranking - a.ranking)
              return item;
            });
@@ -34,6 +34,7 @@
          delete:deleteUsimCategory,
          updateStatus:updateCategoryStatus,
          updateHot:updateHotStatus,
+         changeHot:updateHotStatus
     });
     const {
       formDrawerRef,
@@ -71,7 +72,9 @@
     });
     getData();
     const childCreate = (id)=>{
-
+        handleCreate();
+        formData.pid = id;
+        formData.status = 1;
     }
 </script>
 
@@ -83,6 +86,7 @@
           node-key="id"
           :data="dataList"
           :props="{label: 'name',children: 'child'}"
+          v-loading="loading"
       >
         <template #default="{node,data}" >
           <div class="custom-tree-node" @click.stop>
@@ -98,10 +102,11 @@
                   v-model="data.hot"
                   inline-prompt
                   size="large"
-                  style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949; margin-right: 30px"
+                  style="--el-switch-on-color: #ff4949 ; --el-switch-off-color:#13ce66; margin-right: 30px"
                   active-text="- 热门菜单 -"
                   inactive-text="- 正常菜单 -"
                   :active-value="1" :inactive-value="0"
+                  @change="changeHot(data.hot,data)"
               />
               <el-switch
                   v-model="data.status"

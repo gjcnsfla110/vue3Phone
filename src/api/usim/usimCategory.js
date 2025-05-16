@@ -23,6 +23,6 @@ export function updateCategoryStatus(id,status){
     return service.post(`/admin/usimCategory/${id}/updateStatus`,{status});
 }
 
-export function updateHotStatus(id,status){
-    return service.post(`/admin/usimCategory/${id}/updateHot`,{status});
+export function updateHotStatus(id,hot){
+    return service.post(`/admin/usimCategory/${id}/updateHot`,{hot});
 }

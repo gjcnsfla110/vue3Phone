@@ -131,6 +131,12 @@ export function useInitTable(opt={}){
             loading.value = false;
         })
     }
+    const changeHot = (hot,item)=>{
+        opt.changeHot(item.id,hot).then((res)=>{
+            showMsg("状态修改成功");
+            item.hot = hot;
+        })
+    }
 
     return {
         searchForm,
@@ -146,7 +152,8 @@ export function useInitTable(opt={}){
         handleDelete,
         handleStatusChangeAll,
         handleDeleteAll,
-        handleSelectionChange
+        handleSelectionChange,
+        changeHot
      }
 }
 
