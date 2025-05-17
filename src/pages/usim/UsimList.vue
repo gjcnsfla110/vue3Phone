@@ -8,6 +8,7 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
   import SearchItem from "@/components/SearchItem.vue";
   const firstList = ref(1);
   const categoryList = ref([]);
+  const categorys = ref([]);
   const {
     searchForm,
     resetSearchForm,
@@ -39,6 +40,7 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
        dataList.value = res.list;
        if(firstList.value < 2){
          categoryList.value = listTrees(res.category,'pid','child');
+         categorys.value = res.category;
        }
        searchForm.isCheck= firstList.value+1;
        firstList.value = firstList.value+1;
@@ -62,7 +64,7 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
     form:{
        'category_id':"",
        'title':"",
-       'details':"",
+       'detail':"",
        'mobile':1,
        'price':"",
        'data':"",
@@ -85,7 +87,7 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
         message:"请填写套餐名称",
         trigger:"blur"
       },
-      'details':{
+      'detail':{
         required: true,
         message:"请填写套餐介绍",
         trigger:"blur"
@@ -128,21 +130,25 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
     }
 
   });
-
   getData();
+
+  const categoryName = (checkId)=>{
+      return categoryList.value.find(item => item.id == categorys.value.find(item => item.id == checkId)?.pid)?.name
+             ? categoryList.value.find(item => item.id == categorys.value.find(item => item.id == checkId)?.pid)?.name : "无";
+  }
 </script>
 <template>
    <el-card shadow="always" v-loading="loading">
       <ListHeader @create="handleCreate" @refresh="getData" />
      <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
        <search-item label="套餐标题">
-         <el-input v-model="searchForm.title1" placeholder="填写详细标题"></el-input>
+         <el-input v-model="searchForm.title" placeholder="填写详细标题"></el-input>
        </search-item>
        <template #show>
          <SearchItem label="套餐分类">
            <el-cascader
                v-model="searchForm.category_id"
-               :options="[]"
+               :options="categoryList"
                :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
                placeholder="请选择套餐分类"
                style="width: 330px"
@@ -163,9 +169,42 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
       <el-table
           :data="dataList"
           v-loading="loading"
-          style="width: 100%"
+          style="width: 100%; margin-top: 30px"
       >
+         <el-table-column label="套餐名称" align="center" width="380">
+           <template #default="{row}">
+             <p style="margin:8px 0; font-size:15px; color:rgb(160,160,160);">{{row.title}}</p>
+             <el-button v-if="row.mobile == 1" type="danger" size="small" round>LG-通信社</el-button>
+             <el-button v-else-if="row.mobile == 2" type="success" size="small" round>KT-通信社</el-button>
+             <el-button v-else-if="row.mobile == 3" type="primary" size="small" round>SK-通信社</el-button>
+           </template>
+         </el-table-column>
+         <el-table-column label="套餐类型" align="center" width="180">
+           <template #default="{row}">
+             <el-button color="#626aef" disabled plain>
+                {{categoryName(row.category_id)}}
+             </el-button>
+           </template>
+         </el-table-column>
+         <el-table-column label="热门套餐" align="center" width="180">
+           <template #default="{row}">
+             <el-switch
+                 v-model="row.hot"
+                 inline-prompt
+                 style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66"
+                 active-text="HoT"
+                 inactive-text="N"
+                 :active-value="1"
+                 :inactive-value="0"
+                 size="large"
+             />
+           </template>
+         </el-table-column>
+        <el-table-column label="其他" align="center">
+          <template #default="{row}">
 
+          </template>
+        </el-table-column>
       </el-table>
      <div class="bottomPage">
        <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" @change="getData" />
@@ -194,11 +233,11 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
           </el-radio-group>
         </el-form-item>
         <el-form-item label="套餐名称" prop="title">
-           <el-input style="width: 600px" v-model="formData.name" placeholder="请填写套餐名称"></el-input>
+           <el-input style="width: 600px" v-model="formData.title" placeholder="请填写套餐名称"></el-input>
         </el-form-item>
-        <el-form-item label="套餐介绍" prop="details">
+        <el-form-item label="套餐介绍" prop="detail">
           <el-input
-              v-model="formData.details"
+              v-model="formData.detail"
               style="width: 600px"
               :rows="8"
               type="textarea"
@@ -208,7 +247,8 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
           />
         </el-form-item>
         <el-form-item label="套餐价格" prop="price">
-           <el-input v-model="formData.price" placeholder="填写套餐价格" style="width: 600px"></el-input>
+          <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                    :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price" placeholder="填写售卖价格" style="width:600px" ></el-input>
         </el-form-item>
         <el-form-item label="上网流量" prop="data">
           <el-input
@@ -239,6 +279,17 @@ import {useInitTable, useInitFrom, listTrees} from "@/composables/useCommon.js";
               :rows="3"
               type="textarea"
               placeholder="请填写套餐信息量"
+              show-word-limit
+              maxlength="300"
+          />
+        </el-form-item>
+        <el-form-item label="附加服务" prop="other">
+          <el-input
+              v-model="formData.other"
+              style="width: 600px"
+              :rows="3"
+              type="textarea"
+              placeholder="请填写套餐附加服务信息"
               show-word-limit
               maxlength="300"
           />
