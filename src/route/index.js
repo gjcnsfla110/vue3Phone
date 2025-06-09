@@ -19,6 +19,15 @@ import Goods from "@/pages/goods/Goods.vue";
 import GoodsService from "@/pages/goods/goods_about/GoodsService.vue";
 import UsimList from "@/pages/usim/UsimList.vue";
 import UsimCategory from "@/pages/usim/UsimCategory.vue";
+import CreditCard from "@/pages/phone/CreditCard.vue";
+import PhoneCategory from "@/pages/phone/PhoneCategory.vue";
+import PhoneList from "@/pages/phone/PhoneList.vue";
+import PhonePlan from "@/pages/phone/PhonePlan.vue";
+import SideCategory from "@/pages/phone/SideCategory.vue";
+import MainPage from "@/pages/main/MainPage.vue";
+import SubPage from "@/pages/main/SubPage.vue";
+import PageItem from "@/pages/main/PageItem.vue";
+import Banner from "@/pages/main/Banner.vue";
 
 const routes = [
     {
@@ -182,6 +191,78 @@ const asycnRoutes = [
         component: UsimCategory,
         meta: {
             title: '套餐菜单'
+        }
+    },
+    {
+        path:'/phone/list',
+        name: '/phone/list',
+        component: PhoneList,
+        meta: {
+            title: "合约机列表"
+        }
+    },
+    {
+        path:'/phone/category',
+        name: '/phone/category',
+        component: PhoneCategory,
+        meta: {
+            title:'合约机菜单'
+        }
+    },
+    {
+        path:'/credit/card',
+        name: '/credit/card',
+        component: CreditCard,
+        meta: {
+            title:"信用卡优惠"
+        }
+    },
+    {
+        path:'/phone/plan',
+        name: '/phone/plan',
+        component: PhonePlan,
+        meta: {
+            title:"合约机套餐"
+        }
+    },
+    {
+        path:'/phone/sideMenu',
+        name: '/phone/sideMenu',
+        component: SideCategory,
+        meta: {
+            title:'副菜单'
+        }
+    },
+    {
+        path:'/main/page',
+        name: '/main/page',
+        component: MainPage,
+        meta:{
+            title:"首页设置"
+        }
+    },
+    {
+        path:'/main/subPage',
+        name: '/main/subPage',
+        component: SubPage,
+        meta:{
+            title:"首页副菜单"
+        }
+    },
+    {
+        path:'/main/banner',
+        name: '/main/banner',
+        component: Banner,
+        meta:{
+            title:"轮播图"
+        }
+    },
+    {
+        path:'/main/pageItems',
+        name: '/main/pageItems',
+        component: PageItem,
+        meta:{
+            title:"页面详细"
         }
     }
 ];

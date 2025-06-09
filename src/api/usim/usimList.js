@@ -27,3 +27,7 @@ export function updateStatus(id,status){
 export function updateHot(id,hot){
     return service.post(`/admin/usim/${id}/updateHot`,{hot});
 }
+
+export function oneDetail(id){
+    return service.post(`/admin/usim/item/detail`,{id});
+}

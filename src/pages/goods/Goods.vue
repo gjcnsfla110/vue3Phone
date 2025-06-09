@@ -85,7 +85,6 @@ const{
   formTitle,
   handleCreate,
   handleUpdate,
-  resetFormData,
   handleSubmit
 } = useInitFrom({
   form:{
