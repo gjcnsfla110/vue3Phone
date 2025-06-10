@@ -36,7 +36,8 @@
          name:"",
          img:"",
          label:"",
-         label_type:0,
+         label_type:'0',
+         label_position:1,
          ranking:50,
          status:1,
       },
@@ -91,14 +92,21 @@
           </el-form-item>
           <el-form-item label="选择标题模版">
              <el-radio-group v-model="formData.label_type">
-               <el-radio-button :value="0" label="无"></el-radio-button>
-               <el-radio-button :value="" label="新品"></el-radio-button>
-               <el-radio-button :value="2" label="热卖"></el-radio-button>
-               <el-radio-button :value="3" label="销量高"></el-radio-button>
-               <el-radio-button :value="4" label="打折"></el-radio-button>
-               <el-radio-button :value="5" label="特卖"></el-radio-button>
-               <el-radio-button :value="6" label="性价比"></el-radio-button>
+               <el-radio-button value="0" label="无"></el-radio-button>
+               <el-radio-button value="#206EF3" label="新品"></el-radio-button>
+               <el-radio-button value="#C90101" label="热卖"></el-radio-button>
+               <el-radio-button value="#FFD603" label="销量高"></el-radio-button>
+               <el-radio-button value="#E80000" label="打折"></el-radio-button>
+               <el-radio-button value="#FF012C" label="特卖"></el-radio-button>
+               <el-radio-button value="#01F3EB" label="性价比"></el-radio-button>
              </el-radio-group>
+          </el-form-item>
+          <el-form-item label="选择标题模版">
+            <el-radio-group v-model="formData.label_position">
+              <el-radio-button :value="1" label="上部"></el-radio-button>
+              <el-radio-button :value="2" label="中部"></el-radio-button>
+              <el-radio-button :value="3" label="下部"></el-radio-button>
+            </el-radio-group>
           </el-form-item>
           <el-form-item label="状态">
             <el-switch v-model="formData.status" active-text="正常" inactive-text="隐藏"  :active-value="1" :inactive-value="0"/>
