@@ -28,6 +28,9 @@ import MainPage from "@/pages/main/MainPage.vue";
 import SubPage from "@/pages/main/SubPage.vue";
 import PageItem from "@/pages/main/PageItem.vue";
 import Banner from "@/pages/main/Banner.vue";
+import Plan from "@/pages/phone/Plan.vue";
+import PlanCategory from "@/pages/phone/PlanCategory.vue";
+
 
 const routes = [
     {
@@ -231,6 +234,22 @@ const asycnRoutes = [
         component: SideCategory,
         meta: {
             title:'副菜单'
+        }
+    },
+    {
+       path:"/phone/plan",
+       name: '/phone/plan',
+       component: Plan,
+        meta:{
+           title:"套餐"
+        }
+    },
+    {
+        path:'/phone/planCategory',
+        name: '/phone/planCategory',
+        component: PlanCategory,
+        meta:{
+            title:'套餐菜单'
         }
     },
     {
