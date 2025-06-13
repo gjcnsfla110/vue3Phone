@@ -17,14 +17,9 @@ const {
   currentPage,
   total,
   limit,
-  multipleTableRef,
   getData,
   handleStatusChange,
   handleDelete,
-  handleStatusChangeAll,
-  handleDeleteAll,
-  handleSelectionChange,
-  changeHot
 } = useInitTable({
   defaultSearchForm:{
     title:"",

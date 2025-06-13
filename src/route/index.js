@@ -221,8 +221,8 @@ const asycnRoutes = [
         }
     },
     {
-        path:'/phone/plan',
-        name: '/phone/plan',
+        path:'/phone/phonePlan',
+        name: '/phone/phonePlan',
         component: PhonePlan,
         meta: {
             title:"合约机套餐"
