@@ -15,6 +15,9 @@ const {
   handleSelectionChange,
   changeHot
 } = useInitTable({
+  afterDataList:(res)=>{
+
+  },
   getList: planCategoryList,
   updateStatus:updatePlanCategoryStatus,
   delete:deletePlanCategory,
@@ -63,7 +66,7 @@ const {
       v-loading="loading"
       :data="dataList"
     >
-
+        <el-table-column></el-table-column>
     </el-table>
     <div style="display: flex;align-items: center; justify-content: center; margin: 10px 0;">
       <el-pagination background layout="prev, pager, next"  v-model:page-size="limit"  v-model:current-page="currentPage" :total="total" />
@@ -78,10 +81,13 @@ const {
       <el-form-item label="上级菜单" prop="pid">
         <el-cascader
             v-model="formData.pid"
-            :options="menus"
+            :options="[]"
             :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
             placeholder="请选择上级菜单"
         />
+      </el-form-item>
+      <el-form-item label="名称" prop="name">
+
       </el-form-item>
     </el-form>
   </Drawer>
