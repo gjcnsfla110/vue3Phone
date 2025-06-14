@@ -23,10 +23,6 @@ export function updateStatus(id,status){
     return service.post(`admin/phone/${id}/updateStatus`,{status});
 }
 
-export function updateHot(id,hot){
-    return service.post(`admin/phone/${id}/updateHot`,{hot})
-}
-
 export function itemDetail(id){
     return service.post(`admin/phone/item`,{id:id});
 }
