@@ -22,7 +22,6 @@ import UsimCategory from "@/pages/usim/UsimCategory.vue";
 import CreditCard from "@/pages/phone/CreditCard.vue";
 import PhoneCategory from "@/pages/phone/PhoneCategory.vue";
 import PhoneList from "@/pages/phone/PhoneList.vue";
-import PhonePlan from "@/pages/phone/PhonePlan.vue";
 import SideCategory from "@/pages/phone/SideCategory.vue";
 import MainPage from "@/pages/main/MainPage.vue";
 import SubPage from "@/pages/main/SubPage.vue";
@@ -218,14 +217,6 @@ const asycnRoutes = [
         component: CreditCard,
         meta: {
             title:"信用卡优惠"
-        }
-    },
-    {
-        path:'/phone/phonePlan',
-        name: '/phone/phonePlan',
-        component: PhonePlan,
-        meta: {
-            title:"合约机套餐"
         }
     },
     {

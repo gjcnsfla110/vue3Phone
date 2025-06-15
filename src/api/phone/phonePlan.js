@@ -1,7 +1,7 @@
 import service from "@/axios.js";
 
-export function phonePlanList(page,limit=10) {
-    return service.get(`/admin/phone/list?page=${page}&limit=${limit}`);
+export function phonePlanList(id) {
+    return service.get(`/admin/phone/list`);
 }
 
 export function createPhonePlan(data) {

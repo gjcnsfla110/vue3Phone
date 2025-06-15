@@ -4,25 +4,33 @@ import {queryUrl} from "@/composables/utill.js";
 export function getPhoneList(page,limit,query={}) {
     let q = queryUrl(query);
     let is = q ? '&':'?';
-    return service.get(`/admin/phone/${page}/list${q}${is}limit=${limit}`);
+    return service.get(`/admin/phoneList/${page}/list${q}${is}limit=${limit}`);
 }
 
 export function createPhone(data) {
-    return service.post(`admin/phone/create`,data);
+    data.banner = JSON.stringify(data.banner);
+    return service.post(`admin/phoneList/create`,data);
 }
 
 export function updatePhone(id,data) {
-    return service.post(`admin/phone/${id}/update`,data);
+    data.banner = JSON.stringify(data.banner);
+    return service.post(`admin/phoneList/${id}/update`,data);
 }
 
 export function deletePhone(id){
-    return service.delete(`admin/phone/${id}/delete`);
+    return service.post(`admin/phoneList/${id}/delete`);
 }
 
 export function updateStatus(id,status){
-    return service.post(`admin/phone/${id}/updateStatus`,{status});
+    return service.post(`admin/phoneList/${id}/updateStatus`,{status});
 }
 
 export function itemDetail(id){
-    return service.post(`admin/phone/item`,{id:id});
+    return service.post(`admin/phoneList/item`,{id:id});
+}
+
+export function updateBanners(id,banner){
+    banner = JSON.stringify(banner);
+    console.log(banner);
+    return service.post(`admin/phoneList/${id}/updateBanner`,{banner:banner});
 }
