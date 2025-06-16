@@ -158,8 +158,12 @@
   //----------------------------------------------아래부분은 요금제정보 전체 부분입니다-------------------------------------------------------------------------------//
   //dialong ref 입니다
   const dialongRef = ref("");
+  const planLength = ref(3);
+  const plans = ref(Array.from({length:planLength}),()=>({agreement_id:"",title:"",detail:"",price:"",sale_price:"",ranking:50}));
+  const agreementId = ref("");
   const createPlan = (id)=>{
       dialongRef.value.openDialog();
+      agreementId.value=id;
   }
 </script>
 
@@ -341,7 +345,12 @@
     </el-form>
   </Drawer>
   <Dialong ref="dialongRef" title="话费套餐" @submit="">
-
+    <h1 style="text-align: center;margin-bottom: 30px; font-size: 20px; color: rgb(60,60,60);">合 约 机 套 餐</h1>
+     <el-card style="padding: 50px">
+          <div>
+            <span style="margin-right: 30px">套餐 : </span><el-input style="width: 300px"></el-input>
+          </div>
+     </el-card>
   </Dialong>
 </template>
 
