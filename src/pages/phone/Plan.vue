@@ -18,8 +18,6 @@ const {
   getData,
   handleStatusChange,
   handleDelete,
-  handleSelectionChange,
-  changeHot
 } = useInitTable({
   defaultSearchForm:{
     category_id:""
@@ -86,6 +84,11 @@ function formatCurrency(value) {
   // 천 단위 쉼표 추가 및 화폐 기호($) 추가
   return `$ ${number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 }
+//요금제 카테고리이름 표시 함수
+const categoryName = (id)=>{
+    let name =categoryList.value.filter(item=> item.id == id);
+    return name[0].name;
+}
 </script>
 
 <template>
@@ -110,8 +113,13 @@ function formatCurrency(value) {
     <el-table
     v-loading="loading"
     :data="dataList">
-       <el-table-column label="套餐名称" prop="title" width="380">
+       <el-table-column label="套餐名称" prop="title" width="300">
        </el-table-column>
+      <el-table-column label="通信社"  width="100" align="center">
+        <template #default="{row}">
+            {{categoryName(row.category_id)}}
+        </template>
+      </el-table-column>
       <el-table-column label="价格"  width="200" align="center">
         <template #default="{row}">
            {{formatCurrency(row.price)}}원

@@ -3,11 +3,12 @@
   import Drawer from "@/components/Drawer.vue";
   import Dialong from "@/components/Dialong.vue";
   import {getPhoneList,createPhone,updatePhone,updateStatus,itemDetail,deletePhone,updateBanners} from "@/api/phone/phoneList.js";
+  import {phonePlanList,createPhonePlan,updatePhonePlan,updatePhonePlanStatus,deletePhonePlan} from "@/api/phone/phonePlan.js";
   import Search from "@/components/Search.vue";
   import SearchItem from "@/components/SearchItem.vue";
   import CheckImg from "@/components/CheckImg.vue";
   import ListHeader from "@/components/ListHeader.vue";
-  import {ref} from "vue";
+  import {onMounted, ref} from "vue";
   import {listTrees} from "@/composables/utill.js";
   import {showMessage} from "@/composables/utill.js";
 
@@ -21,6 +22,8 @@
   const categorys = ref([]);
   //sideCategory 데이터
   const sideCategory = ref([]);
+  //planCategory 데이터
+  const planCategorys = ref([]);
   const {
     searchForm,
     resetSearchForm,
@@ -45,6 +48,7 @@
         total.value = res.total;
         categorys.value = listTrees(res.categorys,'pid','child');
         sideCategory.value = res.sideCategorys;
+        planCategorys.value = res.planCategorys;
     },
     getList: getPhoneList,
     updateStatus:updateStatus,
@@ -63,6 +67,7 @@
   } = useInitFrom({
     form:{
       sideCategory_id:"",
+      planCategory_id:"",
       title:"",
       content:"",
       color:"",
@@ -78,6 +83,11 @@
       sideCategory_id:{
         required: true,
         message:"选择菜单",
+        trigger:"change"
+      },
+      planCategory_id:{
+        required: true,
+        message:"选择套餐菜单",
         trigger:"change"
       },
       title:{
@@ -158,12 +168,15 @@
   //----------------------------------------------아래부분은 요금제정보 전체 부분입니다-------------------------------------------------------------------------------//
   //dialong ref 입니다
   const dialongRef = ref("");
-  const planLength = ref(3);
-  const plans = ref(Array.from({length:planLength}),()=>({agreement_id:"",title:"",detail:"",price:"",sale_price:"",ranking:50}));
+  const plans = ref(Array.from({length:30}),()=>({agreement_id:"",title:"",detail:"",price:"",sale_price:"",ranking:50}));
   const agreementId = ref("");
-  const createPlan = (id)=>{
+  const createPlan = (id,planCategory_id)=>{
       dialongRef.value.openDialog();
       agreementId.value=id;
+      phonePlanList(planCategory_id).then(res=>{
+          plans.value = res.list;
+          plans.value = plans.value.filter((item)=>{ item.category_id && item.title && item.detail && item.price && item.sale_price});
+      })
   }
 </script>
 
@@ -239,7 +252,7 @@
       </el-table-column>
       <el-table-column label="话费套餐" align="center" width="200" >
         <template #default="{row}">
-           <el-button type="warning" @click="createPlan(row.id)">套餐</el-button>
+           <el-button type="warning" @click="createPlan(row.id,row.planCategory_id)">套餐</el-button>
         </template>
       </el-table-column>
       <el-table-column label="设置" align="center">
@@ -283,11 +296,26 @@
          <el-select
              v-model="formData.sideCategory_id"
              clearable
-             placeholder="请选择标签"
+             placeholder="请选择菜单"
              style="width: 300px"
          >
            <el-option
                v-for="item in formSideCategory"
+               :key="item.id"
+               :label="item.name"
+               :value="item.id"
+           />
+         </el-select>
+       </el-form-item>
+       <el-form-item label="话费套餐" prop="planCategory_id">
+         <el-select
+             v-model="formData.planCategory_id"
+             clearable
+             placeholder="请选择话费菜单"
+             style="width: 300px"
+         >
+           <el-option
+               v-for="item in planCategorys"
                :key="item.id"
                :label="item.name"
                :value="item.id"
@@ -347,9 +375,10 @@
   <Dialong ref="dialongRef" title="话费套餐" @submit="">
     <h1 style="text-align: center;margin-bottom: 30px; font-size: 20px; color: rgb(60,60,60);">合 约 机 套 餐</h1>
      <el-card style="padding: 50px">
-          <div>
-            <span style="margin-right: 30px">套餐 : </span><el-input style="width: 300px"></el-input>
-          </div>
+          <el-table
+          data="plans">
+              
+          </el-table>
      </el-card>
   </Dialong>
 </template>
