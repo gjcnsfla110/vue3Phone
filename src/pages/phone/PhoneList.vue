@@ -3,7 +3,7 @@
   import Drawer from "@/components/Drawer.vue";
   import Dialong from "@/components/Dialong.vue";
   import {getPhoneList,createPhone,updatePhone,updateStatus,itemDetail,deletePhone,updateBanners} from "@/api/phone/phoneList.js";
-  import {phonePlanList,createPhonePlan,updatePhonePlan,updatePhonePlanStatus,deletePhonePlan} from "@/api/phone/phonePlan.js";
+  import {phonePlanList,createPhonePlan,updatePhonePlan,deletePhonePlan} from "@/api/phone/phonePlan.js";
   import Search from "@/components/Search.vue";
   import SearchItem from "@/components/SearchItem.vue";
   import CheckImg from "@/components/CheckImg.vue";
@@ -175,7 +175,6 @@
       agreementId.value=id;
       phonePlanList(planCategory_id).then(res=>{
           plans.value = res.list;
-          plans.value = plans.value.filter((item)=>{ item.category_id && item.title && item.detail && item.price && item.sale_price});
       })
   }
 </script>
@@ -376,8 +375,12 @@
     <h1 style="text-align: center;margin-bottom: 30px; font-size: 20px; color: rgb(60,60,60);">合 约 机 套 餐</h1>
      <el-card style="padding: 50px">
           <el-table
-          data="plans">
-              
+          :data="plans">
+              <el-table-column>
+                <template #default="{row}">
+                    
+                </template>
+              </el-table-column>
           </el-table>
      </el-card>
   </Dialong>
