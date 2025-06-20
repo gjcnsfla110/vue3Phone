@@ -376,9 +376,9 @@
      <el-card style="padding: 50px">
           <el-table
           :data="plans">
-              <el-table-column>
+              <el-table-column label="타이틀" prop="title" width="300">
                 <template #default="{row}">
-                    
+                    <el-input v-model="" disabled></el-input>
                 </template>
               </el-table-column>
           </el-table>
