@@ -168,15 +168,35 @@
   //----------------------------------------------아래부분은 요금제정보 전체 부분입니다-------------------------------------------------------------------------------//
   //dialong ref 입니다
   const dialongRef = ref("");
-  const plans = ref(Array.from({length:30}),()=>({agreement_id:"",title:"",detail:"",price:"",sale_price:"",ranking:50}));
+  const plans = ref([]);
+  const planList = ref([]);
   const agreementId = ref("");
-  const createPlan = (id,planCategory_id)=>{
+  const isCheckPlans = ref();
+  const getPlan = (id,planCategory_id)=>{
       dialongRef.value.openDialog();
       agreementId.value=id;
-      phonePlanList(planCategory_id).then(res=>{
-          plans.value = res.list;
+      if(plans.value.length === 0){
+          isCheckPlans.value=1;
+      }else {
+          isCheckPlans.value=0;
+      }
+      phonePlanList(planCategory_id,isCheckPlans.value,agreementId.value).then(res=>{
+           if(isCheckPlans.value){
+              plans.value=res.plans;
+           }
+           planList.value = res.list;
       })
   }
+
+  //-------------------------------------------------------계약폰요금제 추가---------------------------------------------------------------------------------------------------//
+  const addPlanDialong = ref();
+  const createPlan = ()=>{
+      addPlanDialong.value.openDialog();
+  }
+  const planForm = ref({
+      'agreement_id':"",
+      'title':"",
+  });
 </script>
 
 <template>
@@ -251,7 +271,7 @@
       </el-table-column>
       <el-table-column label="话费套餐" align="center" width="200" >
         <template #default="{row}">
-           <el-button type="warning" @click="createPlan(row.id,row.planCategory_id)">套餐</el-button>
+           <el-button type="warning" @click="getPlan(row.id,row.planCategory_id)">套餐</el-button>
         </template>
       </el-table-column>
       <el-table-column label="设置" align="center">
@@ -372,17 +392,19 @@
     </el-form>
   </Drawer>
   <Dialong ref="dialongRef" title="话费套餐" @submit="">
+    <el-button type="danger" @click="createPlan">添加</el-button>
     <h1 style="text-align: center;margin-bottom: 30px; font-size: 20px; color: rgb(60,60,60);">合 约 机 套 餐</h1>
      <el-card style="padding: 50px">
           <el-table
-          :data="plans">
+          :data="planList">
               <el-table-column label="타이틀" prop="title" width="300">
-                <template #default="{row}">
-
-                </template>
               </el-table-column>
           </el-table>
      </el-card>
+  </Dialong>
+
+  <Dialong ref="addPlanDialong" title="添加套餐" @submit="" width="50%" height="30%" top="15vh">
+
   </Dialong>
 </template>
 
