@@ -1,7 +1,7 @@
 import service from "@/axios.js";
 
 export function phonePlanList(categoryId,isCheck,id) {
-    return service.get(`/admin/phone/phonePlan/${categoryId}/list?isCheck=${isCheck} &&agreement_id= ${id}`);
+    return service.get(`/admin/phone/phonePlan/${categoryId}/list?isCheck=${isCheck}&&agreement_id= ${id}`);
 }
 
 export function createPhonePlan(data) {

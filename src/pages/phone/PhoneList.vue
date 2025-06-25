@@ -196,6 +196,17 @@
   const createPlan = ()=>{
       addPlanDialong.value.openDialog();
   }
+  //제일앞에 요금제를 선택시 입력되는값
+  const changePlan = ()=>{
+      let planValue = plans.value.filter(item=>item.id == planId.value);
+      if(planId.value){
+        planForm.value.title=planValue[0].title;
+      }else{
+        planForm.value.title="";
+      }
+      planForm.value.detail=planValue[0].detail;
+      planForm.value.price=planValue[0].price;
+  }
   const planFormRef = ref("");
   const planForm = ref({
       agreement_id:"",
@@ -206,9 +217,24 @@
       ranking:50
   });
   const planRules = ref({
-      "title":{
+      title:{
         required: true,
-        message:"",
+        message:"요금제명을 작성하세요",
+        trigger:"blur"
+      },
+      detail:{
+        required: true,
+        message:"요금제 소개를 작성해주세요",
+        trigger:"blur"
+      },
+      price:{
+        required: true,
+        message:"요금 가격을 입력해주세요",
+        trigger:"blur"
+      },
+      phone_sale:{
+        required: true,
+        message:"공시지원금을 입력해주세요",
         trigger:"blur"
       }
   });
@@ -431,6 +457,7 @@
                   v-model="planId"
                   placeholder="选择套餐"
                   style="width: 220px"
+                  @change="changePlan"
               >
                 <el-option
                     v-for="item in plans"
@@ -440,19 +467,19 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="요금">
+            <el-form-item label="요금" prop="title">
                 <el-input v-model="planForm.title"></el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item prop="detail">
               <el-input v-model="planForm.detail" type="textarea" style="width: 450px"
                         placeholder="요금제 소개를 작성하세요"
                         show-word-limit maxlength="2000" :rows="6" ></el-input>
             </el-form-item>
-            <el-form-item label="요금가격">
+            <el-form-item label="요금가격" prop="price">
               <el-input v-model="planForm.price" :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
                         :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
             </el-form-item>
-            <el-form-item label="공시지원금">
+            <el-form-item label="공시지원금" prop="phone_sale">
               <el-input v-model="planForm.phone_sale" :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
                         :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
             </el-form-item>
