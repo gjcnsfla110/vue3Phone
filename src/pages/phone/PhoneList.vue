@@ -183,6 +183,7 @@
       phonePlanList(planCategory_id,isCheckPlans.value,agreementId.value).then(res=>{
            if(isCheckPlans.value){
               plans.value=res.plans;
+              plans.value.unshift({id:0,title:"직접입력",detail:"",price:""});
            }
            planList.value = res.list;
       })
@@ -190,12 +191,26 @@
 
   //-------------------------------------------------------계약폰요금제 추가---------------------------------------------------------------------------------------------------//
   const addPlanDialong = ref();
+  // select 로 선택한 요금제 아이디
+  const planId = ref();
   const createPlan = ()=>{
       addPlanDialong.value.openDialog();
   }
+  const planFormRef = ref("");
   const planForm = ref({
-      'agreement_id':"",
-      'title':"",
+      agreement_id:"",
+      title:"",
+      detail:"",
+      price:"",
+      phone_sale:"",
+      ranking:50
+  });
+  const planRules = ref({
+      "title":{
+        required: true,
+        message:"",
+        trigger:"blur"
+      }
   });
 </script>
 
@@ -403,11 +418,57 @@
      </el-card>
   </Dialong>
 
-  <Dialong ref="addPlanDialong" title="添加套餐" @submit="" width="50%" height="30%" top="15vh">
-
+  <Dialong ref="addPlanDialong" title="添加套餐" @submit="" width="80%" height="30%" top="25vh">
+        <el-form
+         :model="planForm"
+         :rules="planRules"
+         ref="planFormRef"
+         :inline="true"
+         class="demo-form-inline"
+        >
+            <el-form-item>
+              <el-select
+                  v-model="planId"
+                  placeholder="选择套餐"
+                  style="width: 220px"
+              >
+                <el-option
+                    v-for="item in plans"
+                    :key="item.id"
+                    :label="item.title"
+                    :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="요금">
+                <el-input v-model="planForm.title"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-input v-model="planForm.detail" type="textarea" style="width: 450px"
+                        placeholder="요금제 소개를 작성하세요"
+                        show-word-limit maxlength="2000" :rows="6" ></el-input>
+            </el-form-item>
+            <el-form-item label="요금가격">
+              <el-input v-model="planForm.price" :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                        :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
+            </el-form-item>
+            <el-form-item label="공시지원금">
+              <el-input v-model="planForm.phone_sale" :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                        :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
+            </el-form-item>
+            <el-form-item label="우선순위">
+              <el-input-number v-model="planForm.ranking"></el-input-number>
+            </el-form-item>
+        </el-form>
   </Dialong>
 </template>
 
 <style scoped lang="scss">
+.demo-form-inline .el-input {
+  --el-input-width: 220px;
+}
 
+.demo-form-inline .el-select {
+  --el-select-width: 220px;
+}
 </style>
