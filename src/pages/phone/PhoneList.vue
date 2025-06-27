@@ -9,7 +9,7 @@
   import CheckImg from "@/components/CheckImg.vue";
   import ListHeader from "@/components/ListHeader.vue";
   import {onMounted, ref} from "vue";
-  import {listTrees} from "@/composables/utill.js";
+  import {listTrees, showMsg} from "@/composables/utill.js";
   import {showMessage} from "@/composables/utill.js";
 
   //검색시사용 선택한메인카테고리아이디
@@ -193,9 +193,6 @@
   const addPlanDialong = ref();
   // select 로 선택한 요금제 아이디
   const planId = ref();
-  const createPlan = ()=>{
-      addPlanDialong.value.openDialog();
-  }
   //제일앞에 요금제를 선택시 입력되는값
   const changePlan = ()=>{
       let planValue = plans.value.filter(item=>item.id == planId.value);
@@ -238,6 +235,50 @@
         trigger:"blur"
       }
   });
+
+  //검증 및 데이텁입력 ,업데이트 -- submit 부분
+  const submitCreatePlan = ()=>{
+    planFormRef.value.validate((valid)=>{
+      if(!valid) return;
+      let submit = editId.value ? opt.update(editId.value,body) : opt.create(body);
+      submit.then((res)=>{
+        showMsg(formTitle.value + "成功");
+        opt.getDataList(editId.value ? false : 1);
+        if(opt.resultCheck && typeof opt.resultCheck === 'function'){
+          opt.resultCheck();
+        }
+        addPlanDialong.value.closeDialog();
+      }).finally(()=>{
+        addPlanDialong.value.closeDialog();
+      })
+    });
+  }
+
+  /**
+   * 데이터 추가부분
+   */
+  const createPlan = ()=>{
+    planForm.value.agreement_id = agreementId.value;
+    addPlanDialong.value.openDialog();
+  }
+  /**
+   * 修改
+   */
+  const updatePlan = (row)=>{
+    editId.value = row.id;
+    resetFormData(row);
+    formDrawerRef.value.openDrawer();
+  }
+
+  /**
+   * 初始化form
+   * */
+  const resetFormData = (data = false)=>{
+    if(formRef.value) formRef.value.clearValidate();
+    for(const key in defaultFormData){
+      formData[key] = data[key];
+    }
+  }
 </script>
 
 <template>
@@ -432,7 +473,7 @@
       </el-form-item>
     </el-form>
   </Drawer>
-  <Dialong ref="dialongRef" title="话费套餐" @submit="">
+  <Dialong ref="dialongRef" title="话费套餐">
     <el-button type="danger" @click="createPlan">添加</el-button>
     <h1 style="text-align: center;margin-bottom: 30px; font-size: 20px; color: rgb(60,60,60);">合 约 机 套 餐</h1>
      <el-card style="padding: 50px">
@@ -444,7 +485,7 @@
      </el-card>
   </Dialong>
 
-  <Dialong ref="addPlanDialong" title="添加套餐" @submit="" width="80%" height="30%" top="25vh">
+  <Dialong ref="addPlanDialong" title="添加套餐" @submit="submitCreatePlan" width="80%" height="30%" top="25vh">
         <el-form
          :model="planForm"
          :rules="planRules"
