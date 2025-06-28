@@ -8,7 +8,7 @@
   import SearchItem from "@/components/SearchItem.vue";
   import CheckImg from "@/components/CheckImg.vue";
   import ListHeader from "@/components/ListHeader.vue";
-  import {onMounted, ref} from "vue";
+  import {onMounted, reactive, ref} from "vue";
   import {listTrees, showMsg} from "@/composables/utill.js";
   import {showMessage} from "@/composables/utill.js";
 
@@ -197,15 +197,15 @@
   const changePlan = ()=>{
       let planValue = plans.value.filter(item=>item.id == planId.value);
       if(planId.value){
-        planForm.value.title=planValue[0].title;
+        planForm.title=planValue[0].title;
       }else{
-        planForm.value.title="";
+        planForm.title="";
       }
-      planForm.value.detail=planValue[0].detail;
-      planForm.value.price=planValue[0].price;
+      planForm.detail=planValue[0].detail;
+      planForm.price=planValue[0].price;
   }
   const planFormRef = ref("");
-  const planForm = ref({
+  const planForm = reactive({
       agreement_id:"",
       title:"",
       detail:"",
@@ -213,6 +213,15 @@
       phone_sale:"",
       ranking:50
   });
+  //초기화 planForm
+  const defaultPlanForm = {
+      agreement_id:"",
+      title:"",
+      detail:"",
+      price:"",
+      phone_sale:"",
+      ranking:50
+  };
   const planRules = ref({
       title:{
         required: true,
@@ -236,17 +245,16 @@
       }
   });
 
+  //업데이트 수정 요금제 아이디
+  const updatePlanId = ref();
   //검증 및 데이텁입력 ,업데이트 -- submit 부분
   const submitCreatePlan = ()=>{
     planFormRef.value.validate((valid)=>{
       if(!valid) return;
-      let submit = editId.value ? opt.update(editId.value,body) : opt.create(body);
+      let submit = updatePlanId.value ? updatePhonePlan(updatePlanId.value,planRules.value) : createPhonePlan(planRules.value);
       submit.then((res)=>{
-        showMsg(formTitle.value + "成功");
-        opt.getDataList(editId.value ? false : 1);
-        if(opt.resultCheck && typeof opt.resultCheck === 'function'){
-          opt.resultCheck();
-        }
+        showMsg("成功");
+        phonePlanList(updatePlanId.value ? false : 1);
         addPlanDialong.value.closeDialog();
       }).finally(()=>{
         addPlanDialong.value.closeDialog();
@@ -258,25 +266,25 @@
    * 데이터 추가부분
    */
   const createPlan = ()=>{
-    planForm.value.agreement_id = agreementId.value;
+    planForm.agreement_id = agreementId.value;
     addPlanDialong.value.openDialog();
   }
   /**
    * 修改
    */
   const updatePlan = (row)=>{
-    editId.value = row.id;
+    updatePlanId.value = row.id;
     resetFormData(row);
-    formDrawerRef.value.openDrawer();
+    addPlanDialong.value.openDialog();
   }
 
   /**
    * 初始化form
    * */
   const resetFormData = (data = false)=>{
-    if(formRef.value) formRef.value.clearValidate();
-    for(const key in defaultFormData){
-      formData[key] = data[key];
+    if(planFormRef.value) planFormRef.value.clearValidate();
+    for(const key in defaultPlanForm){
+      planForm[key] = data[key];
     }
   }
 </script>
