@@ -170,8 +170,12 @@
   const dialongRef = ref("");
   const plans = ref([]);
   const planList = ref([]);
+  //계약상품아이디
   const agreementId = ref("");
-  const isCheckPlans = ref();
+  //카테고리 값 갖고와야할지 여부
+  const isCheckPlans = ref("");
+  //요금카테고리 아이디
+  const planCategoryId = ref("");
   const getPlan = (id,planCategory_id)=>{
       dialongRef.value.openDialog();
       agreementId.value=id;
@@ -180,7 +184,8 @@
       }else {
           isCheckPlans.value=0;
       }
-      phonePlanList(planCategory_id,isCheckPlans.value,agreementId.value).then(res=>{
+      planCategoryId.value = planCategory_id;
+      phonePlanList(planCategoryId.value,isCheckPlans.value,agreementId.value).then(res=>{
            if(isCheckPlans.value){
               plans.value=res.plans;
               plans.value.unshift({id:0,title:"직접입력",detail:"",price:""});
@@ -251,10 +256,16 @@
   const submitCreatePlan = ()=>{
     planFormRef.value.validate((valid)=>{
       if(!valid) return;
-      let submit = updatePlanId.value ? updatePhonePlan(updatePlanId.value,planRules.value) : createPhonePlan(planRules.value);
+      let submit = updatePlanId.value ? updatePhonePlan(updatePlanId.value,planForm) : createPhonePlan(planForm);
       submit.then((res)=>{
         showMsg("成功");
-        phonePlanList(updatePlanId.value ? false : 1);
+        phonePlanList(planCategoryId.value,isCheckPlans.value,agreementId.value).then(res=>{
+          if(isCheckPlans.value){
+            plans.value=res.plans;
+            plans.value.unshift({id:0,title:"직접입력",detail:"",price:""});
+          }
+          planList.value = res.list;
+        });
         addPlanDialong.value.closeDialog();
       }).finally(()=>{
         addPlanDialong.value.closeDialog();
@@ -266,6 +277,7 @@
    * 데이터 추가부분
    */
   const createPlan = ()=>{
+    resetFormData(defaultPlanForm);
     planForm.agreement_id = agreementId.value;
     addPlanDialong.value.openDialog();
   }
@@ -286,6 +298,34 @@
     for(const key in defaultPlanForm){
       planForm[key] = data[key];
     }
+  }
+
+  //요금제값을 소수형으로 변환시키는 방법
+  // 숫자를 한국식 포맷(232,500 또는 232,500.50)으로 변환하는 함수
+  function priceDollar(value) {
+    // 입력값이 없거나 유효하지 않으면 기본값 반환
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0';
+    }
+
+    // 숫자로 변환
+    const number = Number(value);
+
+    // 소수점 2자리로 고정
+    const formattedNumber = number.toFixed(2);
+
+    // 정수 부분과 소수 부분 분리
+    const [integerPart, decimalPart] = formattedNumber.split('.');
+
+    // 정수 부분에 세 자리마다 쉼표 추가
+    const integerWithCommas = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // 소수점이 .00이면 소수점 이하 생략, 아니면 포함
+    if (decimalPart === '00') {
+      return integerWithCommas;
+    }
+
+    return `${integerWithCommas}.${decimalPart}`;
   }
 </script>
 
@@ -487,7 +527,22 @@
      <el-card style="padding: 50px">
           <el-table
           :data="planList">
-              <el-table-column label="타이틀" prop="title" width="300">
+              <el-table-column label="요금제명" prop="title" width="300">
+              </el-table-column>
+              <el-table-column label="요금제가격" width="230" align="center">
+                <template #default="{row}">
+                  {{priceDollar(row.price)}} 원
+                </template>
+              </el-table-column>
+              <el-table-column label="공시지원금" width="230" align="center">
+                <template #default="{row}">
+                  {{priceDollar(row.phone_sale)}} 원
+                </template>
+              </el-table-column>
+              <el-table-column label="설정" align="center">
+                <template #default="{row}">
+
+                </template>
               </el-table-column>
           </el-table>
      </el-card>
