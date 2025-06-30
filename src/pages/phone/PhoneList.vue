@@ -300,6 +300,14 @@
     }
   }
 
+  const deletePlan = (id)=>{
+      deletePhonePlan(id).then((res)=>{
+        showMsg("删除成功");
+        phonePlanList(planCategoryId.value,1,agreementId.value).then(res=>{
+          planList.value = res.list;
+        })
+      })
+  }
   //요금제값을 소수형으로 변환시키는 방법
   // 숫자를 한국식 포맷(232,500 또는 232,500.50)으로 변환하는 함수
   function priceDollar(value) {
@@ -541,7 +549,18 @@
               </el-table-column>
               <el-table-column label="설정" align="center">
                 <template #default="{row}">
-
+                  <el-button @click="updatePlan(row)" type="primary" text bg>修改</el-button>
+                  <el-popconfirm
+                      confirm-button-text="确认"
+                      cancel-button-text="取消"
+                      icon-color="#626AEF"
+                      title="确定删除吗？"
+                      @confirm="deletePlan(row.id)"
+                  >
+                    <template #reference>
+                      <el-button type="danger" text bg>删除</el-button>
+                    </template>
+                  </el-popconfirm>
                 </template>
               </el-table-column>
           </el-table>
