@@ -165,7 +165,27 @@
     })
   }
 
+  /**
+   * 아래부분은 상세페이지 보여주는 부분입니다.
+   */
+  const itemDialongRef = ref("");
+  //자세히 보기 객체
+  const agreementItem = ref("");
+  const agreementPlans = ref([]);
+  //자세히보기 보여주기함수
+  const detailCloseDialong = ()=>{
+    itemDialongRef.value.closeDialog();
+  }
+  const detailPage = (id)=>{
+      itemDialongRef.value.openDialog()
+      itemDetail(id).then(res=>{
+        agreementItem.value = res.item[0];
+        agreementPlans.value = res.plans;
+        console.log(agreementItem.value);
+      })
+  };
   //----------------------------------------------아래부분은 요금제정보 전체 부분입니다-------------------------------------------------------------------------------//
+
   //dialong ref 입니다
   const dialongRef = ref("");
   const plans = ref([]);
@@ -426,7 +446,7 @@
               <el-button type="danger" text bg>删除</el-button>
             </template>
           </el-popconfirm>
-          <el-button type="success" round size="small" plain>查看详细</el-button>
+          <el-button type="success" round size="small" @click="detailPage(row.id)" plain>查看详细</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -610,6 +630,12 @@
               <el-input-number v-model="planForm.ranking"></el-input-number>
             </el-form-item>
         </el-form>
+  </Dialong>
+  <Dialong ref="itemDialongRef" title="계약상세보기" width="60%" height="60%" top="25vh" @submit="detailCloseDialong">
+      <div style="width: 100%">
+          <h3>{{agreementItem.title}}</h3>
+      </div>
+      <el-card></el-card>
   </Dialong>
 </template>
 
