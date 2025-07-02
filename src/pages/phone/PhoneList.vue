@@ -632,7 +632,7 @@
         </el-form>
   </Dialong>
   <Dialong ref="itemDialongRef" title="계약상세보기" width="60%" height="60%" top="25vh" @submit="detailCloseDialong">
-      <div style="width: 100%">
+      <div style="width: 100%; display: flex; align-items: center; justify-content: center;margin-top: 30px;margin-bottom: 20px;">
           <h3>{{agreementItem.title}}</h3>
       </div>
       <el-card></el-card>
