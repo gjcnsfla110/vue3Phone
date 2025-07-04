@@ -17,6 +17,10 @@ defineProps({
     top:{
       type: String,
       default:"5vh"
+    },
+    card:{
+      type: Boolean,
+      default:true
     }
 });
 const emit = defineEmits(["submit"]);
@@ -42,9 +46,12 @@ defineExpose({
       style="padding: 50px"
   >
     <el-container style="margin-top: 30px;margin-bottom: 50px">
-       <el-card style="width: 100%;height: 100%;">
+       <el-card style="width: 100%;height: 100%;" v-if="card">
           <slot></slot>
        </el-card>
+        <div style="width: 100%" v-else>
+           <slot></slot>
+        </div>
     </el-container>
     <template #footer>
             <span>

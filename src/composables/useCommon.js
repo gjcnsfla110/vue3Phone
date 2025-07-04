@@ -286,6 +286,35 @@ export function orderTrees(menus,order='ranking'){
     sortTreeByRanking(menus.value);
 }
 
+
+//요금제값을 소수형으로 변환시키는 방법
+// 숫자를 한국식 포맷(232,500 또는 232,500.50)으로 변환하는 함수
+export function priceDollar(value) {
+    // 입력값이 없거나 유효하지 않으면 기본값 반환
+    if (value === null || value === undefined || isNaN(value)) {
+        return '0';
+    }
+
+    // 숫자로 변환
+    const number = Number(value);
+
+    // 소수점 2자리로 고정
+    const formattedNumber = number.toFixed(2);
+
+    // 정수 부분과 소수 부분 분리
+    const [integerPart, decimalPart] = formattedNumber.split('.');
+
+    // 정수 부분에 세 자리마다 쉼표 추가
+    const integerWithCommas = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // 소수점이 .00이면 소수점 이하 생략, 아니면 포함
+    if (decimalPart === '00') {
+        return integerWithCommas;
+    }
+
+    return `${integerWithCommas}.${decimalPart}`;
+}
+
 export function jsonEn(jsonCode){
     // 1. 외부 따옴표 제거
     const cleanedStr = jsonCode.slice(1, -1);

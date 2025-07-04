@@ -1,5 +1,5 @@
 <script setup>
-  import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
+  import {useInitTable,useInitFrom,priceDollar} from "@/composables/useCommon.js";
   import Drawer from "@/components/Drawer.vue";
   import Dialong from "@/components/Dialong.vue";
   import {getPhoneList,createPhone,updatePhone,updateStatus,itemDetail,deletePhone,updateBanners} from "@/api/phone/phoneList.js";
@@ -8,7 +8,7 @@
   import SearchItem from "@/components/SearchItem.vue";
   import CheckImg from "@/components/CheckImg.vue";
   import ListHeader from "@/components/ListHeader.vue";
-  import {onMounted, reactive, ref} from "vue";
+  import {reactive, ref} from "vue";
   import {listTrees, showMsg} from "@/composables/utill.js";
   import {showMessage} from "@/composables/utill.js";
 
@@ -181,7 +181,6 @@
       itemDetail(id).then(res=>{
         agreementItem.value = res.item[0];
         agreementPlans.value = res.plans;
-        console.log(agreementItem.value);
       })
   };
   //----------------------------------------------아래부분은 요금제정보 전체 부분입니다-------------------------------------------------------------------------------//
@@ -328,33 +327,6 @@
         })
       })
   }
-  //요금제값을 소수형으로 변환시키는 방법
-  // 숫자를 한국식 포맷(232,500 또는 232,500.50)으로 변환하는 함수
-  function priceDollar(value) {
-    // 입력값이 없거나 유효하지 않으면 기본값 반환
-    if (value === null || value === undefined || isNaN(value)) {
-      return '0';
-    }
-
-    // 숫자로 변환
-    const number = Number(value);
-
-    // 소수점 2자리로 고정
-    const formattedNumber = number.toFixed(2);
-
-    // 정수 부분과 소수 부분 분리
-    const [integerPart, decimalPart] = formattedNumber.split('.');
-
-    // 정수 부분에 세 자리마다 쉼표 추가
-    const integerWithCommas = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-    // 소수점이 .00이면 소수점 이하 생략, 아니면 포함
-    if (decimalPart === '00') {
-      return integerWithCommas;
-    }
-
-    return `${integerWithCommas}.${decimalPart}`;
-  }
 </script>
 
 <template>
@@ -404,7 +376,7 @@
        <el-table-column label="价格" align="center" width="280">
           <template #default="{row}">
               <div>
-                 <p style="margin-bottom: 10px;border-bottom: 1px solid #eee;padding-bottom: 8px">价格 : {{row.price}}</p>
+                 <p style="margin-bottom: 10px;border-bottom: 1px solid #eee;padding-bottom: 8px">价格 : {{priceDollar(row.price)}} 원</p>
                  <p style="border-bottom: 1px solid #eee;padding-bottom: 8px">优惠后价格 : {{row.sale_price}}</p>
               </div>
           </template>
@@ -631,11 +603,44 @@
             </el-form-item>
         </el-form>
   </Dialong>
-  <Dialong ref="itemDialongRef" title="계약상세보기" width="60%" height="60%" top="25vh" @submit="detailCloseDialong">
-      <div style="width: 100%; display: flex; align-items: center; justify-content: center;margin-top: 30px;margin-bottom: 20px;">
-          <h3>{{agreementItem.title}}</h3>
-      </div>
-      <el-card></el-card>
+  <Dialong ref="itemDialongRef" title="계약상세보기" width="60%" height="60%" top="25vh" @submit="detailCloseDialong" :card="false">
+      <el-card style="padding: 30px">
+        <template #header>
+          <div class="card-header">
+            <h3>{{agreementItem.title}}</h3>
+          </div>
+        </template>
+        <el-card shadow="hover" style="padding: 20px">
+          <template #header><p style="font-size: 18px">제품상세내역</p></template>
+          <p><el-image style="width: 300px; height: 300px" :src="agreementItem.img" fit="cover" /></p>
+          <p style="color:rgb(150,150,150);margin-bottom: 20px; margin-top: 10px;">{{agreementItem.detail}}</p>
+          <p style="margin-bottom: 8px;color:rgb(150,150,150)"><span style="margin-right:10px;color: red;font-size: 16px; font-weight: bold">제품색상 : </span>{{agreementItem.color}}</p>
+          <p style="margin-bottom: 8px;color:rgb(150,150,150)"><span style="margin-right:10px;color:#3498db;font-size: 16px; font-weight: bold" >원가가격 : </span>{{priceDollar(agreementItem.price)}} 원</p>
+          <p style="margin-bottom: 8px;color:rgb(150,150,150)"><span style="margin-right:10px;color:blueviolet;font-size: 16px; font-weight: bold">판매가격 : </span>{{agreementItem.sale_price}}</p>
+
+        </el-card>
+        <template #footer>
+          <el-card shadow="hover" style="padding: 20px">
+            <template #header><p style="font-size: 18px">요금제내역</p></template>
+            <el-table
+                :data="agreementPlans"
+            >
+              <el-table-column label="요금제명" prop="title" width="220"> </el-table-column>
+              <el-table-column label="요금제가격" width="180" align="center">
+                <template #default="{row}">
+                  {{priceDollar(row.price)}} 원
+                </template>
+              </el-table-column>
+              <el-table-column label="공시지원금" width="180" align="center">
+                <template #default="{row}">
+                  {{priceDollar(row.phone_sale)}} 원
+                </template>
+              </el-table-column>
+              <el-table-column label="요금제소개" prop="detail" align="center"> </el-table-column>
+            </el-table>
+          </el-card>
+        </template>
+      </el-card>
   </Dialong>
 </template>
 
