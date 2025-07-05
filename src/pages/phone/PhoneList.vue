@@ -68,6 +68,7 @@
     form:{
       sideCategory_id:"",
       planCategory_id:"",
+      mobile:"",
       title:"",
       content:"",
       color:"",
@@ -88,6 +89,11 @@
       planCategory_id:{
         required: true,
         message:"选择套餐菜单",
+        trigger:"change"
+      },
+      mobile:{
+        required: true,
+        message:"选择信用卡通信社",
         trigger:"change"
       },
       title:{
@@ -470,6 +476,13 @@
                :value="item.id"
            />
          </el-select>
+       </el-form-item>
+       <el-form-item label="信用卡优惠">
+         <el-radio-group v-model="formData.mobile" size="large">
+           <el-radio-button label="LG通信社" :value="1"/>
+           <el-radio-button label="KT通信社" :value="2"/>
+           <el-radio-button label="SK通信社" :value="3"/>
+         </el-radio-group>
        </el-form-item>
        <el-form-item label="标题" prop="title" style="width: 700px">
            <el-input v-model="formData.title" placeholder="填写合约机标题"></el-input>
