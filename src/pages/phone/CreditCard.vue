@@ -3,7 +3,11 @@ import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
 import {createPlanCategory,deletePlanCategory,updatePlanCategory,updatePlanCategoryStatus,planCategoryList} from "@/api/phone/planCategory.js";
 import ListHeader from "@/components/ListHeader.vue";
 import Drawer from "@/components/Drawer.vue";
+import Search from "@/components/Search.vue";
+import SearchItem from "@/components/SearchItem.vue";
 const {
+  searchForm,
+  resetSearchForm,
   dataList,
   loading,
   currentPage,
@@ -15,6 +19,9 @@ const {
   handleSelectionChange,
   changeHot
 } = useInitTable({
+  defaultSearchForm:{
+      mobile:""
+  },
   getList: planCategoryList,
   updateStatus:updatePlanCategoryStatus,
   delete:deletePlanCategory,
@@ -62,7 +69,26 @@ const {
 <template>
   <el-card>
     <ListHeader @create="handleCreate"></ListHeader>
+    <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
+      <SearchItem label="菜单">
+        <el-select
+            v-model="searchForm.mobile"
+            clearable
+            placeholder="请选择通信社"
+            style="width: 300px"
+        >
+          <el-option
+              v-for="item in [{id:1,name:'LG'},{id:2,name:'KT'},{id:3,name:'SK'}]"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+          />
+        </el-select>
+      </SearchItem>
+    </Search>
+    <el-table>
 
+    </el-table>
     <div style="display: flex;align-items: center; justify-content: center; margin: 10px 0;">
       <el-pagination background layout="prev, pager, next"  v-model:page-size="limit"  v-model:current-page="currentPage" :total="total" />
     </div>
@@ -80,11 +106,12 @@ const {
           <el-radio-button label="SK通信社" :value="3"/>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="银行名称">
+      <el-form-item label="银行名称" prop="card_company">
           <el-input v-model="formData.card_company"></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-input v-model="formData.sale"></el-input>
+      <el-form-item label="优惠价格" prop="sale">
+        <el-input v-model="formData.sale" :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                  :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
       </el-form-item>
     </el-form>
   </Drawer>
