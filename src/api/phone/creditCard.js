@@ -1,7 +1,11 @@
 import service from "@/axios.js";
+import {id} from "element-plus/es/locale/index";
+import {queryUrl} from "@/composables/utill.js";
 
-export function creditCardList(page,limit=10) {
-    return service.get(`/admin/phone/list?page=${page}&limit=${limit}`);
+export function creditCardList(page,limit=10,query={}) {
+    let q = queryUrl(query);
+    let is = q ? '&':'?';
+    return service.get(`/admin/goods/${page}/list${q}${is}limit=${limit}`);
 }
 
 export function createCreditCard(data) {

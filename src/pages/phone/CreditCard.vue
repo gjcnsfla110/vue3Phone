@@ -20,7 +20,7 @@ const {
   changeHot
 } = useInitTable({
   defaultSearchForm:{
-      mobile:""
+    mobile:""
   },
   getList: planCategoryList,
   updateStatus:updatePlanCategoryStatus,
@@ -70,23 +70,18 @@ const {
   <el-card>
     <ListHeader @create="handleCreate"></ListHeader>
     <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
-      <SearchItem label="菜单">
-        <el-select
-            v-model="searchForm.mobile"
-            clearable
-            placeholder="请选择通信社"
-            style="width: 300px"
-        >
-          <el-option
-              v-for="item in [{id:1,name:'LG'},{id:2,name:'KT'},{id:3,name:'SK'}]"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-          />
-        </el-select>
+      <SearchItem label="主菜单">
+        <el-radio-group v-model="searchForm.mobile" size="large" fill="#6cf">
+          <el-radio-button label="LG通信社" :value="1" />
+          <el-radio-button label="KT通信社" :value="2" />
+          <el-radio-button label="SK通信社" :value="3" />
+        </el-radio-group>
       </SearchItem>
     </Search>
-    <el-table>
+    <el-table
+        :data="dataList"
+        v-loading="loading"
+    >
 
     </el-table>
     <div style="display: flex;align-items: center; justify-content: center; margin: 10px 0;">
