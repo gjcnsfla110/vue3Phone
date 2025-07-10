@@ -5,21 +5,21 @@ import {queryUrl} from "@/composables/utill.js";
 export function creditCardList(page,limit=10,query={}) {
     let q = queryUrl(query);
     let is = q ? '&':'?';
-    return service.get(`/admin/goods/${page}/list${q}${is}limit=${limit}`);
+    return service.get(`/admin/phone/creditCard/${page}/list${q}${is}limit=${limit}`);
 }
 
 export function createCreditCard(data) {
-    return service.post(`/admin/phone/create`, data);
+    return service.post(`/admin/phone/creditCard/create`, data);
 }
 
 export function updateCreditCard(id,data){
-    return service.post(`admin/goods_category/${id}/update`, data);
+    return service.post(`admin/phone/creditCard/${id}/update`, data);
 }
 
 export function updateCreditCardStatus(id,status){
-    return service.post(`admin/goods_category/${id}/updateStatus`,{status});
+    return service.post(`admin/phone/creditCard/${id}/updateStatus`,{status});
 }
 
 export function deleteCreditCard(id){
-    return service.post(`admin/goods_category/${id}/delete`);
+    return service.post(`admin/phone/creditCard/${id}/delete`);
 }
