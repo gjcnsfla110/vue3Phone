@@ -4,8 +4,13 @@ import ListHeader from "@/components/ListHeader.vue";
 import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
 import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
+import {getComponentList,createComponent,updateComponent,deleteComponent,updateStatus} from "@/api/main/component.js";
 import Drawer from "@/components/Drawer.vue";
+import {ref} from "vue";
 
+//컴포넌트이름/속하는페이지
+const pages = ref([]);
+const componentNames = ref([]);
 const {
   searchForm,
   resetSearchForm,
@@ -21,6 +26,15 @@ const {
   defaultSearchForm:{
     page_id:""
   },
+  afterDataList:(res)=>{
+      pages.value = res.pages;
+      componentNames.value = res.componentNames;
+      total.value = res.total;
+      dataList.value = res.dataList;
+  },
+  getList:getComponentList,
+  updateStatus:updateStatus,
+  delete:deleteComponent,
 })
 const {
   formDrawerRef,
@@ -48,15 +62,30 @@ const {
     banner:0,
     ranking:50,
     status:1
-  }
+  },
+  rules:{
+    page_id:{
+      required: true,
+      message:"페이지를 선택해주세요",
+      trigger:"change"
+    },
+    component:{
+      required:true,
+      message:"컴포넌트를 선택해주세요",
+      trigger:"change"
+    }
+  },
+  create:createComponent,
+  update:updateComponent,
+  getDataList:getData,
 });
-
+getData();
 </script>
 
 <template>
   <el-card>
     <ListHeader @create="handleCreate"></ListHeader>
-    <Search>
+    <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
       <SearchItem>
 
       </SearchItem>
@@ -78,25 +107,34 @@ const {
       :rules="formRules"
       ref="formRef"
       label-width="auto">
-        <el-form-item label="페이지">
-          <el-select v-model="formData.page_id" placeholder="Select" style="width: 240px">
+        <el-form-item label="페이지" prop="page_id">
+          <el-select v-model="formData.page_id" placeholder="페이지선택" style="width: 240px">
             <el-option
-                v-for="item in []"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in pages"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="컴포넌트">
-          <el-select v-model="formData.component" placeholder="Select" style="width: 240px">
+        <el-form-item label="컴포넌트" prop="component">
+          <el-select v-model="formData.component" placeholder="컴포넌트선택" style="width: 240px">
             <el-option
-                v-for="item in []"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in componentNames"
+                :key="item.id"
+                :label="item.name"
+                :value="item.name"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item>
+
+        </el-form-item>
+        <el-form-item>
+
+        </el-form-item>
+        <el-form-item>
+
         </el-form-item>
       </el-form>
   </Drawer>

@@ -1,23 +1,23 @@
 import service from "@/axios.js";
 import {queryUrl} from "@/composables/utill.js";
-export function getPageItemList(page,limit=10,query={}) {
+export function getComponentList(page,limit=10,query={}) {
     let q = queryUrl(query);
     let is = q ? '&':'?';
-    return service.get(`/admin/componentsItem/${page}/list${q}${is}limit=${limit}`);
+    return service.get(`/admin/Component/${page}/list${q}${is}limit=${limit}`);
 }
 
-export function createPageItem(data) {
-    return service.post(`admin/componentsItem/create`,data);
+export function createComponent(data) {
+    return service.post(`admin/Component/create`,data);
 }
 
-export function updatePageItem(id,data){
-    return service.post(`admin/componentsItem/${id}/update`,data);
+export function updateComponent(id,data){
+    return service.post(`admin/Component/${id}/update`,data);
 }
 
-export function deletePageItem(id){
-    return service.post(`admin/componentsItem/${id}/delete`);
+export function deleteComponent(id){
+    return service.post(`admin/Component/${id}/delete`);
 }
 
 export function updateStatus(id,status){
-    return service.post(`admin/componentsItem/${id}/updateStatus`,{status:status});
+    return service.post(`admin/Component/${id}/updateStatus`,{status:status});
 }

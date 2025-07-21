@@ -25,10 +25,11 @@ import PhoneList from "@/pages/phone/PhoneList.vue";
 import SideCategory from "@/pages/phone/SideCategory.vue";
 import MainPage from "@/pages/main/MainPage.vue";
 import SubPage from "@/pages/main/SubPage.vue";
-import PageItem from "@/pages/main/PageItem.vue";
 import Banner from "@/pages/main/Banner.vue";
 import Plan from "@/pages/phone/Plan.vue";
 import PlanCategory from "@/pages/phone/PlanCategory.vue";
+import ComponenetName from "@/pages/main/ComponenetName.vue";
+import Component from '@/pages/main/Component.vue'
 
 
 const routes = [
@@ -268,11 +269,19 @@ const asycnRoutes = [
         }
     },
     {
-        path:'/main/pageItems',
-        name: '/main/pageItems',
-        component: PageItem,
+        path:'/main/component',
+        name: '/main/component',
+        component: Component,
         meta:{
             title:"页面详细"
+        }
+    },
+    {
+        path:'/main/componentName',
+        name: '/main/componentName',
+        component: ComponenetName,
+        meta:{
+            title: '컴포넌트이름'
         }
     }
 ];
