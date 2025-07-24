@@ -8,6 +8,7 @@ import {getComponentList,createComponent,updateComponent,deleteComponent,updateS
 import Drawer from "@/components/Drawer.vue";
 import {ref} from "vue";
 import CheckImg from "@/components/CheckImg.vue";
+import Dialong from "@/components/Dialong.vue";
 
 //컴포넌트이름/속하는페이지
 const pages = ref([]);
@@ -61,6 +62,7 @@ const {
     img:"",
     top_img:"",
     banner:0,
+    item_size:"",
     ranking:50,
     status:1
   },
@@ -86,6 +88,22 @@ const {
   getDataList:getData,
 });
 getData();
+const pageName = (id)=>{
+  let name = pages.value.filter(item => id == item.id);
+  return name[0];
+}
+
+//아이템 보기
+const addItem = ref("");
+const clickItem = (id)=>{
+    addItem.value.openDialog();
+}
+
+//배너 보기
+const addBanner = ref("");
+const clickBanner = (id)=>{
+    addBanner.value.openDialog();
+}
 </script>
 
 <template>
@@ -93,15 +111,61 @@ getData();
     <ListHeader @create="handleCreate"></ListHeader>
     <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
       <SearchItem>
-
+        <el-select v-model="searchForm.page_id" placeholder="选择商品类型" style="width: 330px">
+          <el-option
+              v-for="item in pages"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+          />
+        </el-select>
       </SearchItem>
     </Search>
     <el-table
     v-loading="loading"
     :data="dataList"
     >
-       <el-table-column label="타이틀" prop="title" width="300">
+       <el-table-column label="컴포넌트" width="180" prop="component">
        </el-table-column>
+       <el-table-column label="페이지" width="180" align="center">
+         <template #default="{row}">
+           <p><span style="color: #3498db">{{pageName(row.page_id).name}}</span> - ( <span style="color: rgb(50,50,50)">{{pageName(row.page_id).page_key}}</span> )</p>
+         </template>
+       </el-table-column>
+      <el-table-column label="타이틀" width="380" prop="title" align="center">
+      </el-table-column>
+      <el-table-column label="아이템" width="230" align="center">
+        <template #default="{row}">
+          <el-button type="primary" @click="clickItem(row.id)" plain>보기</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="배너아이템" width="230" align="center">
+        <template #default="{row}">
+          <el-button v-if="row.banner" type="primary" @click="clickBanner(row.id)" plain>배너아이템</el-button>
+          <el-button type="info" v-else>보기정지</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="更改状态" align="center" width="230">
+        <template #default="{row}">
+          <el-switch @change="handleStatusChange(row.status,row)" v-model="row.status" :active-value="1" :inactive-value="0" />
+        </template>
+      </el-table-column>
+      <el-table-column label="설정" align="center">
+        <template #default="{row}">
+          <el-button @click="handleUpdate(row)" type="primary" text bg>修改</el-button>
+          <el-popconfirm
+              confirm-button-text="确认"
+              cancel-button-text="取消"
+              icon-color="#626AEF"
+              title="确定删除管理员吗？"
+              @confirm="handleDelete(row.id)"
+          >
+            <template #reference>
+              <el-button type="danger" text bg>删除</el-button>
+            </template>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
@@ -217,6 +281,12 @@ getData();
         </el-form-item>
       </el-form>
   </Drawer>
+  <Dialong ref="addItem" title="컴포넌트-아이템" @submit="submitCreatePlan" width="80%" height="30%" top="25vh">
+
+  </Dialong>
+  <Dialong ref="addBanner" title="컴포넌트-배너" @submit="submitCreatePlan" width="80%" height="30%" top="25vh">
+
+  </Dialong>
 </template>
 
 <style scoped lang="scss">
