@@ -21,6 +21,14 @@ defineProps({
     card:{
       type: Boolean,
       default:true
+    },
+    cancellation:{
+      type: Boolean,
+      default:true
+    },
+    confirm:{
+      type: Boolean,
+      default:true
     }
 });
 const emit = defineEmits(["submit"]);
@@ -55,8 +63,8 @@ defineExpose({
     </el-container>
     <template #footer>
             <span>
-                <el-button @click="closeDialog">取消</el-button>
-                <el-button type="primary" @click="submit">确定</el-button>
+                <el-button v-if="cancellation" @click="closeDialog">取消</el-button>
+                <el-button v-if="confirm" type="primary" @click="submit">确定</el-button>
             </span>
     </template>
   </el-dialog>

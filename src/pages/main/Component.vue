@@ -9,6 +9,7 @@ import Drawer from "@/components/Drawer.vue";
 import {ref} from "vue";
 import CheckImg from "@/components/CheckImg.vue";
 import Dialong from "@/components/Dialong.vue";
+import CheckGoods from "@/components/CheckGoods.vue";
 
 //컴포넌트이름/속하는페이지
 const pages = ref([]);
@@ -95,10 +96,14 @@ const pageName = (id)=>{
 
 //아이템 보기
 const addItem = ref("");
+const checkItems = ref("");//체크아이템즈
 const clickItem = (id)=>{
     addItem.value.openDialog();
 }
-
+//체크아이뎀
+const addItems = ()=>{
+  checkItems.value.openDialog();
+}
 //배너 보기
 const addBanner = ref("");
 const clickBanner = (id)=>{
@@ -281,10 +286,13 @@ const clickBanner = (id)=>{
         </el-form-item>
       </el-form>
   </Drawer>
-  <Dialong ref="addItem" title="컴포넌트-아이템" @submit="submitCreatePlan" width="80%" height="30%" top="25vh">
-
+  <Dialong ref="addItem" title="컴포넌트-아이템" @submit="" width="80%" height="30%" top="25vh">
+     <el-button type="primary" @click="addItems">아이템추가</el-button>
   </Dialong>
-  <Dialong ref="addBanner" title="컴포넌트-배너" @submit="submitCreatePlan" width="80%" height="30%" top="25vh">
+  <Dialong ref="checkItems" @submit="" :confirm="false" :card="false" top="15vh">
+     <CheckGoods></CheckGoods>
+  </Dialong>
+  <Dialong ref="addBanner" title="컴포넌트-배너" @submit="" width="80%" height="30%" top="25vh">
 
   </Dialong>
 </template>
