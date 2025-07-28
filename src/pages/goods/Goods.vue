@@ -8,7 +8,7 @@ import Search from "@/components/Search.vue";
 import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
 import Drawer from "@/components/Drawer.vue";
 import CheckImg from "@/components/CheckImg.vue";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {showMessage} from "@/composables/utill.js";
 import {goodsList,createGoods,deleteGoods,deleteAll,updateGoods,updateStatus,updateStatusAll,updateBanners} from "@/api/goods/goods.js";
 import {listTrees,menuListTrees,orderTrees} from "@/composables/useCommon.js";
@@ -24,6 +24,8 @@ const labels = ref([]);
 const models = ref([]);
 const services = ref([]);
 const tableList = ref([]);
+//sideCategory 데이터
+const sideCategory = ref([]);
 const {
   searchForm,
   resetSearchForm,
@@ -41,7 +43,7 @@ const {
 } = useInitTable({
   defaultSearchForm:{
     title1:"",
-    category_id:"",
+    sideCategory_id:"",
     model:"",
     type:"",
     isCheck:1
@@ -67,6 +69,7 @@ const {
         return true;
       });
       goodsCategorys.value = listTrees(res.goodsCategory,'category_id');
+      sideCategory.value = res.sideCategorys;
     }
     searchForm.isCheck= firstList.value+1;
     firstList.value = firstList.value+1;
@@ -89,6 +92,7 @@ const{
 } = useInitFrom({
   form:{
     category_id:"",
+    sideCategory_id:"",
     model:'',
     service:[],
     label:"",
@@ -113,6 +117,11 @@ const{
   },
   rules:{
     category_id:{
+      required: true,
+      message:"选择商品分类",
+      trigger:"change"
+    },
+    sideCategory_id:{
       required: true,
       message:"选择商品分类",
       trigger:"change"
@@ -178,6 +187,38 @@ const updateBanner = ()=>{
     bannerDrawerRef.value.closeDrawer();
   })
 }
+//주메뉴-서브메뉴 부분코딩
+
+//검색시사용 선택한메인카테고리아이디
+const searchCategoryId = ref("");
+const searchSideCategory = ref([]);
+//입력시사용 선택한메인카테고리아이디
+const formSideCategory = ref([]);
+
+//sideCategory 를 선택하는 고르는 함수
+const selectSideCategory = (id)=>{
+  return sideCategory.value.filter((item)=>item.category_id == id);
+}
+
+//검색 카테고리선택 함수
+const checkSearchCategoryId = ()=>{
+  searchForm.sideCategory_id = "";
+  searchSideCategory.value = selectSideCategory(searchCategoryId.value);
+}
+
+//입력폼 카테고리선택 함수
+const checkFormCategoryId = ()=>{
+  //formData.sideCategory_id = "";
+  formSideCategory.value = selectSideCategory(formData.category_id);
+}
+//입력폼 변화감지
+watch(
+    () => formData.category_id,
+    (newValue, oldValue) => {
+      checkFormCategoryId();
+    },
+    { immediate: true } // 초기값 설정 시에도 실행
+);
 </script>
 <template>
   <el-card>
@@ -189,14 +230,29 @@ const updateBanner = ()=>{
         <el-input v-model="searchForm.title1" placeholder="填写详细标题"></el-input>
       </search-item>
       <template #show>
-        <SearchItem label="商品分类">
+        <SearchItem label="主菜单">
           <el-cascader
-              v-model="searchForm.category_id"
+              v-model="searchCategoryId"
               :options="goodsCategorys"
               :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
-              placeholder="请选择商品分类"
-              style="width: 330px"
+              placeholder="必选主菜单才可选菜单"
+              @change="checkSearchCategoryId"
           />
+        </SearchItem>
+        <SearchItem label="菜单">
+          <el-select
+              v-model="searchForm.sideCategory_id"
+              clearable
+              placeholder="请选择标签"
+              style="width: 300px"
+          >
+            <el-option
+                v-for="item in searchSideCategory"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+            />
+          </el-select>
         </SearchItem>
         <SearchItem label="商品名称">
           <el-cascader
@@ -341,7 +397,7 @@ const updateBanner = ()=>{
         label-width="auto"
         ref="formRef"
     >
-      <el-form-item label="商品分类" prop="category_id">
+      <el-form-item label="主分类" prop="category_id">
         <el-cascader
             v-model="formData.category_id"
             :options="goodsCategorys"
@@ -349,6 +405,21 @@ const updateBanner = ()=>{
             placeholder="请选择商品分类"
             style="width: 300px"
         />
+      </el-form-item>
+      <el-form-item label="副菜单" prop="sideCategory_id">
+        <el-select
+            v-model="formData.sideCategory_id"
+            clearable
+            placeholder="请选择菜单"
+            style="width: 300px"
+        >
+          <el-option
+              v-for="item in formSideCategory"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="商品" prop="model">
         <el-cascader

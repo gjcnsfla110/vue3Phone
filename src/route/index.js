@@ -30,7 +30,7 @@ import Plan from "@/pages/phone/Plan.vue";
 import PlanCategory from "@/pages/phone/PlanCategory.vue";
 import ComponenetName from "@/pages/main/ComponenetName.vue";
 import Component from '@/pages/main/Component.vue'
-
+import SubMenu from "@/pages/goods/goods_about/SubMenu.vue";
 
 const routes = [
     {
@@ -162,6 +162,14 @@ const asycnRoutes = [
         component: Goods,
         meta: {
             title: '商品列表'
+        }
+    },
+    {
+        path:'/subMenu/list',
+        name: '/subMenu/list',
+        component: SubMenu,
+        meta:{
+            title: '副菜单'
         }
     },
     {

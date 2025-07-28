@@ -8,7 +8,7 @@
   import SearchItem from "@/components/SearchItem.vue";
   import CheckImg from "@/components/CheckImg.vue";
   import ListHeader from "@/components/ListHeader.vue";
-  import {reactive, ref} from "vue";
+  import {reactive, ref, watch} from "vue";
   import {listTrees, showMsg} from "@/composables/utill.js";
   import {showMessage} from "@/composables/utill.js";
 
@@ -16,7 +16,6 @@
   const searchCategoryId = ref("");
   const searchSideCategory = ref([]);
   //입력시사용 선택한메인카테고리아이디
-  const formCategoryId =ref("");
   const formSideCategory = ref([]);
   //category 메인카테고리 데이터
   const categorys = ref([]);
@@ -66,6 +65,7 @@
     handleSubmit
   } = useInitFrom({
     form:{
+      category_id:"",
       sideCategory_id:"",
       planCategory_id:"",
       mobile:"",
@@ -81,6 +81,11 @@
       ranking:50
     },
     rules:{
+      category_id:{
+        required: true,
+        message:"选择主菜单",
+        trigger:"change"
+      },
       sideCategory_id:{
         required: true,
         message:"选择菜单",
@@ -146,9 +151,18 @@
 
   //입력폼 카테고리선택 함수
   const checkFormCategoryId = ()=>{
-       formData.sideCategory_id = "";
-       formSideCategory.value = selectSideCategory(formCategoryId.value);
+       //formData.sideCategory_id = "";
+       formSideCategory.value = selectSideCategory(formData.category_id);
   }
+  //입력폼 변화감지
+  watch(
+      () => formData.category_id,
+      (newValue, oldValue) => {
+        checkFormCategoryId();
+      },
+      { immediate: true } // 초기값 설정 시에도 실행
+  );
+
 
   //배너수정부분
   const banner = ref({
@@ -438,13 +452,12 @@
      :rules="formRules"
      ref="formRef"
      label-width="auto">
-       <el-form-item label="主菜单">
+       <el-form-item label="主菜单" prop="category_id">
          <el-cascader
-             v-model="formCategoryId"
+             v-model="formData.category_id"
              :options="categorys"
              :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
              placeholder="必须选择主菜单"
-             @change="checkFormCategoryId"
          />
        </el-form-item>
        <el-form-item label="菜单" prop="sideCategory_id">

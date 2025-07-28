@@ -46,6 +46,7 @@
     handleSubmit
   } = useInitFrom({
       form:{
+         category_id:"",
          name:"",
          img:"",
          label:"",
