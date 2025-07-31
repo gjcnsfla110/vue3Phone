@@ -96,6 +96,7 @@ const{
     model:'',
     service:[],
     label:"",
+    label_color:"",
     type:1,
     title:"",
     title1:"",
@@ -219,6 +220,11 @@ watch(
     },
     { immediate: true } // 초기값 설정 시에도 실행
 );
+const changeLabel = (labelName)=>{
+    let item = labels.value.find((item)=>item.name == labelName);
+    formData.label_color = item.color;
+    console.log(formData.label_color);
+}
 </script>
 <template>
   <el-card>
@@ -446,6 +452,7 @@ watch(
             clearable
             placeholder="请选择标签"
             style="width: 300px"
+            @change="changeLabel"
         >
           <el-option
               v-for="item in labels"
@@ -484,9 +491,13 @@ watch(
         <el-input v-model="formData.price" placeholder="填写市场原价" style="width: 80%" :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
       </el-form-item>
-      <el-form-item label="售卖价格">
+      <el-form-item label="售卖价格" v-if="formData.type !== 5">
         <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price1" placeholder="填写售卖价格" style="width: 80%" ></el-input>
+      </el-form-item>
+      <el-form-item label="二手价格" v-else>
+        <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                  :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price2" placeholder="填写二手价格" style="width: 80%" ></el-input>
       </el-form-item>
       <el-form-item label="选择参数" v-if="formData.type != 5">
         <el-cascader

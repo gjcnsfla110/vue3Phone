@@ -1,4 +1,6 @@
 <script setup>
+    import {ref} from "vue";
+
     defineOptions({
        name: "GoodsLabel",
     })
@@ -6,7 +8,7 @@
     import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
     import Drawer from "@/components/Drawer.vue";
     import {getLabelList,createLabel,updateLabel,deleteLabel} from "@/api/goods/label.js";
-
+    const colors = ref([]);
     const {
       dataList,
       loading,
@@ -16,7 +18,11 @@
       getData,
       handleDelete,
     } = useInitTable({
-
+       afterDataList:(res)=>{
+        dataList.value = res.list;
+        total.value = res.total;
+        colors.value = res.colors;
+       },
        delete:deleteLabel,
        getList:getLabelList,
     })
@@ -31,13 +37,19 @@
       handleSubmit
     } = useInitFrom({
         form:{
-          name:""
+          name:"",
+          color:""
         },
         rules:{
           name:{
             required: true,
             message:'填写标签',
             trigger:"blur"
+          },
+          color:{
+            required: true,
+            message:'색상을 선택하세요',
+            trigger:"change"
           }
         },
         getDataList:getData,
@@ -90,6 +102,16 @@
         >
             <el-form-item label="标签名称" prop="name">
                <el-input v-model="formData.name" placeholder="填写标签名称"></el-input>
+            </el-form-item>
+            <el-form-item label="색상" prop="color">
+              <el-select v-model="formData.color" placeholder="색상선택" style="width: 240px">
+                <el-option
+                    v-for="item in colors"
+                    :key="item.id"
+                    :label="item.color"
+                    :value="item.code"
+                />
+              </el-select>
             </el-form-item>
         </el-form>
     </Drawer>
