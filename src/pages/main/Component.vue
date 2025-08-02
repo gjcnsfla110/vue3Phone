@@ -5,11 +5,14 @@ import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
 import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
 import {getComponentList,createComponent,updateComponent,deleteComponent,updateStatus} from "@/api/main/component.js";
+import {getComponentItemList,createComponentItem,deleteComponentItem} from "@/api/main/componentItem.js";
 import Drawer from "@/components/Drawer.vue";
 import {ref} from "vue";
 import CheckImg from "@/components/CheckImg.vue";
 import Dialong from "@/components/Dialong.vue";
 import CheckGoods from "@/components/CheckGoods.vue";
+import { h } from 'vue'
+import { ElLink } from 'element-plus'
 
 //컴포넌트이름/속하는페이지
 const pages = ref([]);
@@ -94,11 +97,23 @@ const pageName = (id)=>{
   return name[0];
 }
 
+/*----------------------------------------------아이템 부분----------------------------------------------------------------------------*/
 //아이템 보기
 const addItem = ref("");
 const checkItems = ref("");//체크아이템즈
+//컴포넌트 아이템
+const componentItems = ref([]);
+//타이틀 ... 표시해주는 함수
+const withVNode = (data) => {
+  return h(ElLink, { type: 'primary', href: data.cellValue }, () =>
+      h('span', null, data.cellValue)
+  )
+}
 const clickItem = (id)=>{
     addItem.value.openDialog();
+    getComponentItemList(id).then(res=>{
+      componentItems.value = res.list;
+    })
 }
 //체크아이뎀
 const addItems = ()=>{
@@ -286,10 +301,52 @@ const clickBanner = (id)=>{
         </el-form-item>
       </el-form>
   </Drawer>
-  <Dialong ref="addItem" title="컴포넌트-아이템" @submit="" width="80%" height="30%" top="25vh">
-     <el-button type="primary" @click="addItems">아이템추가</el-button>
+  <Dialong ref="addItem" title="컴포넌트-아이템" @submit="" :confirm="false" width="80%" height="30%" top="25vh">
+     <el-button type="primary" @click="addItems" style="margin-top: 10px">아이템추가</el-button>
+     <el-table
+         :data="componentItems"
+         style="margin-top: 50px"
+     >
+       <el-table-column type="index" width="50" />
+       <el-table-column label="타이틀" prop="title" width="500" :tooltip-formatter="withVNode"></el-table-column>
+       <el-table-column label="이미지" align="center" width="200">
+          <template #default="{row}">
+
+          </template>
+       </el-table-column>
+       <el-table-column label="라벨" align="center" width="200">
+         <template #default="{row}">
+
+         </template>
+       </el-table-column>
+       <el-table-column label="용량" align="center" width="200">
+         <template #default="{row}">
+
+         </template>
+       </el-table-column>
+       <el-table-column label="시장가격" align="center" width="200">
+         <template #default="{row}">
+
+         </template>
+       </el-table-column>
+       <el-table-column label="판매가격" align="center" width="200">
+         <template #default="{row}">
+
+         </template>
+       </el-table-column>
+       <el-table-column label="중고가격" align="center" width="200">
+         <template #default="{row}">
+
+         </template>
+       </el-table-column>
+       <el-table-column label="삭제" align="center">
+         <template #default="{row}">
+
+         </template>
+       </el-table-column>
+     </el-table>
   </Dialong>
-  <Dialong ref="checkItems" @submit="" :confirm="false" :card="false" top="15vh">
+  <Dialong ref="checkItems" @submit="" :card="false" top="15vh">
      <CheckGoods></CheckGoods>
   </Dialong>
   <Dialong ref="addBanner" title="컴포넌트-배너" @submit="" width="80%" height="30%" top="25vh">

@@ -1,5 +1,29 @@
 <script setup>
+    import {useInitTable} from "@/composables/useCommon.js";
+    import {getGoodsList} from "@/api/main/componentItem.js";
+    import {ref} from "vue";
+    const props = defineProps({
 
+    });
+    const mainMenu = ref([]);
+    const subMenu = ref([]);
+    const {
+      dataList,
+      loading,
+      currentPage,
+      total,
+      limit,
+      getData,
+    } = useInitTable({
+      afterDataList:(res)=>{
+        dataList.value = res.list;
+        total.value = res.total;
+        mainMenu.value = res.mainMenu;
+        subMenu.value = res.subMenu;
+      },
+      getList:getGoodsList,
+    })
+    getData();
 </script>
 
 <template>
@@ -46,11 +70,27 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+         <el-table
+           :data="dataList"
+           v-loading ="loading"
+         >
+
+         </el-table>
+        <div class="pagination">
+          <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
+        </div>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <style scoped lang="scss">
-
+.pagination{
+  height: 80px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>
