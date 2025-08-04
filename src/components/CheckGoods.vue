@@ -1,5 +1,5 @@
 <script setup>
-    import {useInitTable} from "@/composables/useCommon.js";
+    import {menuListTrees, orderTrees, useInitTable} from "@/composables/useCommon.js";
     import {getGoodsList} from "@/api/main/componentItem.js";
     import {ref} from "vue";
     const props = defineProps({
@@ -18,7 +18,8 @@
       afterDataList:(res)=>{
         dataList.value = res.list;
         total.value = res.total;
-        mainMenu.value = res.mainMenu;
+        mainMenu.value = menuListTrees(res.mainMenu,res.menuList,'category_id');
+        orderTrees(mainMenu.value);
         subMenu.value = res.subMenu;
       },
       getList:getGoodsList,
