@@ -1,5 +1,5 @@
 <script setup>
-    import {menuListTrees, orderTrees, useInitTable} from "@/composables/useCommon.js";
+    import {menuListTrees, orderTrees, useInitTable,addSubmenu} from "@/composables/useCommon.js";
     import {getGoodsList} from "@/api/main/componentItem.js";
     import {ref} from "vue";
     const props = defineProps({
@@ -7,7 +7,10 @@
     });
     const mainMenu = ref([]);
     const subMenu = ref([]);
+    const menuList = ref([]);
+    const firstList = ref(1);
     const {
+      searchForm,
       dataList,
       loading,
       currentPage,
@@ -15,16 +18,33 @@
       limit,
       getData,
     } = useInitTable({
+      defaultSearchForm:{
+        category_id:"",
+        isCheck:1
+      },
       afterDataList:(res)=>{
         dataList.value = res.list;
         total.value = res.total;
-        mainMenu.value = menuListTrees(res.mainMenu,res.menuList,'category_id');
-        orderTrees(mainMenu.value);
-        subMenu.value = res.subMenu;
+        if(firstList.value < 2){
+          mainMenu.value = menuListTrees(res.mainMenu,res.menuList,'category_id');
+          orderTrees(mainMenu.value);
+          subMenu.value = res.subMenu;
+          subMenu.value.forEach(item=>{
+            item.child = [];
+          });
+          menuList.value = addSubmenu(mainMenu.value,subMenu.value);
+        }
+        searchForm.isCheck= firstList.value+1;
+        firstList.value = firstList.value+1;
       },
       getList:getGoodsList,
     })
     getData();
+    //메뉴클릭시 메뉴관련상품갖고오는함수/메뉴클릭함수
+    const changeGoods = (id)=>{
+        searchForm.category_id = id;
+        getData();
+    }
 </script>
 
 <template>
@@ -35,40 +55,58 @@
         <el-menu
             active-text-color="#ffd04b"
             background-color="#545c64"
-            class="el-menu-vertical-demo"
-            default-active="2"
+            :unique-opened="true"
             text-color="#fff"
-            @open="handleOpen"
-            @close="handleClose"
+            @select="changeGoods"
         >
-          <el-sub-menu index="1">
-            <template #title>
-              <span>Navigator One</span>
-            </template>
-            <el-menu-item-group title="Group One">
-              <el-menu-item index="1-1">item one</el-menu-item>
-              <el-menu-item index="1-2">item two</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group Two">
-              <el-menu-item index="1-3">item three</el-menu-item>
-            </el-menu-item-group>
-            <el-sub-menu index="1-4">
-              <template #title>item four</template>
-              <el-menu-item index="1-4-1">item one</el-menu-item>
+          <div v-for="menu in menuList">
+            <el-sub-menu v-if="menu.child.length > 0" :index="String(menu.id)">
+              <template #title>
+                  <p>
+                    <span>{{menu.name}}</span>
+                  </p>
+              </template>
+              <template v-for="menu1 in menu.child">
+                <el-sub-menu v-if="menu1.child.length > 0" :index="String(menu1.id)" >
+                  <template #title>
+                      <p>
+                        <span>{{menu1.name}}</span>
+                      </p>
+                  </template>
+                  <template v-for="menu2 in menu1.child">
+                    <el-sub-menu v-if="menu2.child.length > 0" :index="String(menu2.id)">
+                      <template slot="title">
+                        <p>
+                          <span>{{menu2.name}}</span>
+                        </p>
+                      </template>
+                    </el-sub-menu>
+                    <el-menu-item v-else  :index="String(menu2.id)" >
+                      <template #title>
+                        <p>
+                          <span>{{menu2.name}}</span>
+                        </p>
+                      </template>
+                    </el-menu-item>
+                  </template>
+                </el-sub-menu>
+                <el-menu-item v-else :index="String(menu1.id)">
+                  <template #title>
+                      <p>
+                        <span>{{menu1.name}}</span>
+                      </p>
+                  </template>
+                </el-menu-item>
+              </template>
             </el-sub-menu>
-          </el-sub-menu>
-          <el-menu-item index="2">
-            <el-icon><icon-menu /></el-icon>
-            <span>Navigator Two</span>
-          </el-menu-item>
-          <el-menu-item index="3" disabled>
-            <el-icon><document /></el-icon>
-            <span>Navigator Three</span>
-          </el-menu-item>
-          <el-menu-item index="4">
-            <el-icon><setting /></el-icon>
-            <span>Navigator Four</span>
-          </el-menu-item>
+            <el-menu-item v-else  :index="String(menu.id)">
+              <template #title>
+                  <p>
+                    <span>{{menu.name}}</span>
+                  </p>
+              </template>
+            </el-menu-item>
+          </div>
         </el-menu>
       </el-aside>
       <el-main>
@@ -79,7 +117,7 @@
 
          </el-table>
         <div class="pagination">
-          <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
+          <el-pagination @change="getData" background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
         </div>
       </el-main>
     </el-container>

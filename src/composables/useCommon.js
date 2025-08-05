@@ -1,4 +1,4 @@
-import {ref, reactive, computed} from 'vue'
+import {ref, reactive, computed, toRaw} from 'vue'
 import {showMsg} from "@/composables/utill.js";
 
 /**
@@ -285,7 +285,21 @@ export function orderTrees(menus,order='ranking'){
 
     sortTreeByRanking(menus.value);
 }
-
+//주메뉴에 서브메뉴 추가하는 방법
+export function addSubmenu(mainMenu,subMenu){
+    const rawMainMenu = toRaw(mainMenu);
+    const rawSubMenu = toRaw(subMenu);
+    rawMainMenu.forEach(item=>{
+          if(item.child.length > 0){
+              item.child.forEach(item1=>{
+                 item1.child = rawSubMenu.filter(item2=>item2.category_id === item1.id);
+              })
+          }else{
+              item.child = rawSubMenu.filter(item1=>item1.category_id === item.id);
+          }
+     })
+    return rawMainMenu;
+}
 
 //요금제값을 소수형으로 변환시키는 방법
 // 숫자를 한국식 포맷(232,500 또는 232,500.50)으로 변환하는 함수

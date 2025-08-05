@@ -1,6 +1,6 @@
 import service from "@/axios.js";
 import {queryUrl} from "@/composables/utill.js";
-export function getComponentItemList(id,page,limit=10) {
+export function getComponentItemList(id,limit=10) {
     return service.get(`/admin/componentItems/${id}/list?limit=${limit}`);
 }
 
