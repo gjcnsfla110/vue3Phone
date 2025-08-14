@@ -19,6 +19,8 @@ export default defineConfig({
     }
   },
   server:{
+
+    port: process.env.PORT || 8085, // 환경 변수에서 포트 읽기, 기본값 8085
     proxy:{
       '/api': {
         target: 'http://clphone.com',

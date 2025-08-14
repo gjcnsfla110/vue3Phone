@@ -470,6 +470,7 @@ const changeLabel = (labelName)=>{
           <el-radio-button label="新专柜机" :value="3" />
           <el-radio-button label="开封专柜机" :value="4" />
           <el-radio-button label="二手商品" :value="5" />
+          <el-radio-button label="配件商品" :value="6" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="商品详细">
@@ -499,7 +500,7 @@ const changeLabel = (labelName)=>{
         <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price2" placeholder="填写二手价格" style="width: 80%" ></el-input>
       </el-form-item>
-      <el-form-item label="选择参数" v-if="formData.type != 5">
+      <el-form-item label="选择参数" v-if="formData.type != 5 && formData.type != 6">
         <el-cascader
             v-model="formData.spec_id"
             :options="goodsSpecs"
@@ -529,7 +530,7 @@ const changeLabel = (labelName)=>{
         </el-select>
         <el-input v-else v-model="formData.color" placeholder="填写颜色" style="width: 300px;margin-left: 15px"> </el-input>
       </el-form-item>
-      <el-form-item label="内存">
+      <el-form-item label="内存" v-if="formData.type !== 6">
         <el-radio-group v-model="isStorage" size="large">
           <el-radio-button label="选项" :value="1" />
           <el-radio-button label="填写" :value="2" />
@@ -549,7 +550,7 @@ const changeLabel = (labelName)=>{
           />
         </el-select>
         <el-input v-else v-model="formData.storage" placeholder="填写内存" style="width: 300px; margin-left:15px;"> </el-input>
-      </el-form-item>
+      </el-form-item v-i>
       <el-form-item label="二手说明" v-if="formData.type == 5">
         <el-input
             v-model="formData.phone_detail"

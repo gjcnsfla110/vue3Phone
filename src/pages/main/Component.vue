@@ -3,9 +3,10 @@
 import ListHeader from "@/components/ListHeader.vue";
 import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
-import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
+import {useInitTable,useInitFrom,priceDollar} from "@/composables/useCommon.js";
 import {getComponentList,createComponent,updateComponent,deleteComponent,updateStatus} from "@/api/main/component.js";
-import {getComponentItemList,createComponentItem,deleteComponentItem} from "@/api/main/componentItem.js";
+import {getComponentItemList,createComponentItem,deleteComponentItem,getGoods} from "@/api/main/componentItem.js";
+import ComponentBanner from "@/pages/main/ComponentBanner.vue";
 import Drawer from "@/components/Drawer.vue";
 import {ref} from "vue";
 import CheckImg from "@/components/CheckImg.vue";
@@ -13,6 +14,7 @@ import Dialong from "@/components/Dialong.vue";
 import CheckGoods from "@/components/CheckGoods.vue";
 import { h } from 'vue'
 import { ElLink } from 'element-plus'
+import {showMsg} from "@/composables/utill.js";
 
 //컴포넌트이름/속하는페이지
 const pages = ref([]);
@@ -99,6 +101,7 @@ const pageName = (id)=>{
 
 /*----------------------------------------------아이템 부분----------------------------------------------------------------------------*/
 //아이템 보기
+const clickItemId = ref("");
 const addItem = ref("");
 const checkItems = ref("");//체크아이템즈
 //컴포넌트 아이템
@@ -111,6 +114,7 @@ const withVNode = (data) => {
 }
 const clickItem = (id)=>{
     addItem.value.openDialog();
+    clickItemId.value = id;
     getComponentItemList(id).then(res=>{
       componentItems.value = res.list;
     })
@@ -119,10 +123,43 @@ const clickItem = (id)=>{
 const addItems = ()=>{
   checkItems.value.openDialog();
 }
+
+//아이템 추가
+const checkGoods = ref([]);
+const addCheckItems = ()=>{
+    checkItems.value.closeDialog();
+    createComponentItem(clickItemId.value,checkGoods.value).then(res=>{
+       showMsg("추가성공하였습니다");
+        getComponentItemList(clickItemId.value).then(res=>{
+          componentItems.value = res.list;
+        })
+    })
+}
+//아이템 삭제
+const deleteComponentItemEvent = (id)=>{
+    deleteComponentItem(id).then(res=>{
+      showMsg("아이템삭제성공하였습니다");
+      getComponentItemList(clickItemId.value).then(res=>{
+        componentItems.value = res.list;
+      })
+    })
+}
+//아이템관련 상품 자세히 보기
+const detailComponentGoodsDialong = ref("");
+const detailComponentGoods = ref("");
+const detailComponentItemGoods = (id)=>{
+    getGoods(id).then(res=>{
+      detailComponentGoods.value = res.goods[0];
+      detailComponentGoodsDialong.value.openDialog();
+    })
+}
+/*------------------------------------------------- 배너부분 --------------------------------------------------------------------*/
 //배너 보기
+const bannerId = ref("");
 const addBanner = ref("");
 const clickBanner = (id)=>{
-    addBanner.value.openDialog();
+  addBanner.value.openDialog();
+  bannerId.value=id;
 }
 </script>
 
@@ -156,13 +193,14 @@ const clickBanner = (id)=>{
       </el-table-column>
       <el-table-column label="아이템" width="230" align="center">
         <template #default="{row}">
-          <el-button type="primary" @click="clickItem(row.id)" plain>보기</el-button>
+          <el-button v-if="row.banner" disabled type="info">보기정지</el-button>
+          <el-button v-else type="danger" round @click="getComponentBanner(row.id)">아이템보기</el-button>
         </template>
       </el-table-column>
       <el-table-column label="배너아이템" width="230" align="center">
         <template #default="{row}">
-          <el-button v-if="row.banner" type="primary" @click="clickBanner(row.id)" plain>배너아이템</el-button>
-          <el-button type="info" v-else>보기정지</el-button>
+          <el-button v-if="row.banner" type="danger" round @click="clickBanner(row.id)">배너보기</el-button>
+          <el-button type="info" disabled v-else>보기정지</el-button>
         </template>
       </el-table-column>
       <el-table-column label="更改状态" align="center" width="230">
@@ -308,49 +346,134 @@ const clickBanner = (id)=>{
          style="margin-top: 50px"
      >
        <el-table-column type="index" width="50" />
-       <el-table-column label="타이틀" prop="title" width="500" :tooltip-formatter="withVNode"></el-table-column>
+       <el-table-column label="타이틀" prop="title" width="350" :tooltip-formatter="withVNode"></el-table-column>
        <el-table-column label="이미지" align="center" width="200">
           <template #default="{row}">
-
+            <el-image style="width: 100px; height: 100px" :src="row.img" fit="cover" />
           </template>
        </el-table-column>
-       <el-table-column label="라벨" align="center" width="200">
+       <el-table-column label="기기타입" align="center" width="150">
          <template #default="{row}">
-
+           <el-button type="primary" plain>
+                   <span v-if="row.type === 1">
+                      新合约机
+                   </span>
+             <span v-else-if="row.type === 2">
+                     开封合约机
+                   </span>
+             <span v-else-if="row.type === 3">
+                     新专柜机
+                   </span>
+             <span v-else-if="row.type === 4">
+                     开封专柜机
+                   </span>
+             <span v-else-if="row.type === 5">
+                     二手商品
+                   </span>
+             <span v-else-if="row.type === 6">
+                     配件商品
+                   </span>
+           </el-button>
          </template>
        </el-table-column>
-       <el-table-column label="용량" align="center" width="200">
+       <el-table-column label="라벨" align="center" width="150">
          <template #default="{row}">
-
+            <p :style="{backgroundColor:row.label_color,width:'100%',height:'35px',lineHeight:'35px',borderRadius:'5px'}">{{row.label}}</p>
          </template>
        </el-table-column>
-       <el-table-column label="시장가격" align="center" width="200">
+       <el-table-column label="용량" align="center" width="150" prop="storage">
+       </el-table-column>
+       <el-table-column label="시장가격" align="center" width="180">
          <template #default="{row}">
-
+           {{priceDollar(row.price)}} 원
          </template>
        </el-table-column>
-       <el-table-column label="판매가격" align="center" width="200">
+       <el-table-column label="판매가격" align="center" width="180">
          <template #default="{row}">
-
+           {{priceDollar(row.price1)}} 원
          </template>
        </el-table-column>
-       <el-table-column label="중고가격" align="center" width="200">
+       <el-table-column label="중고가격" align="center" width="180">
          <template #default="{row}">
-
+           {{priceDollar(row.price2)}} 원
          </template>
        </el-table-column>
-       <el-table-column label="삭제" align="center">
+       <el-table-column label="설정" align="center">
          <template #default="{row}">
-
+           <el-button style="margin-right: 20px" type="danger" round @click="detailComponentItemGoods(row.goods_id)">상품보기</el-button>
+           <el-popconfirm
+               confirm-button-text="确认"
+               cancel-button-text="取消"
+               icon-color="#626AEF"
+               title="确定删除吗？"
+               @confirm="deleteComponentItemEvent(row.id)"
+           >
+             <template #reference>
+               <el-button type="danger" plain>삭제</el-button>
+             </template>
+           </el-popconfirm>
          </template>
        </el-table-column>
      </el-table>
   </Dialong>
-  <Dialong ref="checkItems" @submit="" :card="false" top="15vh">
-     <CheckGoods></CheckGoods>
+  <Dialong ref="checkItems" @submit="" :card="false" top="15vh" :confirm="false" :cancellation="false">
+     <CheckGoods v-model="checkGoods" @addCheckItems="addCheckItems"></CheckGoods>
   </Dialong>
-  <Dialong ref="addBanner" title="컴포넌트-배너" @submit="" width="80%" height="30%" top="25vh">
-
+  <Dialong ref="addBanner" title="컴포넌트-배너" width="80%" height="30%" top="25vh" :confirm="false" :card="false">
+      <ComponentBanner :componentId="bannerId"></ComponentBanner>
+  </Dialong>
+  <Dialong ref="detailComponentGoodsDialong" :confirm="false" width="55%" :card="false">
+      <h2 style="text-align: center;margin-top: 10px; margin-bottom: 50px;">상 품 상 세 정 보</h2>
+      <el-card style="width:90%;margin-left: 5%;">
+        <div style="padding: 30px">
+          <p class="goodsContent"><span class="goodsTitle">라벨 </span>  <el-button type="danger" round style="margin-left: 10px">{{detailComponentGoods.label}}</el-button></p>
+          <p class="goodsContent"><span class="goodsTitle">타입 </span>
+            <el-button type="primary" plain style="margin-left: 10px">
+                   <span v-if="detailComponentGoods.type === 1">
+                      新合约机
+                   </span>
+                    <span v-else-if="detailComponentGoods.type === 2">
+                             开封合约机
+                           </span>
+                    <span v-else-if="detailComponentGoods.type === 3">
+                             新专柜机
+                           </span>
+                    <span v-else-if="detailComponentGoods.type === 4">
+                             开封专柜机
+                           </span>
+                    <span v-else-if="detailComponentGoods.type === 5">
+                             二手商品
+                           </span>
+                    <span v-else-if="detailComponentGoods.type === 6">
+                             配件商品
+                   </span>
+          </el-button></p>
+          <p class="goodsContent"><span class="goodsTitle">타이틀 </span> - <span class="goodsText">{{detailComponentGoods.title}}</span></p>
+          <p class="goodsContent"><span class="goodsTitle">상세타이틀</span> - <span class="goodsText">{{detailComponentGoods.title1}}</span></p>
+          <p class="goodsContent" style="display: flex;justify-content: left; align-items: center"><span class="goodsTitle" style="margin-right: 20px">메인이미지  </span> <el-image style="width: 100px; height: 100px" :src="detailComponentGoods.img" fit="cover" /></p>
+          <p class="goodsContent" style="display: flex;justify-content: left; align-items: center"><span class="goodsTitle" style="margin-right: 20px">배너이미지  </span>
+              <el-image
+                style="width: 100px; height: 100px"
+                :src="JSON.parse(detailComponentGoods.banner)[0]"
+                :zoom-rate="1.2"
+                :max-scale="7"
+                :min-scale="0.2"
+                :preview-src-list="JSON.parse(detailComponentGoods.banner)"
+                show-progress
+                :initial-index="4"
+                fit="cover"
+              />
+          </p>
+          <p class="goodsContent"><span class="goodsTitle">휴대폰시장 가격  </span> - <span class="goodsText">{{ priceDollar(detailComponentGoods.price)}}원</span></p>
+          <p class="goodsContent"><span class="goodsTitle">판매 가격  </span> - <span class="goodsText">{{ priceDollar(detailComponentGoods.price1)}}원</span></p>
+          <p class="goodsContent"><span class="goodsTitle">중고 가격  </span> - <span class="goodsText">{{ priceDollar(detailComponentGoods.price2)}}원</span></p>
+          <p class="goodsContent"><span class="goodsTitle">색상  </span> - <span class="goodsText">{{JSON.parse(detailComponentGoods.color).color}}</span></p>
+          <p class="goodsContent"><span class="goodsTitle">용량  </span> - <span class="goodsText">{{detailComponentGoods.storage}}</span></p>
+          <p class="goodsContent"><span class="goodsTitle">중고상품설명  </span> - <span class="goodsText">{{detailComponentGoods.phone_detail}}</span></p>
+          <p class="goodsContent"><span class="goodsTitle">일련번호 </span> - <span class="goodsText">{{detailComponentGoods.serial}}</span></p>
+          <p class="goodsContent"><span class="goodsTitle">IMEI  </span> - <span class="goodsText">{{detailComponentGoods.imei}}</span></p>
+        </div>
+      </el-card>
   </Dialong>
 </template>
 
@@ -361,5 +484,19 @@ const clickBanner = (id)=>{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.goodsContent{
+   margin-bottom: 20px;
+   padding: 20px;
+   border-bottom: 1px solid #eee;
+}
+.goodsTitle{
+   margin-left: 5px;
+   font-size: 16px;
+   color: rgb(0,128,255);
+}
+.goodsText{
+   font-size: 14px;
+   color: rgb(150,150,150);
 }
 </style>
