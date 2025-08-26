@@ -137,6 +137,11 @@ const{
       message:'选择商品类型',
       trigger:"change"
     },
+    title:{
+      required: true,
+      message:"填写商品名称",
+      trigger:"blur"
+    },
     title1:{
       required: true,
       message:"填写详细商品名称",
@@ -223,7 +228,7 @@ watch(
 const changeLabel = (labelName)=>{
     let item = labels.value.find((item)=>item.name == labelName);
     formData.label_color = item.color;
-    console.log(formData.label_color);
+
 }
 </script>
 <template>
@@ -333,12 +338,13 @@ const changeLabel = (labelName)=>{
           <div class="detail">
             <div class="detailLeft">
               <el-image
-                  style="width: 80px; height: 80px;"
+                  style="width: 80px; height: 80px; z-index: 1000;"
                   :src="row.img"
                   :zoom-rate="1.2"
                   :max-scale="7"
                   :min-scale="0.2"
                   :preview-src-list="[row.img]"
+                  :preview-teleported="true"
                   show-progress
                   fit="cover"
               />
@@ -355,7 +361,7 @@ const changeLabel = (labelName)=>{
         <template #default="{row}">
           <div>
             <p><el-button style="width:120px" type="primary" plain>{{row.storage}}</el-button></p>
-            <p style="margin-top: 10px"><el-button style="width:120px" type="danger" plain>{{JSON.parse(row.color).color}}</el-button></p>
+            <p style="margin-top: 10px"><el-button style="width:120px" type="danger" plain>{{row.color}}</el-button></p>
           </div>
         </template>
       </el-table-column>
@@ -473,10 +479,10 @@ const changeLabel = (labelName)=>{
           <el-radio-button label="配件商品" :value="6" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="商品详细">
+      <el-form-item label="商品标题" prop="title">
         <el-input v-model="formData.title" placeholder="请填写标题详细" style="width: 80%"></el-input>
       </el-form-item>
-      <el-form-item label="详细标题" prop="title1">
+      <el-form-item label="详细页标题" prop="title1">
         <el-input v-model="formData.title1" placeholder="请填写详细标题" style="width: 80%"></el-input>
       </el-form-item>
       <el-form-item label="详细URL">
@@ -510,33 +516,10 @@ const changeLabel = (labelName)=>{
         />
       </el-form-item>
       <el-form-item label="颜色">
-        <el-radio-group v-model="isColor" size="large">
-          <el-radio-button label="选项" :value="1" />
-          <el-radio-button label="填写" :value="2" />
-        </el-radio-group>
-        <el-select
-            v-if="isColor == 1"
-            v-model="formData.color"
-            clearable
-            placeholder="请选择颜色"
-            style="width: 300px;margin-left: 15px"
-        >
-          <el-option
-              v-for="item in goodsColors"
-              :key="item.id"
-              :label="item.color"
-              :value="JSON.stringify({color:item.color,english:item.english,code:item.code})"
-          />
-        </el-select>
-        <el-input v-else v-model="formData.color" placeholder="填写颜色" style="width: 300px;margin-left: 15px"> </el-input>
+        <el-input v-model="formData.color" placeholder="填写颜色" style="width: 300px;margin-left: 15px"> </el-input>
       </el-form-item>
       <el-form-item label="内存" v-if="formData.type !== 6">
-        <el-radio-group v-model="isStorage" size="large">
-          <el-radio-button label="选项" :value="1" />
-          <el-radio-button label="填写" :value="2" />
-        </el-radio-group>
         <el-select
-            v-if="isStorage == 1"
             v-model="formData.storage"
             clearable
             placeholder="请选择内存"
@@ -549,8 +532,7 @@ const changeLabel = (labelName)=>{
               :value="item"
           />
         </el-select>
-        <el-input v-else v-model="formData.storage" placeholder="填写内存" style="width: 300px; margin-left:15px;"> </el-input>
-      </el-form-item v-i>
+      </el-form-item>
       <el-form-item label="二手说明" v-if="formData.type == 5">
         <el-input
             v-model="formData.phone_detail"

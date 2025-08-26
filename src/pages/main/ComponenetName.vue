@@ -28,12 +28,19 @@
       handleSubmit
     } = useInitFrom({
       form:{
-         name:""
+         name:"",
+         title:"",
+         type:0
       },
       rules:{
         name:{
           required: true,
           message:"컴포넌트 이름을 작성해주세요",
+          trigger:"blur"
+        },
+        title:{
+          required: true,
+          message:"컴포넌트 타이틀 작성해주세요",
           trigger:"blur"
         }
       },
@@ -51,6 +58,8 @@
       v-loading="loading"
       :data="dataList">
         <el-table-column label="컴포넌트이름" prop="name" width="300">
+        </el-table-column>
+        <el-table-column label="타이틀" prop="title" width="300" align="center">
         </el-table-column>
         <el-table-column label="설정" align="center">
           <template #default="{row}">
@@ -79,8 +88,14 @@
         :rules="formRules"
         ref="formRef"
         label-width="auto">
-      <el-form-item label="컴포넌트이름" prop="name">
+      <el-form-item label="타이틀" prop="title">
+        <el-input v-model="formData.title" placeholder="컴포넌트 타이틀을 작성해주세요"></el-input>
+      </el-form-item>
+      <el-form-item label="이름" prop="name">
         <el-input v-model="formData.name" placeholder="컴포넌트 이름을 작성해주세요"></el-input>
+      </el-form-item>
+      <el-form-item label="타입">
+
       </el-form-item>
     </el-form>
   </Drawer>

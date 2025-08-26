@@ -1,7 +1,9 @@
 import service from "@/axios.js";
-
-export function getSubMenuList(page,limit=10) {
-    return service.get(`/admin/goodsSubMenu/${page}/list?limit=${limit}`);
+import {queryUrl} from "@/composables/utill.js";
+export function getSubMenuList(page,limit=10,query={}) {
+    let q = queryUrl(query);
+    let is = q ? '&':'?';
+    return service.get(`/admin/goodsSubMenu/${page}/list${q}${is}limit=${limit}`);
 }
 
 export function createSubMenu(data){

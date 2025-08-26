@@ -27,7 +27,7 @@
          total.value = res.count;
     },
     defaultSearchForm:{
-       page_id:""
+      page_key:""
     },
     getList:getBannerList,
     delete:deleteBanner,
@@ -45,14 +45,14 @@
     handleSubmit
   } = useInitFrom({
     form:{
-      page_id:"",
+      page_key:"",
       img:"",
       link:"",
       ranking:50,
       status:1
     },
     rules:{
-      page_id:{
+      page_key:{
         required: true,
         message:'',
         trigger:"change"
@@ -68,15 +68,6 @@
     getDataList:getData
   });
   getData();
-  const onPage=(id)=>{
-      let value = "";
-      pageList.value.forEach((item)=>{
-           if(item.id==id){
-              value = item.name;
-           }
-      })
-     return value;
-  }
 </script>
 
 <template>
@@ -85,7 +76,7 @@
         <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
             <SearchItem>
               <el-select
-                  v-model="searchForm.page_id"
+                  v-model="searchForm.page_key"
                   placeholder="选择页面"
                   style="width: 240px"
               >
@@ -93,7 +84,7 @@
                     v-for="item in pageList"
                     :key="item.id"
                     :label="item.name"
-                    :value="item.id"
+                    :value="item.page_key"
                 />
               </el-select>
             </SearchItem>
@@ -105,7 +96,7 @@
         >
           <el-table-column label="菜单名称" width="200">
             <template #default="{row}">
-               <div>{{onPage(row.page_id)}}</div>
+               <div>{{row.page_key}}</div>
             </template>
           </el-table-column>
           <el-table-column label="图片" width="230" align="center">
@@ -149,7 +140,7 @@
        label-width="auto">
             <el-form-item label="页面" prop="page_id">
               <el-select
-                  v-model="formData.page_id"
+                  v-model="formData.page_key"
                   placeholder="选择页面"
                   style="width: 240px"
               >
@@ -157,7 +148,7 @@
                     v-for="item in pageList"
                     :key="item.id"
                     :label="item.name"
-                    :value="item.id"
+                    :value="item.page_key"
                 />
               </el-select>
             </el-form-item>

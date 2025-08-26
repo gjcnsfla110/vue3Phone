@@ -32,7 +32,7 @@ const {
   handleDelete,
 } = useInitTable({
   defaultSearchForm:{
-    page_id:""
+    page_key:""
   },
   afterDataList:(res)=>{
       pages.value = res.pages;
@@ -55,10 +55,12 @@ const {
   handleSubmit
 } = useInitFrom({
   form:{
-    page_id:"",
+    page_key:"",
     component:"",
     title:"",
     title1:"",
+    component_left_title:"",
+    component_right_title:"",
     content_title:"",
     content_title1:"",
     more:0,
@@ -73,7 +75,7 @@ const {
     status:1
   },
   rules:{
-    page_id:{
+    page_key:{
       required: true,
       message:"페이지를 선택해주세요",
       trigger:"change"
@@ -82,11 +84,6 @@ const {
       required:true,
       message:"컴포넌트를 선택해주세요",
       trigger:"change"
-    },
-    title:{
-      required:true,
-      message:"타이틀을 입력해주세요",
-      trigger:"blur"
     }
   },
   create:createComponent,
@@ -94,8 +91,8 @@ const {
   getDataList:getData,
 });
 getData();
-const pageName = (id)=>{
-  let name = pages.value.filter(item => id == item.id);
+const pageName = (key)=>{
+  let name = pages.value.filter(item => key == item.page_key);
   return name[0];
 }
 
@@ -168,12 +165,12 @@ const clickBanner = (id)=>{
     <ListHeader @create="handleCreate"></ListHeader>
     <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
       <SearchItem>
-        <el-select v-model="searchForm.page_id" placeholder="选择商品类型" style="width: 330px">
+        <el-select v-model="searchForm.page_key" placeholder="选择商品类型" style="width: 330px">
           <el-option
               v-for="item in pages"
               :key="item.id"
               :label="item.name"
-              :value="item.id"
+              :value="item.page_key"
           />
         </el-select>
       </SearchItem>
@@ -186,7 +183,7 @@ const clickBanner = (id)=>{
        </el-table-column>
        <el-table-column label="페이지" width="180" align="center">
          <template #default="{row}">
-           <p><span style="color: #3498db">{{pageName(row.page_id).name}}</span> - ( <span style="color: rgb(50,50,50)">{{pageName(row.page_id).page_key}}</span> )</p>
+           <p><span style="color: #3498db">{{pageName(row.page_key).name}}</span> - ( <span style="color: rgb(50,50,50)">{{pageName(row.page_key).page_key}}</span> )</p>
          </template>
        </el-table-column>
       <el-table-column label="타이틀" width="380" prop="title" align="center">
@@ -194,7 +191,7 @@ const clickBanner = (id)=>{
       <el-table-column label="아이템" width="230" align="center">
         <template #default="{row}">
           <el-button v-if="row.banner" disabled type="info">보기정지</el-button>
-          <el-button v-else type="danger" round @click="getComponentBanner(row.id)">아이템보기</el-button>
+          <el-button v-else type="danger" round @click="clickItem(row.id)">아이템보기</el-button>
         </template>
       </el-table-column>
       <el-table-column label="배너아이템" width="230" align="center">
@@ -236,12 +233,12 @@ const clickBanner = (id)=>{
       ref="formRef"
       label-width="auto">
         <el-form-item label="페이지" prop="page_id">
-          <el-select v-model="formData.page_id" placeholder="페이지선택" style="width: 240px">
+          <el-select v-model="formData.page_key" placeholder="페이지선택" style="width: 240px">
             <el-option
                 v-for="item in pages"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id"
+                :value="item.page_key"
             />
           </el-select>
         </el-form-item>
@@ -250,27 +247,27 @@ const clickBanner = (id)=>{
             <el-option
                 v-for="item in componentNames"
                 :key="item.id"
-                :label="item.name"
+                :label="item.title"
                 :value="item.name"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="타이틀" prop="title">
+        <el-form-item label="왼쪽타이틀">
           <el-input
               v-model="formData.title"
               maxlength="30"
               style="width: 450px"
-              placeholder="타이틀을 입력하세요"
+              placeholder="컴포넌트 왼쪽 타이틀을 입력하세요"
               show-word-limit
               type="textarea"
           />
         </el-form-item>
-        <el-form-item label="작은타이틀" >
+        <el-form-item label="오른쪽타이틀" >
           <el-input
               v-model="formData.title1"
               maxlength="30"
               style="width: 450px"
-              placeholder="작은타이틀을 입력하세요"
+              placeholder="컴포넌트 오른쪽 작은타이틀을 입력하세요"
               show-word-limit
               type="textarea"
           />
@@ -467,7 +464,7 @@ const clickBanner = (id)=>{
           <p class="goodsContent"><span class="goodsTitle">휴대폰시장 가격  </span> - <span class="goodsText">{{ priceDollar(detailComponentGoods.price)}}원</span></p>
           <p class="goodsContent"><span class="goodsTitle">판매 가격  </span> - <span class="goodsText">{{ priceDollar(detailComponentGoods.price1)}}원</span></p>
           <p class="goodsContent"><span class="goodsTitle">중고 가격  </span> - <span class="goodsText">{{ priceDollar(detailComponentGoods.price2)}}원</span></p>
-          <p class="goodsContent"><span class="goodsTitle">색상  </span> - <span class="goodsText">{{JSON.parse(detailComponentGoods.color).color}}</span></p>
+          <p class="goodsContent"><span class="goodsTitle">색상  </span> - <span class="goodsText">{{detailComponentGoods.color}}</span></p>
           <p class="goodsContent"><span class="goodsTitle">용량  </span> - <span class="goodsText">{{detailComponentGoods.storage}}</span></p>
           <p class="goodsContent"><span class="goodsTitle">중고상품설명  </span> - <span class="goodsText">{{detailComponentGoods.phone_detail}}</span></p>
           <p class="goodsContent"><span class="goodsTitle">일련번호 </span> - <span class="goodsText">{{detailComponentGoods.serial}}</span></p>

@@ -113,6 +113,9 @@
             text-color="#fff"
             @select="changeGoods"
         >
+          <el-menu-item index="">
+              전체보기
+          </el-menu-item>
           <div v-for="menu in menuList">
             <el-sub-menu v-if="menu.child.length > 0" :index="String(menu.id)">
               <template #title>
