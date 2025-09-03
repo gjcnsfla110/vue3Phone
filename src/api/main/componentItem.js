@@ -21,3 +21,7 @@ export function getGoodsList(page,limit=10,query={}) {
 export function getGoods(id){
     return service.post(`admin/componentItems/${id}/getGoods`);
 }
+
+export function updateChangeListType(type,id){
+    return service.post(`admin/componentItems/${id}/updateChangeListType`,{listType:type});
+}

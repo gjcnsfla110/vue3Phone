@@ -5,7 +5,7 @@ import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
 import {useInitTable,useInitFrom,priceDollar} from "@/composables/useCommon.js";
 import {getComponentList,createComponent,updateComponent,deleteComponent,updateStatus} from "@/api/main/component.js";
-import {getComponentItemList,createComponentItem,deleteComponentItem,getGoods} from "@/api/main/componentItem.js";
+import {getComponentItemList,createComponentItem,deleteComponentItem,getGoods,updateChangeListType} from "@/api/main/componentItem.js";
 import ComponentBanner from "@/pages/main/ComponentBanner.vue";
 import Drawer from "@/components/Drawer.vue";
 import {ref} from "vue";
@@ -149,6 +149,12 @@ const detailComponentItemGoods = (id)=>{
       detailComponentGoods.value = res.goods[0];
       detailComponentGoodsDialong.value.openDialog();
     })
+}
+//아이템 list 타입 즉 list1 list2 설정하기
+const changeListType = (type,id)=>{
+  updateChangeListType(type,id).then(res=>{
+      showMsg("아이템 List 변경하였습니다");
+  })
 }
 /*------------------------------------------------- 배너부분 --------------------------------------------------------------------*/
 //배너 보기
@@ -409,6 +415,7 @@ const clickBanner = (id)=>{
                <el-button type="danger" plain>삭제</el-button>
              </template>
            </el-popconfirm>
+           <el-switch @change="changeListType(row.listType,row.id)" style="margin-left: 30px; font-size:18px;" v-model="row.listType" :active-value="1" :inactive-value="0" active-text="List2" inactive-text="List1" />
          </template>
        </el-table-column>
      </el-table>
