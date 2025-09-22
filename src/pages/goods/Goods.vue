@@ -10,7 +10,7 @@ import Drawer from "@/components/Drawer.vue";
 import CheckImg from "@/components/CheckImg.vue";
 import {ref, watch} from "vue";
 import {showMessage} from "@/composables/utill.js";
-import {goodsList,createGoods,deleteGoods,deleteAll,updateGoods,updateStatus,updateStatusAll,updateBanners} from "@/api/goods/goods.js";
+import {goodsList,createGoods,deleteGoods,deleteAll,updateGoods,updateStatus,updateStatusAll,updateBanners,updateContents} from "@/api/goods/goods.js";
 import {listTrees,menuListTrees,orderTrees} from "@/composables/useCommon.js";
 import useSpecData from "@/store/spec.js";
 const {storageData} = useSpecData();
@@ -50,8 +50,10 @@ const {
   },
   afterDataList:(res)=>{
     tableList.value = res.list;
+    total.value = res.total;
     tableList.value.forEach((item)=>{
       item.banner = JSON.parse(item.banner);
+      item.content = JSON.parse(item.content);
       item.service = JSON.parse(item.service);
       item.delivery = JSON.parse(item.delivery);
     })
@@ -156,23 +158,17 @@ getData();
 //모델타입
 const modelTypeOption = [
   {label:'全部',value:""},
-  {label:'新手机',value:1},
-  {label:'开封商品',value:2},
-  {label:'二手机',value:3}
+  {label:'合约新机',value:"合约新机"},
+  {label:'开封合约机',value:"开封合约机"},
+  {label:'专卖店新机',value:'专卖店新机'},
+  {label:'开封专卖店机',value:'开封专卖店机'},
+  {label:'二手商品',value:'二手商品'},
+  {label:'配件商品',value:'配件商品'}
 ]
 //입력,선택여부 결정
 const isColor = ref(1);
 const isStorage = ref(1);
-const statusMap = {
-  1: '合约新机',
-  2: '开封合约机',
-  3: '新专柜机',
-  4: '开封专柜机',
-  5: '二手商品',
-};
-const shopStatusMap = (type)=>{
-  return  statusMap[type] ?  statusMap[type] : '无符合商品';
-}
+
 //배너수정부분
 const banner = ref({
   id:"",
@@ -191,6 +187,26 @@ const updateBanner = ()=>{
     bannerDrawerRef.value.closeDrawer();
   }).finally(()=>{
     bannerDrawerRef.value.closeDrawer();
+  })
+}
+//상품 내용 사진부분
+const content = ref({
+  id:"",
+  content:[]
+})
+const contentDrawerRef =ref("");
+const contentFormRef = ref("");
+const openContentDrawer = (row)=>{
+  content.value = {id:row.id,content:row.content};
+  contentDrawerRef.value.openDrawer();
+}
+const updateContent = ()=>{
+  updateContents(content.value.id,content.value.content).then(res=>{
+    showMessage("详细内容图片-修改成功");
+    getData();
+    contentDrawerRef.value.closeDrawer();
+  }).finally(()=>{
+    contentDrawerRef.value.closeDrawer();
   })
 }
 //주메뉴-서브메뉴 부분코딩
@@ -327,7 +343,7 @@ const changeLabel = (labelName)=>{
           <div>
             <p>商品名称: {{row.title}}</p>
             <p>详细名称: {{row.title1}}</p>
-            <p>商品状态: {{shopStatusMap(row.type)}}</p>
+            <p>商品状态: {{row.type}}</p>
             <p>市场价格: {{row.title}}</p>
             <p>商品价格: {{row.title}}</p>
           </div>
@@ -352,7 +368,7 @@ const changeLabel = (labelName)=>{
             <div class="detailRight">
               <p class="detailRight1">{{row.title1}}</p>
               <p class="detailRight2">{{row.label}}</p>
-              <p class="detailRight3">{{shopStatusMap(row.type)}}</p>
+              <p class="detailRight3">{{row.type}}</p>
             </div>
           </div>
         </template>
@@ -384,6 +400,7 @@ const changeLabel = (labelName)=>{
         <template #default="{row}">
           <el-button @click="handleUpdate(row)" type="primary" text bg>修改</el-button>
           <el-button @click="openBannerDrawer(row)" type="primary" text bg>更改轮播图</el-button>
+          <el-button v-if="row.type != '二手商品'"  @click="openContentDrawer(row)" type="primary" text bg>更改内容图</el-button>
           <el-popconfirm
               confirm-button-text="确认"
               cancel-button-text="取消"
@@ -399,7 +416,7 @@ const changeLabel = (labelName)=>{
       </el-table-column>
     </el-table>
     <div class="pagination">
-      <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
+      <el-pagination @change="getData"  background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
     </div>
   </el-card>
   <Drawer ref="formDrawerRef" :title="formTitle" @submit="handleSubmit">
@@ -471,12 +488,12 @@ const changeLabel = (labelName)=>{
 
       <el-form-item label="商品类型" prop="type">
         <el-radio-group v-model="formData.type" size="large">
-          <el-radio-button label="新合约机" :value="1" />
-          <el-radio-button label="开封合约机" :value="2" />
-          <el-radio-button label="新专柜机" :value="3" />
-          <el-radio-button label="开封专柜机" :value="4" />
-          <el-radio-button label="二手商品" :value="5" />
-          <el-radio-button label="配件商品" :value="6" />
+          <el-radio-button label="新合约机" value="新合约机" />
+          <el-radio-button label="开封合约机" value="开封合约机" />
+          <el-radio-button label="专卖店新机" value="新专柜机" />
+          <el-radio-button label="开封专卖店机" value="开封专柜机" />
+          <el-radio-button label="二手商品" value="二手商品" />
+          <el-radio-button label="配件商品" value="配件商品" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="商品标题" prop="title">
@@ -485,20 +502,20 @@ const changeLabel = (labelName)=>{
       <el-form-item label="详细页标题" prop="title1">
         <el-input v-model="formData.title1" placeholder="请填写详细标题" style="width: 80%"></el-input>
       </el-form-item>
-      <el-form-item label="详细URL">
-        <el-input v-model="formData.content" placeholder="请填写详细信息URL" style="width: 80%"></el-input>
-      </el-form-item>
       <el-form-item label="主图">
         <CheckImg v-model="formData.img"></CheckImg>
       </el-form-item>
       <el-form-item label="轮播详细图">
         <CheckImg v-model="formData.banner" :limit="20" ></CheckImg>
       </el-form-item>
+      <el-form-item v-if="formData.type != '二手商品'" label="详细图片">
+        <CheckImg v-model="formData.content" :limit="15" ></CheckImg>
+      </el-form-item>
       <el-form-item label="市场原价">
         <el-input v-model="formData.price" placeholder="填写市场原价" style="width: 80%" :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
       </el-form-item>
-      <el-form-item label="售卖价格" v-if="formData.type !== 5">
+      <el-form-item label="售卖价格" v-if="formData.type !== '二手商品'">
         <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price1" placeholder="填写售卖价格" style="width: 80%" ></el-input>
       </el-form-item>
@@ -506,7 +523,7 @@ const changeLabel = (labelName)=>{
         <el-input :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')" v-model="formData.price2" placeholder="填写二手价格" style="width: 80%" ></el-input>
       </el-form-item>
-      <el-form-item label="选择参数" v-if="formData.type != 5 && formData.type != 6">
+      <el-form-item label="选择参数" v-if="formData.type != '二手商品' && formData.type != '配件商品'">
         <el-cascader
             v-model="formData.spec_id"
             :options="goodsSpecs"
@@ -518,7 +535,7 @@ const changeLabel = (labelName)=>{
       <el-form-item label="颜色">
         <el-input v-model="formData.color" placeholder="填写颜色" style="width: 300px;margin-left: 15px"> </el-input>
       </el-form-item>
-      <el-form-item label="内存" v-if="formData.type !== 6">
+      <el-form-item label="内存" v-if="formData.type !== '配件商品'">
         <el-select
             v-model="formData.storage"
             clearable
@@ -533,7 +550,7 @@ const changeLabel = (labelName)=>{
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="二手说明" v-if="formData.type == 5">
+      <el-form-item label="二手说明" v-if="formData.type == '二手商品'">
         <el-input
             v-model="formData.phone_detail"
             maxlength="500"
@@ -544,7 +561,7 @@ const changeLabel = (labelName)=>{
             type="textarea"
         />
       </el-form-item>
-      <el-form-item label="商品所属" v-if="formData.type == 5">
+      <el-form-item label="商品所属" v-if="formData.type == '二手商品'">
         <el-radio-group v-model="formData.isShop" size="large">
           <el-radio-button label="公司所属" value="公司所属" />
           <el-radio-button label="卖家寄托" value="卖家寄托" />
@@ -560,7 +577,7 @@ const changeLabel = (labelName)=>{
   </Drawer>
   <Drawer ref="bannerDrawerRef" title="修改轮播图-图片" @submit="updateBanner">
     <el-form
-        v-model="banner"
+        :model="banner"
         ref="bannerFormRef"
         label-width="auto"
     >
@@ -569,6 +586,19 @@ const changeLabel = (labelName)=>{
       </el-form-item>
     </el-form>
   </Drawer>
+
+  <Drawer ref="contentDrawerRef" title="修改详细内容图-图片" @submit="updateContent">
+    <el-form
+        :model="content"
+        ref="contentFormRef"
+        label-width="auto"
+    >
+      <el-form-item>
+        <CheckImg v-model="content.content" :limit="20"></CheckImg>
+      </el-form-item>
+    </el-form>
+  </Drawer>
+
 </template>
 
 <style scoped lang="scss">

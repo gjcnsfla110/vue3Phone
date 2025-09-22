@@ -229,7 +229,7 @@ const clickBanner = (id)=>{
       </el-table-column>
     </el-table>
     <div class="pagination">
-      <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
+      <el-pagination @change="getData" background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
     </div>
   </el-card>
   <Drawer ref="formDrawerRef" :title="formTitle" @submit="handleSubmit">
@@ -358,30 +358,13 @@ const clickBanner = (id)=>{
        <el-table-column label="기기타입" align="center" width="150">
          <template #default="{row}">
            <el-button type="primary" plain>
-                   <span v-if="row.type === 1">
-                      新合约机
-                   </span>
-             <span v-else-if="row.type === 2">
-                     开封合约机
-                   </span>
-             <span v-else-if="row.type === 3">
-                     新专柜机
-                   </span>
-             <span v-else-if="row.type === 4">
-                     开封专柜机
-                   </span>
-             <span v-else-if="row.type === 5">
-                     二手商品
-                   </span>
-             <span v-else-if="row.type === 6">
-                     配件商品
-                   </span>
+              <span>{{row.type}}</span>
            </el-button>
          </template>
        </el-table-column>
        <el-table-column label="라벨" align="center" width="150">
          <template #default="{row}">
-            <p :style="{backgroundColor:row.label_color,width:'100%',height:'35px',lineHeight:'35px',borderRadius:'5px'}">{{row.label}}</p>
+            <p :style="{backgroundColor:row.label_color,width:'100%',height:'35px',lineHeight:'35px',borderRadius:'5px',color:'rgb(230,230,230)'}">{{row.label}}</p>
          </template>
        </el-table-column>
        <el-table-column label="용량" align="center" width="150" prop="storage">

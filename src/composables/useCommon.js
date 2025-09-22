@@ -267,6 +267,7 @@ export function menuListTrees(menu,allMenu,pid="pid",child="child"){
     return menu;
 }
 
+//우선순위를 정하는 부분
 export function orderTrees(menus,order='ranking'){
     function sortTreeByRanking(tree) {
         // 트리가 배열인지 확인 (최상위가 배열일 경우)

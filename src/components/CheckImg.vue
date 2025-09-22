@@ -178,9 +178,11 @@
       if(props.limit == 1){
         value = urls[0]
       } else {
-        value = props.preview ? [...props.modelValue,...urls] : [...urls]
+        //부모에서 넘겨온 props.modelValue 값이 null혹은 undifind일때 작업
+        let propsImgData = props.modelValue ? props.modelValue : [];
+        value = props.preview ? [...propsImgData,...urls] : [...urls]
         if(value.length > props.limit){
-          let limit = props.preview ? (props.limit - props.modelValue.length) : props.limit
+          let limit = props.preview ? (props.limit - propsImgData.length) : props.limit
           return showMessage("最多还能选择"+ limit + "张")
         }
       }

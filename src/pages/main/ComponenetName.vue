@@ -79,7 +79,7 @@
         </el-table-column>
       </el-table>
       <div class="pagination">
-        <el-pagination background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
+        <el-pagination @change="getData" background layout="prev, pager, next" v-model:page-size="limit" v-model:current-page="currentPage" :total="total" />
       </div>
     </el-card>
   <Drawer ref="formDrawerRef" :title="formTitle" @submit="handleSubmit">

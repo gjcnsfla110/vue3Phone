@@ -9,6 +9,7 @@ export function goodsList(page,limit=10,query={}) {
 
 export function createGoods(data) {
       data.banner = JSON.stringify(data.banner);
+      data.content = JSON.stringify(data.content);
       data.service = JSON.stringify(data.service);
       data.delivery= JSON.stringify(data.delivery);
       return service.post(`admin/goods/create`,data);
@@ -39,4 +40,8 @@ export function updateStatusAll(id,status){
 
 export function updateBanners(id,banner){
     return service.post(`admin/goods/${id}/banner`,{banner:banner});
+}
+export function updateContents(id,content){
+    content = JSON.stringify(content);
+    return service.post(`admin/goods/${id}/updateContent`,{content:content});
 }
