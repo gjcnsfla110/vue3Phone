@@ -1,5 +1,4 @@
 <script setup>
-
     defineOptions({
         name: 'GoodsCategory',
     })
@@ -7,6 +6,7 @@
     import {useInitTable, useInitFrom, listTrees,menuListTrees,orderTrees} from "@/composables/useCommon.js";
     import {categoryList,addCategory,updateCategory,updateStatus,deleteCategory} from "@/api/goods/goodsCategory.js";
     import Drawer from "@/components/Drawer.vue";
+    import CheckImg from "@/components/CheckImg.vue";
     import {ref} from "vue";
 
     //카테고리
@@ -53,7 +53,9 @@
         category_id:"",
         menu:1,
         name:"",
+        title:"",
         img:"",
+        color:"",
         ranking:50,
         status:1
       },
@@ -174,11 +176,17 @@
                  <el-radio-button label="内菜单" :value="0" />
                </el-radio-group>
              </el-form-item>
+           <el-form-item label="菜单颜色" >
+             <el-input v-model="formData.color"></el-input>
+           </el-form-item>
             <el-form-item label="填写名称" prop="name">
               <el-input v-model="formData.name"></el-input>
             </el-form-item>
-           <el-form-item label="图片URL" v-if="formData.menu == 0">
-             <el-input v-model="formData.img"></el-input>
+           <el-form-item label="现实商品名称" >
+             <el-input v-model="formData.title"></el-input>
+           </el-form-item>
+           <el-form-item label="图片URL">
+             <CheckImg v-model="formData.img"></CheckImg>
            </el-form-item>
             <el-form-item label="选择排序">
               <el-input-number v-model="formData.ranking"/>
