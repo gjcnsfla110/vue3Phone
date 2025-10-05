@@ -133,7 +133,7 @@ export function useInitTable(opt={}){
     }
     const changeHot = (hot,item)=>{
         opt.updateHot(item.id,hot).then((res)=>{
-            showMsg("状态修改成功");
+            showMsg("热门状态修改成功");
             item.hot = hot;
         })
     }

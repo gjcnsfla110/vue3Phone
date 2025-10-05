@@ -25,6 +25,10 @@ export function updateStatus(id,status){
     return service.post(`admin/phoneList/${id}/updateStatus`,{status});
 }
 
+export function updateHot(id,hot){
+    return service.post(`admin/phoneList/${id}/updateHot`,{hot});
+}
+
 export function itemDetail(id){
     return service.post(`admin/phoneList/item`,{id:id});
 }

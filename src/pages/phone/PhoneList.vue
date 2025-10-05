@@ -2,7 +2,7 @@
   import {useInitTable,useInitFrom,priceDollar} from "@/composables/useCommon.js";
   import Drawer from "@/components/Drawer.vue";
   import Dialong from "@/components/Dialong.vue";
-  import {getPhoneList,createPhone,updatePhone,updateStatus,itemDetail,deletePhone,updateBanners} from "@/api/phone/phoneList.js";
+  import {getPhoneList,createPhone,updatePhone,updateStatus,itemDetail,deletePhone,updateBanners,updateHot} from "@/api/phone/phoneList.js";
   import {phonePlanList,createPhonePlan,updatePhonePlan,deletePhonePlan} from "@/api/phone/phonePlan.js";
   import Search from "@/components/Search.vue";
   import SearchItem from "@/components/SearchItem.vue";
@@ -12,11 +12,6 @@
   import {listTrees, showMsg} from "@/composables/utill.js";
   import {showMessage} from "@/composables/utill.js";
 
-  //검색시사용 선택한메인카테고리아이디
-  const searchCategoryId = ref("");
-  const searchSideCategory = ref([]);
-  //입력시사용 선택한메인카테고리아이디
-  const formSideCategory = ref([]);
   //category 메인카테고리 데이터
   const categorys = ref([]);
   //sideCategory 데이터
@@ -33,11 +28,14 @@
     limit,
     getData,
     handleStatusChange,
+    changeHot,
     handleDelete,
   }= useInitTable({
     defaultSearchForm:{
         title:"",
-        sideCategory_id:"",
+        category_id:"",
+        mobile:"",
+        hot:""
     },
     afterDataList:(res)=>{
         dataList.value = res.list;
@@ -51,6 +49,7 @@
     },
     getList: getPhoneList,
     updateStatus:updateStatus,
+    updateHot,
     delete:deletePhone,
   })
 
@@ -66,17 +65,21 @@
   } = useInitFrom({
     form:{
       category_id:"",
-      sideCategory_id:"",
       planCategory_id:"",
       mobile:"",
+      hot:0,
       title:"",
       content:"",
       color:"",
       detail:"",
       img:"",
+      store:"",
       banner:[],
       price:"",
+      shopCashSupport:"",
+      phoneCashSupport:"",
       sale_price:"",
+      month_price:"",
       status:1,
       ranking:50
     },
@@ -84,11 +87,6 @@
       category_id:{
         required: true,
         message:"选择主菜单",
-        trigger:"change"
-      },
-      sideCategory_id:{
-        required: true,
-        message:"选择菜单",
         trigger:"change"
       },
       planCategory_id:{
@@ -121,15 +119,10 @@
         message:"填写合约内容",
         trigger:"blur"
       },
-      price:{
+      shopCashSupport: {
         required: true,
-        message:"填写手机价格",
-        trigger:"blur"
-      },
-      sale_price:{
-        required: true,
-        message:"填写优惠完后实价格",
-        trigger:"blur"
+        message: "填写手机价格",
+        trigger: "blur"
       }
     },
     getDataList:getData,
@@ -137,32 +130,6 @@
     update:updatePhone,
   })
   getData();
-
-  //sideCategory 를 선택하는 고르는 함수
-  const selectSideCategory = (id)=>{
-    return sideCategory.value.filter((item)=>item.category_id == id);
-  }
-
-  //검색 카테고리선택 함수
-  const checkSearchCategoryId = ()=>{
-       searchForm.sideCategory_id = "";
-       searchSideCategory.value = selectSideCategory(searchCategoryId.value);
-  }
-
-  //입력폼 카테고리선택 함수
-  const checkFormCategoryId = ()=>{
-       //formData.sideCategory_id = "";
-       formSideCategory.value = selectSideCategory(formData.category_id);
-  }
-  //입력폼 변화감지
-  watch(
-      () => formData.category_id,
-      (newValue, oldValue) => {
-        checkFormCategoryId();
-      },
-      { immediate: true } // 초기값 설정 시에도 실행
-  );
-
 
   //배너수정부분
   const banner = ref({
@@ -355,25 +322,20 @@
     <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
       <SearchItem label="主菜单">
         <el-cascader
-            v-model="searchCategoryId"
+            v-model="searchForm.category_id"
             :options="categorys"
             :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
-            placeholder="必选主菜单才可选菜单"
+            placeholder="选择菜单"
             @change="checkSearchCategoryId"
         />
       </SearchItem>
-      <SearchItem label="菜单">
-        <el-select
-            v-model="searchForm.sideCategory_id"
-            clearable
-            placeholder="请选择标签"
-            style="width: 300px"
-        >
+      <SearchItem label="热门通信社商品">
+        <el-select v-model="searchForm.mobile" placeholder="热门通信社商品" style="width: 240px">
           <el-option
-              v-for="item in searchSideCategory"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
+              v-for="item in [{label:'LG_通信社',value:1},{label:'KT_通信社',value:2},{label:'SK_通信社',value:3}]"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           />
         </el-select>
       </SearchItem>
@@ -386,6 +348,19 @@
     :data="dataList"
     >
        <el-table-column label="标题" prop="title" width="300"></el-table-column>
+       <el-table-column label="通信社" align="center" width="150" >
+         <template #default="{row}">
+           <el-button v-if="row.mobile == 1" type="danger" >LG_通信社</el-button>
+           <el-button v-if="row.mobile == 2" type="primary" >KT_通信社</el-button>
+           <el-button v-if="row.mobile == 3" type="warning" >SK_通信社</el-button>
+           <el-button v-if="row.mobile == 4" type="danger" >LG_网线</el-button>
+           <el-button v-if="row.mobile == 5" type="primary" >KT_网线</el-button>
+           <el-button v-if="row.mobile == 6" type="warning" >SK_网线</el-button>
+           <el-button v-if="row.mobile == 7" type="danger" >알뜰LG网线</el-button>
+           <el-button v-if="row.mobile == 8" type="primary" >알뜰KT网线</el-button>
+           <el-button v-if="row.mobile == 9" type="warning" >알뜰SK网线</el-button>
+         </template>
+       </el-table-column>
        <el-table-column label="图片" align="center" width="180">
          <template #default="{row}">
               <div>
@@ -411,6 +386,19 @@
               :active-value="1"
               :inactive-value="0"
               @change="handleStatusChange($event,row)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column label="热门" width="150" align="center">
+        <template #default="{row}">
+          <el-switch
+              v-model="row.hot"
+              active-text="热门"
+              inactive-text="正常"
+              width="40px"
+              :active-value="1"
+              :inactive-value="0"
+              @change="changeHot($event,row)"
           />
         </template>
       </el-table-column>
@@ -443,7 +431,7 @@
       </el-table-column>
     </el-table>
     <div style="display: flex;align-items: center; justify-content: center; margin: 10px 0;">
-      <el-pagination background layout="prev, pager, next"  v-model:page-size="limit"  v-model:current-page="currentPage" :total="total" />
+      <el-pagination @change="getData" background layout="prev, pager, next"  v-model:page-size="limit"  v-model:current-page="currentPage" :total="total" />
     </div>
   </el-card>
   <Drawer ref="formDrawerRef" :title="formTitle" @submit="handleSubmit">
@@ -460,21 +448,6 @@
              placeholder="必须选择主菜单"
          />
        </el-form-item>
-       <el-form-item label="菜单" prop="sideCategory_id">
-         <el-select
-             v-model="formData.sideCategory_id"
-             clearable
-             placeholder="请选择菜单"
-             style="width: 300px"
-         >
-           <el-option
-               v-for="item in formSideCategory"
-               :key="item.id"
-               :label="item.name"
-               :value="item.id"
-           />
-         </el-select>
-       </el-form-item>
        <el-form-item label="话费套餐" prop="planCategory_id">
          <el-select
              v-model="formData.planCategory_id"
@@ -490,11 +463,23 @@
            />
          </el-select>
        </el-form-item>
-       <el-form-item label="信用卡优惠">
+       <el-form-item label="通信社">
          <el-radio-group v-model="formData.mobile" size="large">
            <el-radio-button label="LG通信社" :value="1"/>
            <el-radio-button label="KT通信社" :value="2"/>
            <el-radio-button label="SK通信社" :value="3"/>
+           <el-radio-button label="LG网线" :value="4"/>
+           <el-radio-button label="KT网线" :value="5"/>
+           <el-radio-button label="SK网线" :value="6"/>
+           <el-radio-button label="알뜰LG网线" :value="7"/>
+           <el-radio-button label="알뜰KT网线" :value="8"/>
+           <el-radio-button label="알뜰SK网线" :value="9"/>
+         </el-radio-group>
+       </el-form-item>
+       <el-form-item label="信用卡优惠">
+         <el-radio-group v-model="formData.hot" size="large">
+           <el-radio-button label="正常" :value="0"/>
+           <el-radio-button label="热门" :value="1"/>
          </el-radio-group>
        </el-form-item>
        <el-form-item label="标题" prop="title" style="width: 700px">
@@ -511,8 +496,8 @@
        <el-form-item label="颜色" prop="color" style="width: 700px">
            <el-input v-model="formData.color" placeholder="填写合约机颜色"></el-input>
        </el-form-item>
-       <el-form-item label="内容url" prop="content" style="width: 700px">
-           <el-input v-model="formData.content" placeholder="填写合约机连接Url"></el-input>
+       <el-form-item label="内存" style="width: 700px">
+         <el-input v-model="formData.store" placeholder="填写商品内存"></el-input>
        </el-form-item>
        <el-form-item label="主图">
          <CheckImg v-model="formData.img" ></CheckImg>
@@ -520,12 +505,25 @@
        <el-form-item label="轮播详细图">
          <CheckImg v-model="formData.banner" :limit="20" ></CheckImg>
        </el-form-item>
-       <el-form-item style="width: 700px" label="价格" prop="price">
+       <el-form-item style="width: 700px" label="价格" >
             <el-input v-model="formData.price" placeholder="填写价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
                       :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
        </el-form-item>
-       <el-form-item label="优惠后价格" prop="sale_price" style="width: 700px">
-            <el-input v-model="formData.sale_price" placeholder="填写优惠完后价格"></el-input>
+       <el-form-item label="现金支援" prop="shopCashSupport" style="width: 700px">
+         <el-input v-model="formData.shopCashSupport" placeholder="填写现金支援价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
+       </el-form-item>
+       <el-form-item label="공시지원금"  style="width: 700px">
+         <el-input v-model="formData.phoneCashSupport" placeholder="填写공시지원금"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
+       </el-form-item>
+       <el-form-item label="优惠后价格" style="width: 700px">
+         <el-input  v-model="formData.sale_price" placeholder="填写优惠完后价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                   :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
+       </el-form-item>
+       <el-form-item label="最低每月话费" style="width: 700px">
+         <el-input  v-model="formData.month_price" placeholder="填写优惠完后价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                    :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
        </el-form-item>
        <el-form-item label="状态">
          <el-switch v-model="formData.status" active-text="正常" inactive-text="隐藏"  :active-value="1" :inactive-value="0"/>
