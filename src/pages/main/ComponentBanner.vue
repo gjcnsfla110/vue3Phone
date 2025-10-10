@@ -16,13 +16,13 @@
     const bannerId = ref("");
     const formTitle = computed(()=>bannerId.value ? "배너 업데이트":"배너 추가");
     const defaultFormData = reactive({
-        img:"",
+        image:"",
         link:"",
         status:1,
         ranking:50
     })
     const formData = reactive({
-        img:"",
+        image:"",
         link:"",
         status:1,
         ranking:50
@@ -137,7 +137,7 @@
       :rules="formRules"
       label-width="auto">
           <el-form-item label="이미지">
-              <CheckImg v-model="formData.img"></CheckImg>
+              <CheckImg v-model="formData.image"></CheckImg>
           </el-form-item>
           <el-form-item label="이미지링크" prop="link">
               <el-input v-model="formData.link"></el-input>
