@@ -31,6 +31,9 @@ import PlanCategory from "@/pages/phone/PlanCategory.vue";
 import ComponenetName from "@/pages/main/ComponenetName.vue";
 import Component from '@/pages/main/Component.vue'
 import SubMenu from "@/pages/goods/goods_about/SubMenu.vue";
+import AccessoriesSubCategory from "@/pages/accessories/AccessoriesSubCategory.vue";
+import Accessories from "@/pages/accessories/Accessories.vue";
+import AccessoriesCategory from "@/pages/accessories/AccessoriesCategory.vue";
 
 const routes = [
     {
@@ -290,6 +293,30 @@ const asycnRoutes = [
         component: ComponenetName,
         meta:{
             title: '컴포넌트이름'
+        }
+    },
+    {
+        path:'/accessories/category',
+        name: '/accessories/category',
+        component: AccessoriesCategory,
+        meta:{
+            title: '악세사리카테고리'
+        }
+    },
+    {
+        path:'/accessories/accessories',
+        name: '/accessories/accessories',
+        component: Accessories,
+        meta:{
+            title: '악세사리'
+        }
+    },
+    {
+        path:'/accessories/subCategory',
+        name: '/accessories/subCategory',
+        component: AccessoriesSubCategory,
+        meta:{
+            title: '악세사리서브카테고리'
         }
     }
 ];

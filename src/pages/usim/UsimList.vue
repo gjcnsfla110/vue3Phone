@@ -60,13 +60,19 @@ const {
     'category_id':"",
     'title':"",
     'detail':"",
-    'mobile':1,
+    'mobile_name':"LG公司",
+    'mobile_type':"5G网络",
     'price':"",
-    'data':"",
-    'talk_time':"",
-    'mns':"",
-    'other':"",
-    'agreement':"",
+    'data':"无限上网",
+    'tell_time':"无限通话",
+    'mns':"无限短信",
+    'esim':"",
+    'other_service':"",
+    'agreement_time':"",
+    'papers':"",
+    'delivery':"",
+    'phone_type':"",
+    'peopleNeed':"",
     'ranking':50,
     'status':1,
     'hot':0
@@ -87,7 +93,7 @@ const {
       message:"请填写套餐介绍",
       trigger:"blur"
     },
-    'mobile':{
+    'mobile_name':{
       required: true,
       message:"请选择通信社公司",
       trigger:"change"
@@ -102,7 +108,7 @@ const {
       message:"请填写套餐可上网流量",
       trigger:"blur"
     },
-    'talk_time':{
+    'tell_time':{
       required: true,
       message:"请填写套餐通话时间",
       trigger:"blur"
@@ -112,16 +118,36 @@ const {
       message:"请填写套餐(MNS)信息",
       trigger:"blur"
     },
-    'other':{
+    'mobile_type':{
+      required: true,
+      message:"请选择套餐网络",
+      trigger:"blur"
+    },
+    'other_service':{
       required: true,
       message:"请填写套餐附加服务",
       trigger:"blur"
     },
-    'agreement':{
+    'agreement_time':{
       required: true,
       message:"请填写套餐合约时间",
       trigger:"blur"
     },
+    'papers':{
+      required: true,
+      message:"请填写套餐合约时间",
+      trigger:"blur"
+    },
+    'phone_type':{
+      required: true,
+      message:"请填写可使用手机",
+      trigger:"blur"
+    },
+    'peopleNeed':{
+      required: true,
+      message:"请填写适合人群",
+      trigger:"blur"
+    }
   }
 
 });
@@ -161,7 +187,8 @@ const itemDetail= (id)=>{
         <SearchItem label="通信社">
           <el-select clearable v-model="searchForm.mobile" placeholder="选择通信社" style="width: 330px">
             <el-option
-                v-for="item in [{label:'LG-通信社',value:'1'},{label:'KT-通信社',value:'2'},{label:'SK-通信社',value:'3'}]"
+                v-for="item in [{label:'LG-通信社',value:'LG公司'},{label:'KT-通信社',value:'KT公司'},{label:'SK-通信社',value:'SK公司'},
+                                {label:'LG-알뜰통신',value:'LG알뜰통신'},{label:'KT-알뜰통신',value:'KT알뜰통신'},{label:'SK-알뜰통신',value:'SK알뜰통신'}]"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -178,9 +205,7 @@ const itemDetail= (id)=>{
       <el-table-column label="套餐名称" align="center" width="300">
         <template #default="{row}">
           <p style="margin:8px 0; font-size:15px; color:rgb(160,160,160);">{{row.title}}</p>
-          <el-button v-if="row.mobile == 1" type="danger" size="small" round>LG-通信社</el-button>
-          <el-button v-else-if="row.mobile == 2" type="success" size="small" round>KT-通信社</el-button>
-          <el-button v-else-if="row.mobile == 3" type="primary" size="small" round>SK-通信社</el-button>
+          <el-button type="danger" size="small" round>{{row.mobile_name}}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="套餐类型" align="center" width="180">
@@ -267,11 +292,23 @@ const itemDetail= (id)=>{
             placeholder="请选择上级菜单"
         />
       </el-form-item>
-      <el-form-item label="通信公司" prop="mobile">
-        <el-radio-group v-model="formData.mobile" size="large" fill="#6cf">
-          <el-radio-button label="LG-通信社" :value="1" />
-          <el-radio-button label="KT-通信社" :value="2" />
-          <el-radio-button label="SK-通信社" :value="3" />
+      <el-form-item label="通信公司" prop="mobile_name">
+        <el-radio-group v-model="formData.mobile_name" size="large" fill="#6cf">
+          <el-radio-button label="LG-通信社" value="LG公司" />
+          <el-radio-button label="KT-通信社" value="KT公司" />
+          <el-radio-button label="SK-通信社" value="SK公司" />
+          <el-radio-button label="LG-알뜰통신" value="LG알뜰통신" />
+          <el-radio-button label="KT-알뜰통신" value="KT알뜰통신" />
+          <el-radio-button label="SK-알뜰통신" value="SK알뜰통신" />
+          <el-radio-button label="LG-선불통신" value="LG선불통신" />
+          <el-radio-button label="KT-선불통신" value="KT선불통신" />
+          <el-radio-button label="SK-선불통신" value="SK선불통신" />
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="通信公司" prop="mobile_type">
+        <el-radio-group v-model="formData.mobile_type" size="large" fill="#6cf">
+          <el-radio-button label="5G网络" value="5G网络" />
+          <el-radio-button label="4G网络" value="4G网路" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="套餐名称" prop="title">
@@ -303,9 +340,9 @@ const itemDetail= (id)=>{
             maxlength="300"
         />
       </el-form-item>
-      <el-form-item label="通话量" prop="talk_time">
+      <el-form-item label="通话量" prop="tell_time">
         <el-input
-            v-model="formData.talk_time"
+            v-model="formData.tell_time"
             style="width: 600px"
             :rows="3"
             type="textarea"
@@ -325,9 +362,15 @@ const itemDetail= (id)=>{
             maxlength="300"
         />
       </el-form-item>
-      <el-form-item label="附加服务" prop="other">
+      <el-form-item label="Esim手机卡" prop="mobile_type">
+        <el-radio-group v-model="formData.esim" size="large" fill="#6cf">
+          <el-radio-button label="Esim可用" value="可用" />
+          <el-radio-button label="Esim不可用" value="不可用" />
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="附加服务" prop="other_service">
         <el-input
-            v-model="formData.other"
+            v-model="formData.other_service"
             style="width: 600px"
             :rows="3"
             type="textarea"
@@ -336,9 +379,9 @@ const itemDetail= (id)=>{
             maxlength="300"
         />
       </el-form-item>
-      <el-form-item label="合约期间" prop="agreement">
+      <el-form-item label="合约期间" prop="agreement_time">
         <el-input
-            v-model="formData.agreement"
+            v-model="formData.agreement_time"
             style="width: 600px"
             :rows="3"
             type="textarea"
@@ -346,6 +389,42 @@ const itemDetail= (id)=>{
             show-word-limit
             maxlength="300"
         />
+      </el-form-item>
+      <el-form-item label="开通需材料" prop="papers">
+        <el-input
+            v-model="formData.papers"
+            style="width: 600px"
+            :rows="3"
+            type="textarea"
+            placeholder="请填写需要的材料"
+            show-word-limit
+            maxlength="300"
+        />
+      </el-form-item>
+      <el-form-item label="可使用手机" prop="phone_type">
+        <el-input
+            v-model="formData.phone_type"
+            style="width: 600px"
+            :rows="3"
+            type="textarea"
+            placeholder="请填写可用的手机"
+            show-word-limit
+            maxlength="300"
+        />
+      </el-form-item>
+      <el-form-item label="适合人群" prop="peopleNeed">
+        <el-input
+            v-model="formData.peopleNeed"
+            style="width: 600px"
+            :rows="8"
+            type="textarea"
+            placeholder="请填写套餐介绍"
+            show-word-limit
+            maxlength="1000"
+        />
+      </el-form-item>
+      <el-form-item label="邮费" prop="delivery">
+        <el-input style="width: 600px" v-model="formData.delivery" placeholder="请填写运送邮费"></el-input>
       </el-form-item>
       <el-form-item label="状态">
         <el-switch

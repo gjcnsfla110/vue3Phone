@@ -113,6 +113,10 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="색상보기">
+                 <div class="bgColor" :style="{'background-color':formData.color}">
+                 </div>
+            </el-form-item>
         </el-form>
     </Drawer>
 </template>
@@ -124,5 +128,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.bgColor{
+  width: 200px;
+  height: 100px;
+  border-radius: 10px;
 }
 </style>

@@ -80,6 +80,7 @@
       phoneCashSupport:"",
       sale_price:"",
       month_price:"",
+      installationPrice:"",
       status:1,
       ranking:50
     },
@@ -107,11 +108,6 @@
       detail:{
         required: true,
         message:"填写合约内容",
-        trigger:"blur"
-      },
-      color:{
-        required: true,
-        message:"填写机器颜色",
         trigger:"blur"
       },
       content:{
@@ -493,10 +489,10 @@
 
            </el-input>
        </el-form-item>
-       <el-form-item label="颜色" prop="color" style="width: 700px">
+       <el-form-item label="颜色" style="width: 700px" v-if="formData.mobile < 4">
            <el-input v-model="formData.color" placeholder="填写合约机颜色"></el-input>
        </el-form-item>
-       <el-form-item label="内存" style="width: 700px">
+       <el-form-item label="内存" style="width: 700px" v-if="formData.mobile < 4">
          <el-input v-model="formData.store" placeholder="填写商品内存"></el-input>
        </el-form-item>
        <el-form-item label="主图">
@@ -513,16 +509,20 @@
          <el-input v-model="formData.shopCashSupport" placeholder="填写现金支援价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
                    :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
        </el-form-item>
-       <el-form-item label="공시지원금"  style="width: 700px">
+       <el-form-item label="공시지원금"  style="width: 700px" v-if="formData.mobile < 4">
          <el-input v-model="formData.phoneCashSupport" placeholder="填写공시지원금"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
                    :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
        </el-form-item>
-       <el-form-item label="优惠后价格" style="width: 700px">
+       <el-form-item label="优惠后价格" style="width: 700px" v-if="formData.mobile < 4">
          <el-input  v-model="formData.sale_price" placeholder="填写优惠完后价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
                    :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
        </el-form-item>
-       <el-form-item label="最低每月话费" style="width: 700px">
+       <el-form-item label="最低每月话费" style="width: 700px" v-if="formData.mobile < 4">
          <el-input  v-model="formData.month_price" placeholder="填写优惠完后价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
+                    :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
+       </el-form-item>
+       <el-form-item label="网线安装费用" style="width: 700px" v-if="formData.mobile > 3">
+         <el-input  v-model="formData.installationPrice" placeholder="填写优惠完后价格"  :formatter="(value) => `$ ${Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`"
                     :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"></el-input>
        </el-form-item>
        <el-form-item label="状态">
