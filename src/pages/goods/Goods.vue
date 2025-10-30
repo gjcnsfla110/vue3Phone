@@ -43,6 +43,7 @@ const {
 } = useInitTable({
   defaultSearchForm:{
     title1:"",
+    item_number:"",
     sideCategory_id:"",
     model:"",
     type:"",
@@ -95,6 +96,7 @@ const{
   form:{
     category_id:"",
     sideCategory_id:"",
+    item_number:"",
     model:'',
     service:[],
     label:"",
@@ -253,6 +255,9 @@ const changeLabel = (labelName)=>{
       <el-button type="primary" size="large" @click="handleCreate">添加商品</el-button>
     </div>
     <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
+      <search-item label="商品单号">
+        <el-input v-model="searchForm.item_number" placeholder="填写商品单号"></el-input>
+      </search-item>
       <search-item label="商品标题">
         <el-input v-model="searchForm.title1" placeholder="填写详细标题"></el-input>
       </search-item>
@@ -348,6 +353,8 @@ const changeLabel = (labelName)=>{
             <p>商品价格: {{row.title}}</p>
           </div>
         </template>
+      </el-table-column>
+      <el-table-column width="200" label="商品单号" prop="item_number">
       </el-table-column>
       <el-table-column width="300" label="商品">
         <template #default="{row}">

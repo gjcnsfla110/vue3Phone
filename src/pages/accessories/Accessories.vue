@@ -39,6 +39,7 @@ const {
   defaultSearchForm:{
     title:"",
     sideCategory_id:"",
+    item_number:"",
     isCheck:1
   },
   afterDataList:(res)=>{
@@ -74,8 +75,10 @@ const{
   form:{
     category_id:"",
     sideCategory_id:"",
+    item_number:"",
     label:"",
     label_color:"",
+    material:"",
     title:"",
     accessories_detail:"",
     img:"",
@@ -178,6 +181,9 @@ const changeLabel = (labelName)=>{
       <el-button type="primary" size="large" @click="handleCreate">添加商品</el-button>
     </div>
     <Search backColor="rgb(248,248,248)" @search="getData" :model="searchForm" @reset="resetSearchForm">
+      <search-item label="商品序列号">
+        <el-input v-model="searchForm.item_number" placeholder="填写商品序列号"></el-input>
+      </search-item>
       <search-item label="商品标题">
         <el-input v-model="searchForm.title" placeholder="填写详细标题"></el-input>
       </search-item>
@@ -252,6 +258,8 @@ const changeLabel = (labelName)=>{
             <p>市场价格: {{row.price}}</p>
           </div>
         </template>
+      </el-table-column>
+      <el-table-column width="200" label="商品单号" prop="item_number">
       </el-table-column>
       <el-table-column width="300" label="商品">
         <template #default="{row}">
@@ -363,6 +371,9 @@ const changeLabel = (labelName)=>{
 
       <el-form-item label="商品标题" prop="title">
         <el-input v-model="formData.title" placeholder="请填写标题详细" style="width: 80%"></el-input>
+      </el-form-item>
+      <el-form-item label="商品材质">
+        <el-input v-model="formData.material" placeholder="请填写商品材质" style="width: 80%"></el-input>
       </el-form-item>
       <el-form-item label="商品说明">
         <el-input

@@ -34,7 +34,8 @@ import SubMenu from "@/pages/goods/goods_about/SubMenu.vue";
 import AccessoriesSubCategory from "@/pages/accessories/AccessoriesSubCategory.vue";
 import Accessories from "@/pages/accessories/Accessories.vue";
 import AccessoriesCategory from "@/pages/accessories/AccessoriesCategory.vue";
-
+import Shop from "@/pages/shop/Shop.vue";
+import ShopCategory from "@/pages/shop/ShopCategory.vue";
 const routes = [
     {
         path: "/login",
@@ -317,6 +318,22 @@ const asycnRoutes = [
         component: AccessoriesSubCategory,
         meta:{
             title: '악세사리서브카테고리'
+        }
+    },
+    {
+        path: '/shop/category',
+        name: '/shop/category',
+        component: ShopCategory,
+        meta: {
+            title: '매장카테고리'
+        }
+    },
+    {
+        path:'/shop/shopList',
+        name: '/shop/shopList',
+        component: Shop,
+        meta: {
+            title: '매장리스트'
         }
     }
 ];

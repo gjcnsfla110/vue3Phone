@@ -9,6 +9,10 @@ export function AccessoriesList(page,limit=10,query={}) {
 
 export function createAccessories(data) {
     data.banner = JSON.stringify(data.banner);
+    const min= 100000000; // 1억
+    const max= 1000000000; // 10억
+    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+    data.item_number = randomNumber;
     return service.post(`admin/accessories/create`,data);
 }
 
