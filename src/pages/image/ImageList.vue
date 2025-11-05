@@ -6,6 +6,7 @@ import {ref, reactive, onMounted} from "vue";
 import {imageClassAll,addImageClass} from "@/api/imageClass.js";
 import {addImage} from "@/api/image.js";
 import {showMsg,showMessage} from "@/composables/utill.js";
+import { Plus } from '@element-plus/icons-vue'
 //사이드라인 이미지메뉴 클릭여부 확인
 const isClassA = ref(0);
 //imageManin ref
@@ -18,8 +19,6 @@ const drawerImgClass = ref(null);
 const drawerPhoto = ref(null);
 //이미지클래스 ref
 const editImgClassRef = ref(null);
-//사진 ref
-const editPhotoRef = ref(null);
 
 
 //이미지클래스 rules 검증
@@ -47,37 +46,22 @@ const imgClassRules = reactive({
   ]
 });
 
-//사진 rules 검증
-const photoRules = reactive({
-  name : [
-    {
-      required: true,
-      message : "填写图片名字",
-      trigger: 'blur'
-    }
-  ],
-  url : [
-    {
-      required: true,
-      message : "填写图片网址",
-      trigger: 'blur'
-    }
-  ]
-});
-
 //이미지클래스 formData
 const editImgClassFormData = reactive({
   pid : "",
   name : "",
   order : 50
 })
+/*---------------------- 사진업로드 부분 ------------------------------*/
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+const uploadImgList = ref([]);
 
-//사진폼 데이터
-const editPhotoFormData = reactive({
-  image_class_id : 0,
-  name : "",
-  url : ""
-})
+const handlePictureCardPreview = (uploadFile) => {
+  dialogImageUrl.value = uploadFile.url;
+  dialogVisible.value = true
+}
+
 //이미지 클래스 drawer 열기
 const editClassImgOpen = ()=>{
   editImgClassFormData.name="";
@@ -104,23 +88,30 @@ const editPhotoOpen = ()=>{
      showMessage("选择菜单后再添加","error");
      return false;
   }
-  editPhotoFormData.name="";
-  editPhotoFormData.url="";
+  uploadImgList.value=[];
   drawerPhoto.value.openDrawer();
 };
 
 //사진업로드 submit
 const editPhotoSubmit = ()=>{
-  editPhotoRef.value.validate(valid => {
-    if (!valid) return;
-    if(!isClassA.value) return;
-    editPhotoFormData.image_class_id = isClassA.value;
-    addImage(editPhotoFormData).then(res => {
-        showMsg("图片添加成功");
-        imageMainRef.value.getImagesList(isClassA.value);
-    }).finally(res=>{
-      drawerPhoto.value.closeDrawer();
-    })
+  if (uploadImgList.value.length === 0) {
+    showMsg('파일을 선택해주세요.')
+    return
+  }
+  const formData = new FormData()
+
+  // 1. 파일 추가 (여러 개 가능)
+  uploadImgList.value.forEach((file) => {
+    formData.append('files[]', file.raw)  // 키: 'files' (배열)
+  })
+  // 2. 사진클래스 추가
+  formData.append('image_class_id', isClassA.value);
+  // 3. API 호출
+  addImage(formData).then(res=>{
+    showMsg("图片添加成功");
+    imageMainRef.value.getImagesList(isClassA.value);
+  }).finally(res=>{
+    drawerPhoto.value.closeDrawer();
   })
 }
 
@@ -182,29 +173,18 @@ function imageClassActive(id){
       </Drawer>
 
       <Drawer ref="drawerPhoto" title="图片添加 " @submit="editPhotoSubmit">
-        <el-form
-          label-width="auto"
-          ref="editPhotoRef"
-          :model="editPhotoFormData"
-          :rules="photoRules"
+        <el-upload
+            v-model:file-list="uploadImgList"
+            list-type="picture-card"
+            :auto-upload = "false"
+            :on-preview="handlePictureCardPreview"
+            :multiple = "true"
         >
-           <el-form-item label="填写图片名" prop="name">
-             <el-input
-                 v-model="editPhotoFormData.name"
-                 style="width: 600px"
-                 placeholder="填写图片名～"
-                 clearable
-             />
-           </el-form-item>
-           <el-form-item label="填写图片网址" prop="url">
-             <el-input
-                 v-model="editPhotoFormData.url"
-                 style="width: 600px"
-                 placeholder="填写图片网址～"
-                 clearable
-             />
-           </el-form-item>
-        </el-form>
+          <el-icon><Plus /></el-icon>
+        </el-upload>
+        <el-dialog v-model="dialogVisible">
+          <img w-full :src="dialogImageUrl" alt="Preview Image" />
+        </el-dialog>
       </Drawer>
     </el-card>
 </template>
