@@ -72,7 +72,7 @@
 
   //이미지 업데이트 부분
   const updateName = (item)=>{
-    showMessageboxPrompt("修改图片名称",item.name).then(({value})=>{
+    showMessageboxPrompt("修改图片名称",item.original_name).then(({value})=>{
         updateImage(item.id,value).then(()=>{
             loding.value = true;
             showMsg("修改成功");
@@ -131,7 +131,7 @@
               <el-image class="imgItem_img" :src="item.url" fit="cover" />
             </div>
             <div class="imgItem_name">
-              {{item.name}}
+              {{item.original_name}}
             </div>
             <div class="imgItem_bottom">
               <el-checkbox style="margin-right: 15px" v-if="openChoose"  v-model="item.checked" @change="handleCheck(item)"/>

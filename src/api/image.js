@@ -9,5 +9,5 @@ export function deleteImages(ids){
 }
 
 export function updateImage(id,name){
-    return service.post(`admin/image/${id}/update`,{name});
+    return service.post(`admin/image/${id}/update`,{original_name:name});
 }
