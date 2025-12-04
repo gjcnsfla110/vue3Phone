@@ -5,27 +5,20 @@ import { setToken } from "@/composables/auth.js";
 
  const useManagerStore = defineStore("manager", {
     state: () => {
-     const savedState = JSON.parse(sessionStorage.getItem('manager'))||{
-            manager: {},
-            //해더부분메뉴탭
-            topMenu: [],
-            //탑메뉴클릭시 id
-            activeTopMenu:'',
-            //해더메뉴추가,수정시 하위 사이드메뉴 id,name이름을 갖고와서 보여주는 값 즉 tb_title_menu child값을 위해 id정렬
-            checkMenu: [],
-            //라우터에 등록하기위하여 모든 메뉴를 정리한것
-            menus: [],
-            //헤더메관련 사이드에보여주는 전체메뉴
-            sideMenu: [],
-            //해더메뉴가 클릭시 id에맞는 sidemenu를 추출해서 값을대입
-            childMenu: [],
-            //사이드메뉴 클릭된부분
-            activeRoute: "",
-            //사이드메뉴바에 넓이
-            asideWidth: "250px",
-            ruleNames: [],
-        }
-        return savedState;
+        const savedState = JSON.parse(sessionStorage.getItem('manager')) || {};
+        // 무조건 기본값 보장!
+        return {
+            manager: savedState.manager || {},
+            topMenu: savedState.topMenu || [],
+            activeTopMenu: savedState.activeTopMenu || '',
+            checkMenu: savedState.checkMenu || [],
+            menus: savedState.menus || [],
+            sideMenu: savedState.sideMenu || [],
+            childMenu: savedState.childMenu || [],  // ← 여기 무조건 [] 보장!
+            activeRoute: savedState.activeRoute || "",
+            asideWidth: savedState.asideWidth || "250px",
+            ruleNames: savedState.ruleNames || [],
+        };
     },
     actions: {
         adminLogin(data) {

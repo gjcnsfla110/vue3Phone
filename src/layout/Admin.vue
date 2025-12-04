@@ -11,7 +11,6 @@
   const clickHeaderMenu = ()=>{
       childMenu.value = sideMenu.value[activeTopMenu.value];
   }
-
 </script>
 
 <template>

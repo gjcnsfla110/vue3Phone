@@ -174,6 +174,14 @@ const changeLabel = (labelName)=>{
   let item = labels.value.find((item)=>item.name == labelName);
   formData.label_color = item.color;
 }
+//댓글부분
+import AccessoriesReview from "@/pages/review/AccessoriesReview.vue";
+const clickReviewAccessoriesId = ref("");
+const dialongReview = ref(false)
+const clickReview = (id)=>{
+  clickReviewAccessoriesId.value = id;
+  dialongReview.value = true;
+}
 </script>
 <template>
   <el-card>
@@ -299,6 +307,11 @@ const changeLabel = (labelName)=>{
           <el-switch @change="handleStatusChange(row.status,row)" v-model="row.status" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0" />
         </template>
       </el-table-column>
+      <el-table-column label="客户评价区" align="center" width="180">
+        <template #default="{row}">
+          <el-button type="primary" @click="clickReview(row.id)">客户评价</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center">
         <template #default="{row}">
           <el-button @click="handleUpdate(row)" type="primary" text bg>修改</el-button>
@@ -422,6 +435,17 @@ const changeLabel = (labelName)=>{
       </el-form-item>
     </el-form>
   </Drawer>
+
+  <el-dialog v-model="dialongReview" title="Warning" width="66%" center>
+    <AccessoriesReview :accessoriesId="clickReviewAccessoriesId"></AccessoriesReview>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="dialongReview = false">
+          닫기
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">

@@ -177,7 +177,7 @@
       let value = []
       if(props.limit == 1){
         value = urls[0]
-      } else {
+      } else{
         //부모에서 넘겨온 props.modelValue 값이 null혹은 undifind일때 작업
         let propsImgData = props.modelValue ? props.modelValue : [];
         value = props.preview ? [...propsImgData,...urls] : [...urls]

@@ -11,6 +11,7 @@
   import {storeToRefs} from "pinia";
   const managerS = managerStore();
   const  {checkMenu} = storeToRefs(managerS);
+  console.log("체크할수 있는 메뉴",checkMenu.value);
   const {
     dataList,
     loading,

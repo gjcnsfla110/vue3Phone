@@ -1,9 +1,10 @@
 <script setup>
 import SearchItem from "@/components/SearchItem.vue";
-
 defineOptions({
   name: 'Goods',
 })
+
+import UploadImg from "@/components/UploadImg.vue";
 import Search from "@/components/Search.vue";
 import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
 import Drawer from "@/components/Drawer.vue";
@@ -51,13 +52,11 @@ const {
   },
   afterDataList:(res)=>{
     tableList.value = res.list;
-    total.value = res.total;
     tableList.value.forEach((item)=>{
-      item.banner = JSON.parse(item.banner);
-      item.content = JSON.parse(item.content);
-      item.service = JSON.parse(item.service);
-      item.delivery = JSON.parse(item.delivery);
+      item.used_img = Object.values(item.used_img || [])
+      item.used_banner = Object.values(item.used_banner || []);
     })
+    total.value = res.total;
     if(firstList.value < 2){
       deliverys.value = res.delivery;
       services.value = res.service;
@@ -76,6 +75,7 @@ const {
     }
     searchForm.isCheck= firstList.value+1;
     firstList.value = firstList.value+1;
+
   },
   getList:goodsList,
   updateStatus:updateStatus,
@@ -106,7 +106,7 @@ const{
     title1:"",
     img:"",
     banner:[],
-    content:"",
+    content:[],
     price:"",
     price1:"",
     price2:"",
@@ -115,6 +115,10 @@ const{
     storage:"",
     status:1,
     delivery:[],
+    video_link:"",
+    video_title:"",
+    used_img:[],
+    used_banner:[],
     order:50,
     spec_id:"",
     phone_detail:"",
@@ -248,6 +252,65 @@ const changeLabel = (labelName)=>{
     formData.label_color = item.color;
 
 }
+//댓글부분
+import GoodsReview from "@/pages/review/GoodsReview.vue";
+const clickReviewGoodsId = ref("");
+const dialongReview = ref(false)
+const clickReview = (id)=>{
+    clickReviewGoodsId.value = id;
+    dialongReview.value = true;
+}
+
+/*------------------------------------중고폰 수정-------------------------------------------------------------*/
+const updateGoodsData = (row)=>{
+    let bannerData = [];
+    let imgData = [];
+    if(row.used_banner){
+      let banner = Object.values(row.used_banner || []);
+      banner.forEach((item)=>{
+        bannerData.push({
+          id:row.id,
+          name:"图",
+          url:item,
+          isExisting: true
+        });
+      })
+      row.used_banner = bannerData;
+    }
+    if(row.used_img){
+        imgData.push({
+          id:row.id,
+          name:"图",
+          url:row.used_img,
+          isExisting: true
+        })
+      row.used_img = imgData;
+    }
+}
+/*-----------------------------------중고폰이미지 변경-------------------------------------------------------*/
+const oldDialogVisible = ref(false);
+const oldData = ref();
+const oldForm = ref({
+    goodsId:0,
+    originallyMainImg:[],
+    originallyBannerImg:[],
+    updateMainImg:[],
+    updateBannerImg:[],
+})
+const oldImgUpdate = (data)=>{
+    oldDialogVisible.value = true;
+    oldData.value = data;
+    oldForm.value.goodsId = data.id;
+    oldForm.value.originallyMainImg = data.used_img;
+    oldForm.value.originallyBannerImg = data.used_banner;
+    oldForm.value.updateMainImg = data.used_img
+    oldForm.value.updateBannerImg = data.used_banner;
+}
+
+watch(oldForm.value.updateBannerImg,(newValue)=>{
+   console.log(newValue);
+})
+
 </script>
 <template>
   <el-card>
@@ -356,7 +419,7 @@ const changeLabel = (labelName)=>{
       </el-table-column>
       <el-table-column width="200" label="商品单号" prop="item_number">
       </el-table-column>
-      <el-table-column width="300" label="商品">
+      <el-table-column width="300" label="商品" align="center">
         <template #default="{row}">
           <div class="detail">
             <div class="detailLeft">
@@ -370,6 +433,19 @@ const changeLabel = (labelName)=>{
                   :preview-teleported="true"
                   show-progress
                   fit="cover"
+                  v-if="row.type !== '二手商品'"
+              />
+              <el-image
+                  style="width: 80px; height: 80px; z-index: 1000;"
+                  src=""
+                  :zoom-rate="1.2"
+                  :max-scale="7"
+                  :min-scale="0.2"
+                  :preview-src-list="[]"
+                  :preview-teleported="true"
+                  show-progress
+                  fit="cover"
+                  v-else
               />
             </div>
             <div class="detailRight">
@@ -403,11 +479,21 @@ const changeLabel = (labelName)=>{
           <el-switch @change="handleStatusChange(row.status,row)" v-model="row.status" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0" />
         </template>
       </el-table-column>
+      <el-table-column label="客户评价区" align="center" width="180">
+        <template #default="{row}">
+            <el-button type="primary" @click="clickReview(row.id)">客户评价</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center">
         <template #default="{row}">
           <el-button @click="handleUpdate(row)" type="primary" text bg>修改</el-button>
-          <el-button @click="openBannerDrawer(row)" type="primary" text bg>更改轮播图</el-button>
-          <el-button v-if="row.type != '二手商品'"  @click="openContentDrawer(row)" type="primary" text bg>更改内容图</el-button>
+          <template v-if="row.type != '二手商品'">
+            <el-button @click="openBannerDrawer(row)" type="primary" text bg >更改轮播图</el-button>
+            <el-button @click="openContentDrawer(row)" type="primary" text bg>更改内容图</el-button>
+          </template>
+          <template v-else>
+            <el-button @click="oldImgUpdate(row)" type="primary" text bg >更改二手图</el-button>
+          </template>
           <el-popconfirm
               confirm-button-text="确认"
               cancel-button-text="取消"
@@ -466,16 +552,6 @@ const changeLabel = (labelName)=>{
             style="width: 300px"
         />
       </el-form-item>
-      <el-form-item label="服务">
-        <el-checkbox-group v-model="formData.service">
-          <el-checkbox v-for="item in services" :key="item.id" :value="{title:item.title,description:item.description}" :label="item.title" border ></el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="购买方式">
-        <el-checkbox-group v-model="formData.delivery">
-          <el-checkbox v-for="item in deliverys" :key="item.id" :value="{title:item.title,description:item.description}" :label="item.title" border ></el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
       <el-form-item label="标签">
         <el-select
             v-model="formData.label"
@@ -509,14 +585,27 @@ const changeLabel = (labelName)=>{
       <el-form-item label="详细页标题" prop="title1">
         <el-input v-model="formData.title1" placeholder="请填写详细标题" style="width: 80%"></el-input>
       </el-form-item>
-      <el-form-item label="主图">
+      <el-form-item label="主图" v-if="formData.type!=='二手商品'">
         <CheckImg v-model="formData.img"></CheckImg>
       </el-form-item>
-      <el-form-item label="轮播详细图">
+      <el-form-item label="轮播详细图" v-if="formData.type!=='二手商品'">
         <CheckImg v-model="formData.banner" :limit="20" ></CheckImg>
       </el-form-item>
-      <el-form-item v-if="formData.type != '二手商品'" label="详细图片">
+      <el-form-item v-if="formData.type !== '二手商品'" label="详细图片">
         <CheckImg v-model="formData.content" :limit="15" ></CheckImg>
+      </el-form-item>
+
+      <el-form-item v-if="formData.type === '二手商品'" label="二手商品封面">
+          <UploadImg v-model:images="formData.used_img" :limit="1" :multi="false"></UploadImg>
+      </el-form-item>
+      <el-form-item v-if="formData.type ==='二手商品'" label="二手商品轮播图">
+          <UploadImg v-model:images="formData.used_banner"></UploadImg>
+      </el-form-item>
+      <el-form-item label="视频标题">
+        <el-input v-model="formData.video_title"></el-input>
+      </el-form-item>
+      <el-form-item label="视频链接">
+        <el-input v-model="formData.video_link"></el-input>
       </el-form-item>
       <el-form-item label="市场原价">
         <el-input v-model="formData.price" placeholder="填写市场原价" style="width: 80%" :formatter="(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
@@ -593,7 +682,6 @@ const changeLabel = (labelName)=>{
       </el-form-item>
     </el-form>
   </Drawer>
-
   <Drawer ref="contentDrawerRef" title="修改详细内容图-图片" @submit="updateContent">
     <el-form
         :model="content"
@@ -606,6 +694,40 @@ const changeLabel = (labelName)=>{
     </el-form>
   </Drawer>
 
+  <el-dialog v-model="dialongReview" title="Warning" width="66%" center>
+    <GoodsReview :goodsId="clickReviewGoodsId"></GoodsReview>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="dialongReview = false">
+          닫기
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="oldDialogVisible" width="50%" center>
+    <div class="oldImg">
+      <h2 class="oldTitle">중고상품 이미지</h2>
+      <div class="oldContent">
+          <h3 class="">중고상품 메인이미지</h3>
+          <div class="oldMainImg">
+            <UploadImg v-model:images="oldForm.updateMainImg" key="xcl12"></UploadImg>
+          </div>
+          <h3 class="">중고상품 배너이미지</h3>
+          <div class="oldBannerImg">
+            <UploadImg v-model:images="oldForm.updateBannerImg" key="xcl13"></UploadImg>
+          </div>
+      </div>
+    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="oldDialogVisible = false">닫기</el-button>
+        <el-button type="primary" @click="oldDialogVisible = false">
+          확인
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">

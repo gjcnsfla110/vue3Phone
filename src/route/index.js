@@ -36,6 +36,10 @@ import Accessories from "@/pages/accessories/Accessories.vue";
 import AccessoriesCategory from "@/pages/accessories/AccessoriesCategory.vue";
 import Shop from "@/pages/shop/Shop.vue";
 import ShopCategory from "@/pages/shop/ShopCategory.vue";
+import GoodsReview from "@/pages/review/GoodsReview.vue";
+import AgreementReview from "@/pages/review/AgreementReview.vue";
+import AccessoriesReview from "@/pages/review/AccessoriesReview.vue";
+
 const routes = [
     {
         path: "/login",
@@ -334,6 +338,30 @@ const asycnRoutes = [
         component: Shop,
         meta: {
             title: '매장리스트'
+        }
+    },
+    {
+       path:'/goodsReview/list',
+       name: '/goodsReview/list',
+       component: GoodsReview,
+        meta: {
+            title: '商品评价'
+        }
+    },
+    {
+        path:'/agreementReview/list',
+        name: '/agreementReview/list',
+        component: AgreementReview,
+        meta: {
+            title: '合约机评价'
+        }
+    },
+    {
+        path:'/accessoriesReview/list',
+        name: '/accessoriesReview/list',
+        component: AccessoriesReview,
+        meta: {
+            title: '手机配件评价'
         }
     }
 ];

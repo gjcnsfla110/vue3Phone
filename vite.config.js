@@ -23,7 +23,7 @@ export default defineConfig({
     port: process.env.PORT || 8085, // 환경 변수에서 포트 읽기, 기본값 8085
     proxy:{
       '/api': {
-        target: 'http://clphone.com',
+        target: 'http://xclphone.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       },

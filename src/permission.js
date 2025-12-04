@@ -24,9 +24,10 @@ router.beforeEach(async (to, from, next) => {
         const useStore = managerStore();
         try {
             //localStorage 에메뉴가 저장되여있으면 한번만 adminInfo 접속
-            if(!useStore.menus.length){
-                await useStore.adminInfo();
-            }
+            //if(!useStore.menus.length){
+                //await useStore.adminInfo();
+            //}
+            await useStore.adminInfo();
             getInfo = true;
             //이부분은 라우터 등록 부분 자동으로 무조건 한번실행되고 menus 변경될때마다 자동실행해줌
             watchEffect(() => {

@@ -61,7 +61,7 @@
 
   //이미지 삭제부분
   const deleteImage = (id)=>{
-      deleteImages({'ids':[id]}).then((res)=>{
+      deleteImages(id).then((res)=>{
           loding.value = true;
           showMsg("删除成功");
           getImagesList(activeClass.value);

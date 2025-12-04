@@ -310,6 +310,16 @@
         })
       })
   }
+
+  //댓글부분
+  import AgreementReview from "@/pages/review/AgreementReview.vue";
+  import GoodsReview from "@/pages/review/GoodsReview.vue";
+  const clickReviewAgreementReview = ref("");
+  const dialongReview = ref(false)
+  const clickReview = (id)=>{
+    clickReviewAgreementReview.value = id;
+    dialongReview.value = true;
+  }
 </script>
 
 <template>
@@ -406,6 +416,11 @@
       <el-table-column label="话费套餐" align="center" width="200" >
         <template #default="{row}">
            <el-button type="warning" @click="getPlan(row.id,row.planCategory_id)">套餐</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="客户评价区" align="center" width="180">
+        <template #default="{row}">
+          <el-button type="primary" @click="clickReview(row.id)">客户评价</el-button>
         </template>
       </el-table-column>
       <el-table-column label="设置" align="center">
@@ -666,6 +681,17 @@
         </template>
       </el-card>
   </Dialong>
+
+  <el-dialog v-model="dialongReview" title="Warning" width="66%" center>
+    <AgreementReview :agreementId="clickReviewAgreementReview"></AgreementReview>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="dialongReview = false">
+          닫기
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">

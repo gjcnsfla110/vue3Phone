@@ -94,7 +94,8 @@ export function listTrees(data,field='pid',child='child',pid=0,callF=null){
 export function sideMenuTrees(menu,titleMenu){
     let newMenu = {};
     titleMenu.forEach(item => {
-        newMenu[item.id] = menu.filter(menu => JSON.parse(item.child).includes(menu.id));
+        let id = menu.filter(menuItem => item.child.includes(menuItem.id));
+        newMenu[item.id] = menu.filter(menuItem => item.child.includes(menuItem.id));
     })
 
     return newMenu;
