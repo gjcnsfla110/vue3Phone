@@ -40,3 +40,9 @@ export function updateStatusAll(id,status){
 export function updateBanners(id,banner){
     return service.post(`admin/accessories/${id}/banner`,{banner:banner});
 }
+
+export function checkAccessoriesList(page,limit=10,query={}){
+    let q = queryUrl(query);
+    let is = q ? '&':'?';
+    return service.get(`/admin/accessories/checkList/${page}/list${q}${is}limit=${limit}`);
+}

@@ -437,11 +437,11 @@ watch(oldForm.value.updateBannerImg,(newValue)=>{
               />
               <el-image
                   style="width: 80px; height: 80px; z-index: 1000;"
-                  src=""
+                  :src="row.used_img[0].url ? row.used_img[0].url : '' "
                   :zoom-rate="1.2"
                   :max-scale="7"
                   :min-scale="0.2"
-                  :preview-src-list="[]"
+                  :preview-src-list="[row.used_img[0].url]"
                   :preview-teleported="true"
                   show-progress
                   fit="cover"
@@ -576,7 +576,7 @@ watch(oldForm.value.updateBannerImg,(newValue)=>{
           <el-radio-button label="专卖店新机" value="新专柜机" />
           <el-radio-button label="开封专卖店机" value="开封专柜机" />
           <el-radio-button label="二手商品" value="二手商品" />
-          <el-radio-button label="配件商品" value="配件商品" />
+          <el-radio-button label="电子商品" value="电子商品" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="商品标题" prop="title">

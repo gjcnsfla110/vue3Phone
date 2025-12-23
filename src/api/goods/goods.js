@@ -77,6 +77,7 @@ export function updateGoods(id,data) {
 
         data.used_banner.forEach((file) => {
             if(file.isExisting){
+                console.log(JSON.stringify(file));
                 formData.append('originalBanner[]', JSON.stringify(file))  // 키: 'files' (배열)
             }else{
                 formData.append('used_banner[]', file.raw)  // 키: 'files' (배열)
@@ -143,4 +144,10 @@ export function updateBanners(id,banner){
 export function updateContents(id,content){
     content = JSON.stringify(content);
     return service.post(`admin/goods/${id}/updateContent`,{content:content});
+}
+
+export function checkGoodsList(page,limit=10,query={}){
+    let q = queryUrl(query);
+    let is = q ? '&':'?';
+    return service.get(`/admin/goods/checkList/${page}/list${q}${is}limit=${limit}`);
 }

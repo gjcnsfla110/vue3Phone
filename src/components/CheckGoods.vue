@@ -82,7 +82,7 @@
     const detailItem = (data)=>{
         itemDetail.value.openDialog();
         itemData.value = data;
-        itemData.value.banner = JSON.parse(itemData.value.banner);
+        //itemData.value.banner = JSON.parse(itemData.value.banner);
         url.value = itemData.value.banner[0] ? itemData.value.banner[0] : "";
         srcList.value = itemData.value.banner ? itemData.value.banner : [];
     }

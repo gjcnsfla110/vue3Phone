@@ -38,3 +38,9 @@ export function updateBanners(id,banner){
     console.log(banner);
     return service.post(`admin/phoneList/${id}/updateBanner`,{banner:banner});
 }
+
+export function checkAgreementList(page,limit=10,query={}){
+    let q = queryUrl(query);
+    let is = q ? '&':'?';
+    return service.get(`/admin/phoneList/checkList/${page}/list${q}${is}limit=${limit}`);
+}

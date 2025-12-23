@@ -39,6 +39,7 @@ import ShopCategory from "@/pages/shop/ShopCategory.vue";
 import GoodsReview from "@/pages/review/GoodsReview.vue";
 import AgreementReview from "@/pages/review/AgreementReview.vue";
 import AccessoriesReview from "@/pages/review/AccessoriesReview.vue";
+import SubMenuCategory from "@/pages/main/SubPageCategory.vue";
 
 const routes = [
     {
@@ -362,6 +363,14 @@ const asycnRoutes = [
         component: AccessoriesReview,
         meta: {
             title: '手机配件评价'
+        }
+    },
+    {
+        path:'/subMenuCategory/list',
+        name: '/subMenuCategory/list',
+        component: SubMenuCategory,
+        meta: {
+            title: '副菜单Category'
         }
     }
 ];

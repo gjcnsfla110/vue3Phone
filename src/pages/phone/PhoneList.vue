@@ -332,7 +332,6 @@
             :options="categorys"
             :props="{value:'id',label:'name',children:'child',checkStrictly:true,emitPath:false }"
             placeholder="选择菜单"
-            @change="checkSearchCategoryId"
         />
       </SearchItem>
       <SearchItem label="热门通信社商品">

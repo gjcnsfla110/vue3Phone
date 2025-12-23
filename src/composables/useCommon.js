@@ -239,6 +239,16 @@ export function useInitFrom(opt = {}){
     }
 }
 
+
+/**
+ * //자식 메뉴를 찾아서 chil속성에 배열을 넣는 부분
+ * @param data - 총배열
+ * @param field - 부모명칭
+ * @param child - 자식태를 배열에 저장할 배열속성 이름
+ * @param pid  - 부모를 나타낼 속성 값 즉 pid 가부모를 찾는 속성이라면 최상위일때 값 예:0
+ * @param callF -리텀함수
+ * @returns {*|*[]}
+ */
 export function listTrees(data,field='pid',child='child',pid=0,callF=null){
     if (!Array.isArray(data) || data.length === 0) return [];
 
@@ -260,6 +270,14 @@ export function listTrees(data,field='pid',child='child',pid=0,callF=null){
     return getList(pid, data);
 }
 
+/**
+ * 총메뉴를 내가 특정지어있는 메뉴 밑에 child 로 속성보내기 즉위에  listTrees 통하여 가공한다
+ * @param menu - 최상위 카테고리 배열
+ * @param allMenu - 최상상위카테고리랑 연관되여있으면  나한테도 부모카테고리가 있을때 최상위카테고리 child 속성 및 내자식도 child 포함
+ * @param pid - allMenu 배열에서 부모 속성을 나타내는 값
+ * @param child - 자식의 속성 값 예:child 라고 이름을 디폴트함
+ * @returns {*}
+ */
 export function menuListTrees(menu,allMenu,pid="pid",child="child"){
     menu.forEach(item=>{
         item.child = (listTrees(allMenu,pid,child,item.id));
@@ -342,4 +360,80 @@ export function jsonEn(jsonCode){
         console.error("JSON 파싱 에러:", e.message);
         return [];
     }
+}
+
+//Three 컴포넌트에서 label, value,를 대입하는부분
+/**
+ * 중첩된 객체 배열에서 여러 키 이름을 재귀적으로 변경하는 함수
+ * @param {Array} array - 키를 변경할 객체 배열
+ * @param {Object} keyMap - {'기존키': '새키'} 쌍을 담은 객체
+ * @returns {Array} 키가 변경된 새 배열
+ */
+export const changeThreeKey = (array, keyMap) => {
+    return array.map(item => {
+        let newItem = { ...item }; // 현재 객체 복사
+
+        // 1. **다중 키 변경 로직:** keyMap 객체를 순회합니다.
+        for (const oldKey in keyMap) {
+            const newKey = keyMap[oldKey];
+
+            // 기존 키가 현재 객체에 존재하는지 확인
+            if (newItem.hasOwnProperty(oldKey)) {
+                const value = newItem[oldKey];
+                // 기존 키 삭제
+                delete newItem[oldKey];
+                // 새 키로 값 할당
+                newItem[newKey] = value;
+            }
+        }
+
+        // 2. **재귀 호출 조건:** child 속성이 존재하고 배열인지 확인
+        if (newItem.child && Array.isArray(newItem.child)) {
+            // child 배열에 대해 자기 자신을 호출 (keyMap을 그대로 전달)
+            newItem.child = changeThreeKey(newItem.child, keyMap);
+        }
+
+        return newItem;
+    });
+};
+
+/**
+ * 서브메뉴 링크를 추출하는 부분
+ */
+export function getSubmenuLink(type){
+    let link = "";
+    if(type === 'goods'){
+        link = `/pages/menu/menu`;
+    }else if(type === 'goods_old'){
+        link = `/pages/agreementPage/index`;
+    }else if(type === 'agreement'){
+        link = `/pages/agreementPage/index`;
+    }else if(type === 'agreement_internet'){
+        link = `/pages/agreementPage/index`;
+    }else if(type === 'usim'){
+        link = `/pages/simCard/simCard`;
+    }else if(type === 'accessories'){
+        link = `/pages/accessories/accessories`;
+    }else if(type === 'shop'){
+        link = "/pages/shop/shop";
+    }
+    return link;
+}
+
+/**
+ * 랜덤 uid를위하여 랜덤 8자리 값을 갖는 방법
+ */
+
+export function getRandomString(length = 8) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const array = new Uint8Array(length);
+
+    crypto.getRandomValues(array);  // 안전한 랜덤 바이트 생성
+
+    let result = '';
+    for (let i = 0; i < array.length; i++) {
+        result += characters[array[i] % characters.length];
+    }
+
+    return result;
 }

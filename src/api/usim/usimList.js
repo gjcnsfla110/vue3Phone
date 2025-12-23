@@ -31,3 +31,9 @@ export function updateHot(id,hot){
 export function oneDetail(id){
     return service.post(`/admin/usim/item/detail`,{id});
 }
+
+export function checkUsimList(page,limit=10,query={}){
+    let q = queryUrl(query);
+    let is = q ? '&':'?';
+    return service.get(`/admin/usim/checkList/${page}/list${q}${is}limit=${limit}`);
+}

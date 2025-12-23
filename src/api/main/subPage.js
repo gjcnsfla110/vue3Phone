@@ -1,4 +1,5 @@
 import service from "@/axios.js";
+import {getSubmenuLink} from "@/composables/useCommon.js";
 
 export function getList(page,limit=10){
     return service.get(`/admin/subPage/${page}/list`);

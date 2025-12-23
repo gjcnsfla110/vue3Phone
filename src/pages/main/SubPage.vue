@@ -4,6 +4,12 @@
    import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
    import {getList,subPageCreate,updateStatus,subPageDelete,subPageUpdate} from "@/api/main/subPage.js";
    import CheckImg from "@/components/CheckImg.vue";
+   import {ref} from "vue";
+   import {listTrees,changeThreeKey} from "@/composables/useCommon.js";
+
+   //카테고리 변수
+   const subMenuCategoryList = ref([]);
+   const subCategoryList = ref([])
    const {
      dataList,
      loading,
@@ -17,6 +23,11 @@
      getList:getList,
      delete:subPageDelete,
      updateStatus:updateStatus,
+     afterDataList(res){
+       subMenuCategoryList.value = res.subMenuCategorys;
+       total.value = res.total;
+       dataList.value = res.list;
+     }
    })
 
    const {
@@ -32,6 +43,8 @@
      form:{
         name:"",
         img:"",
+        category_id:"",
+        category_type:"",
         link:"",
         status:1,
         ranking:50
@@ -42,10 +55,13 @@
           message:"填写副菜单名称",
           trigger:"blur"
         },
-        link:{
+        category_type:{
           required: true,
-          message:"填写页面移动url",
-          trigger:"blur"
+          message:"상품타입을 선택하세요",
+        },
+        category_id:{
+          required: true,
+          message:"카테고리를 선택하세요",
         }
      },
      update:subPageUpdate,
@@ -53,6 +69,46 @@
      getDataList:getData
    });
    getData();
+   const resetRadio=(value)=>{
+       formData.category_type = value;
+       formData.category_id="";
+       subCategoryList.value = changeSubCategory(value);
+   }
+
+   const changeSubCategory = (category_type)=>{
+       return subMenuCategoryList.value.filter(item=>item.type === category_type);
+   }
+   //검색변수
+   const categoryType = [
+     {
+       name:"휴대폰",
+       type:"goods"
+     },
+     {
+       name:"중고폰",
+       type:"goods_old"
+     },
+     {
+       name:"계약폰",
+       type:"agreement"
+     },
+     {
+       name:"인터넷약정",
+       type:"agreement_internet"
+     },
+     {
+       name:"유심",
+       type:"usim"
+     },
+     {
+       name:"악세사리",
+       type:"accessories"
+     },
+     {
+       name:"오프라인매장",
+       type:"shop"
+     }
+   ]
 </script>
 
 <template>
@@ -108,8 +164,20 @@
           <el-form-item label="图片">
               <CheckImg v-model="formData.img"></CheckImg>
           </el-form-item>
-          <el-form-item label="页面Url" prop="link">
-              <el-input v-model="formData.link"></el-input>
+          <el-form-item label="상품타입" prop="category_type">
+            <el-radio-group v-model="formData.category_type" size="large" fill="#6cf" @change="resetRadio">
+              <el-radio-button v-for="item in categoryType" :label="item.name" :value="item.type" />
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="서브상품 카테고리" prop="category_id" v-if="formData.category_type !== 'shop'">
+            <el-select v-model="formData.category_id" placeholder="카테고리선택" style="width: 300px" >
+              <el-option
+                  v-for="item in subCategoryList"
+                  :key="item.key"
+                  :label="item.name"
+                  :value="item.id"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="状态">
             <el-radio-group v-model="formData.status" size="large">

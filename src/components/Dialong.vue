@@ -63,8 +63,8 @@ defineExpose({
     </el-container>
     <template #footer>
             <span>
-                <el-button v-if="cancellation" @click="closeDialog">取消</el-button>
-                <el-button v-if="confirm" type="primary" @click="submit">确定</el-button>
+                <el-button v-if="cancellation" @click="closeDialog" size="large">取消</el-button>
+                <el-button v-if="confirm" type="primary" @click="submit" size="large">确定</el-button>
             </span>
     </template>
   </el-dialog>
