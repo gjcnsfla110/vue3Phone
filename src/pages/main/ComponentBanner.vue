@@ -1,5 +1,6 @@
 <script setup>
-    import {getBannerList,createBanner,updateBanner,updateBannerStatus,deleteBanner} from "@/api/main/componentBanner.js";
+    import {getBannerList,createBanner,updateBanner,updateBannerStatus,deleteBanner,getGoodsItem,getAccessoriesItem,getAgreementItem,getUsimItem,getCategoryItem,getShopNewsItem} from "@/api/main/componentBanner.js";
+    import ComponentBannerItemList from "@/pages/main/ComponentBannerItemList.vue";
     import {computed, reactive, ref} from "vue";
     import Drawer from "@/components/Drawer.vue";
     import {showMsg} from "@/composables/utill.js";
@@ -16,22 +17,28 @@
     const bannerId = ref("");
     const formTitle = computed(()=>bannerId.value ? "배너 업데이트":"배너 추가");
     const defaultFormData = reactive({
+        component_id:"",
         image:"",
-        link:"",
+        title:"",
+        banner_type:"",
+        banner_item_id:"",
         status:1,
         ranking:50
     })
     const formData = reactive({
+        component_id:"",
         image:"",
-        link:"",
+        title:"",
+        banner_type:"",
+        banner_item_id:"",
         status:1,
         ranking:50
     });
     const formRules = ref({
-        link:{
+        banner_type:{
            required: true,
            message:"이미지 연관링크를 입력하세요",
-           trigger:"blur"
+           trigger:"change"
         }
     })
 
@@ -66,6 +73,7 @@
         })
       });
     }
+
     const updateComponentBannerStatus = (status,item)=>{
         updateBannerStatus(item.id,status).then((res)=>{
             showMsg("状态修改成功");
@@ -87,6 +95,38 @@
       }
     }
     getList();
+    //컴포넌트배너 아이템 추가부분
+    const isBannerList = ref(false);
+    const closeBannerList = ()=> {isBannerList.value = false;}
+    const openBannerList = ()=> {isBannerList.value = true;}
+    //아이텝 자세히보기
+    const showItem =(type,id)=>{
+       if(type === 'goods'){
+          getGoodsItem(id).then((res)=>{
+
+          })
+       }else if(type === 'agreement'){
+          getAgreementItem(id).then((res)=>{
+
+          })
+       }else if(type === 'usim'){
+          getUsimItem(id).then((res)=>{
+
+          })
+       }else if(type === 'accessories'){
+          getAccessoriesItem(id).then((res)=>{
+
+          })
+       }else if(type === 'category'){
+          getCategoryItem(id).then((res)=>{
+
+          })
+       }else if(type === 'shopNews'){
+          getShopNewsItem(id).then((res)=>{
+
+          })
+       }
+    }
 </script>
 
 <template>
@@ -95,12 +135,17 @@
       :data="bannerList"
   >
     <el-table-column type="index" width="50" />
+    <el-table-column label="타이틀" width="500" prop="title"></el-table-column>
     <el-table-column label="이미지" width="300" align="center">
         <template #default="{row}">
-          <el-image style="width: 100px; height: 100px" :src="row.img" fit="cover" />
+          <el-image style="width: 100px; height: 100px" :src="row.image" fit="cover" />
         </template>
     </el-table-column>
-    <el-table-column label="링크" width="1000" prop="link" align="center"></el-table-column>
+    <el-table-column label="아이템보기" width="300" align="center">
+      <template #default="{row}">
+       <el-button @click="showItem(row.banner_type,row.banner_item_id)" size="large" type="danger" plain>자세히보기</el-button>
+      </template>
+    </el-table-column>
     <el-table-column label="설정" align="center">
       <template #default="{row}">
         <el-switch
@@ -136,11 +181,32 @@
       :model="formData"
       :rules="formRules"
       label-width="auto">
+          <el-form-item label="타이틀">
+            <el-input
+                v-model="formData.title"
+                maxlength="100"
+                :rows="3"
+                style="width: 500px"
+                placeholder="배너타이틀을 100글자 이내로입력하세요"
+                show-word-limit
+                type="textarea"
+            />
+          </el-form-item>
           <el-form-item label="이미지">
               <CheckImg v-model="formData.image"></CheckImg>
           </el-form-item>
-          <el-form-item label="이미지링크" prop="link">
-              <el-input v-model="formData.link"></el-input>
+          <el-form-item label="상품타입" prop="banner_type">
+              <el-radio-group v-model="formData.banner_type" text-color="#fff" fill="#6c6cff">
+                <el-radio-button value="goods" size="large" >휴대폰</el-radio-button>
+                <el-radio-button value="agreement" size="large" >계약폰</el-radio-button>
+                <el-radio-button value="usim" size="large" >알뜰유심</el-radio-button>
+                <el-radio-button value="accessories" size="large" >악세사리</el-radio-button>
+                <el-radio-button value="category" size="large" >카테고리</el-radio-button>
+                <el-radio-button value="shopNews" size="large" >공지사항</el-radio-button>
+              </el-radio-group>
+          </el-form-item>
+          <el-form-item label="아이템추가">
+              <el-button @click="openBannerList" type="primary" plain>아이템추가</el-button>
           </el-form-item>
           <el-form-item label="상태">
               <el-switch v-model="formData.status" :active-value="1"  :inactive-value="0"/>
@@ -150,6 +216,9 @@
           </el-form-item>
       </el-form>
   </Drawer>
+  <el-dialog v-model="isBannerList" width="70%">
+     <ComponentBannerItemList v-model="formData.banner_item_id" :banner_type="formData.banner_type" @closeBanner="closeBannerList"></ComponentBannerItemList>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">

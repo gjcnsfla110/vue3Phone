@@ -4,8 +4,7 @@
    import {useInitTable,useInitFrom} from "@/composables/useCommon.js";
    import {getList,subPageCreate,updateStatus,subPageDelete,subPageUpdate} from "@/api/main/subPage.js";
    import CheckImg from "@/components/CheckImg.vue";
-   import {ref} from "vue";
-   import {listTrees,changeThreeKey} from "@/composables/useCommon.js";
+   import {ref,watch} from "vue";
 
    //카테고리 변수
    const subMenuCategoryList = ref([]);
@@ -72,12 +71,16 @@
    const resetRadio=(value)=>{
        formData.category_type = value;
        formData.category_id="";
-       subCategoryList.value = changeSubCategory(value);
    }
 
    const changeSubCategory = (category_type)=>{
        return subMenuCategoryList.value.filter(item=>item.type === category_type);
    }
+
+   //카테고리 변경에따라 subCategoryList 부분
+   watch(() => formData.category_type,(newValue)=>{
+      subCategoryList.value = changeSubCategory(newValue);
+   });
    //검색변수
    const categoryType = [
      {
@@ -173,7 +176,7 @@
             <el-select v-model="formData.category_id" placeholder="카테고리선택" style="width: 300px" >
               <el-option
                   v-for="item in subCategoryList"
-                  :key="item.key"
+                  :key="item.id"
                   :label="item.name"
                   :value="item.id"
               />

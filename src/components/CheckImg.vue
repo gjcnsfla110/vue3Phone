@@ -79,13 +79,6 @@
       name : "",
       url : ""
     })
-    //이미지 클래스 drawer 열기
-    const editClassImgOpen = ()=>{
-      editImgClassFormData.name="";
-      editImgClassFormData.pid ="";
-      editImgClassFormData.order =50;
-      drawerImgClass.value.openDrawer();
-    }
 
     //이미지클래스 submit
     const editImgClassSubmit = ()=> {
@@ -99,16 +92,6 @@
         })
       })
     }
-    //이미지 업로드 drawer 열기
-    const editPhotoOpen = ()=>{
-      if(!isClassA.value){
-        showMessage("选择菜单后再添加","error");
-        return false;
-      }
-      editPhotoFormData.name="";
-      editPhotoFormData.url="";
-      drawerPhoto.value.openDrawer();
-    };
 
     //사진업로드 submit
     const editPhotoSubmit = ()=>{
@@ -249,8 +232,7 @@
             style="width: 100%"
         >
           <el-header class="imageHeader">
-            <el-button type="primary" size="small" @click="editClassImgOpen">添加图片分类</el-button>
-            <el-button type="danger" size="small" @click="editPhotoOpen">上传图片</el-button>
+              <div><h1>이미지추가</h1></div>
           </el-header>
           <el-container>
             <ImageAside ref="imagesClassRef" :height="h-65" @classActive="imageClassActive"/>

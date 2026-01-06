@@ -437,3 +437,90 @@ export function getRandomString(length = 8) {
 
     return result;
 }
+
+/**
+ * 컴포넌트에 따라 값을 입력하기
+ */
+export function componentItemData(id,data,type){
+
+    if(type==='goods'){
+        return data.map(item=>{
+            if(item.type === '二手商品'){
+                return{
+                    component_id:id,
+                    item_type:type,
+                    item_id:item.id,
+                    type:item.type,
+                    title:item.title,
+                    img:item.used_img[0].url,
+                    label:item.label,
+                    label_color:item.label_color,
+                    color:item.color,
+                    storage:item.storage,
+                    price:item.price,
+                    price2:item.price2,
+                }
+            }else{
+                return{
+                    component_id:id,
+                    item_type:type,
+                    item_id:item.id,
+                    type:item.type,
+                    title:item.title,
+                    img:item.img,
+                    label:item.label,
+                    label_color:item.label_color,
+                    color:item.color,
+                    storage:item.storage,
+                    price:item.price,
+                    price1:item.price1,
+                }
+            }
+        })
+    }else if(type==='accessories'){
+        return data.map(item=>{
+            return{
+                component_id:id,
+                item_type:type,
+                item_id:item.id,
+                title:item.title,
+                img:item.img,
+                label:item.label,
+                label_color:item.label_color,
+                color:item.color,
+                material:item.material,
+                price:item.price,
+                price1:item.sale_price,
+            }
+        })
+    }else if(type==='agreement'){
+        return data.map(item=>{
+            return{
+                component_id:id,
+                item_type:type,
+                item_id:item.id,
+                title:item.title,
+                img:item.img,
+                color:item.color,
+                storage:item.storage,
+                price:item.sale_price,
+                shopCashSupport:item.shopCashSupport,
+                phoneCashSupport:item.phoneCashSupport,
+            }
+        })
+    }else if(type==='usim'){
+        return data.map(item=>{
+            return{
+                component_id:id,
+                item_type:type,
+                item_id:item.id,
+                title:item.title,
+                img:item.img,
+                usim_data:item.data,
+                usim_tell_time:item.tell_time,
+                price:item.price,
+            }
+        })
+    }
+    return [];
+}

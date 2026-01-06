@@ -1,8 +1,16 @@
 <script setup>
 import {checkAccessoriesList} from "@/api/accessories/accessories.js";
-import {ref} from "vue";
+import {ref,defineEmits,defineProps} from "vue";
 import {addSubmenu, menuListTrees, orderTrees} from "@/composables/useCommon.js";
 import {priceDollar} from "@/composables/useCommon.js";
+import {showMessage} from "@/composables/utill.js";
+
+const props = defineProps({
+  maxSelections:{
+      type:Number,
+      default:200
+  }
+})
 
 //필요한변수
 const currentPage = ref(1);
@@ -41,6 +49,15 @@ const changeGoods = (index)=>{
 
 //테이블에 체크한 아이템 클릭함수
 const checkItemEvent = (data)=>{
+  if (data.length > props.maxSelections) {
+    // 초과된 선택 취소 (마지막으로 체크된 행만 유지되지 않도록 이전 상태로 복구)
+    const excessRow = data[data.length - 1]
+    tableRef.value.toggleRowSelection(excessRow, false)
+
+    // 필요시 메시지 표시
+    showMessage(`최대 ${props.maxSelections}개까지만 선택 가능합니다.`,'error')
+    return;
+  }
   emit('update:modelValue', data);
 }
 //테이블아이템추가

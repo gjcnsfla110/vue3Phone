@@ -180,7 +180,30 @@
            <el-table-column label="이미지" align="center" width="150">
              <template #default="{row}">
                <el-tooltip :content="row.title" placement="top">
-                  <el-image style="width: 100px; height: 100px" :src="row.img" fit="cover" />
+                 <el-image
+                     style="width: 90px; height: 100px; z-index: 1000;"
+                     :src="row.img"
+                     :zoom-rate="1.2"
+                     :max-scale="7"
+                     :min-scale="0.2"
+                     :preview-src-list="[row.img]"
+                     :preview-teleported="true"
+                     show-progress
+                     fit="cover"
+                     v-if="row.type !== '二手商品'"
+                 />
+                 <el-image
+                     style="width: 90px; height: 100px; z-index: 1000;"
+                     :src="row.used_img[0].url ? row.used_img[0].url : '' "
+                     :zoom-rate="1.2"
+                     :max-scale="7"
+                     :min-scale="0.2"
+                     :preview-src-list="[row.used_img[0].url]"
+                     :preview-teleported="true"
+                     show-progress
+                     fit="cover"
+                     v-else
+                 />
                </el-tooltip>
              </template>
            </el-table-column>

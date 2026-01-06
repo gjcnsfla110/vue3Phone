@@ -131,10 +131,10 @@
       </el-table-column>
     </el-table>
     <Dialong title="" width="70%" height="70%" top="10vh" ref="addListRef" :cancellation="false" :confirm="false" >
-        <template v-if="itemType === 'goods'">
+        <template v-if="itemType === 'goods'||itemType === 'goods_old'">
             <CheckGoodsItems v-model="itemsModel" @addCheckItems="submitCheckItems"></CheckGoodsItems>
         </template>
-        <template v-else-if="itemType === 'agreement'">
+        <template v-else-if="itemType === 'agreement'||itemType === 'agreement_internet'">
           <CheckAgreementItems v-model="itemsModel" @addCheckItems="submitCheckItems"></CheckAgreementItems>
         </template>
         <template v-else-if="itemType === 'usim'">
